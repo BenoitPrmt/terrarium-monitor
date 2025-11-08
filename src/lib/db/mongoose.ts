@@ -31,6 +31,8 @@ export async function connectMongoose() {
         globalForMongoose._mongoosePromise = mongoose.connect(uri, {
             maxPoolSize: 10,
             serverSelectionTimeoutMS: 5000,
+            authSource: "admin",
+            dbName: "terrarium"
         })
     }
 
