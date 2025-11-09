@@ -36,6 +36,10 @@ import {timeAgoInWords} from "@/lib/utils";
 import {Kbd} from "@/components/ui/kbd";
 import {CopyButton} from "@/components/ui/copy-button";
 import CopyCode from "@/components/CopyCode";
+import {
+    TERRARIUM_LOCATION_LABELS,
+    type TerrariumLocationValue,
+} from "@/constants/terrarium-locations"
 
 const metricConfigs = [
     {key: "TEMPERATURE", label: "Température (°C)", color: "#f97316"},
@@ -79,6 +83,9 @@ export default async function TerrariumDetailPage({
 
     const terrariumDoc = await requireTerrariumForOwner(id, user.id)
     const terrarium = serializeTerrarium(terrariumDoc)
+    const locationLabel =
+        TERRARIUM_LOCATION_LABELS[terrarium.location as TerrariumLocationValue] ??
+        TERRARIUM_LOCATION_LABELS.other
 
     const seriesData = await Promise.all(
         metricConfigs.map((metric) =>
@@ -142,7 +149,7 @@ export default async function TerrariumDetailPage({
                     <CardDescription>Détails généraux du terrarium.</CardDescription>
                 </CardHeader>
                 <CardContent className="grid gap-4 md:grid-cols-3">
-                    <InfoLine label="Emplacement" value={terrarium.location || "Non défini"}/>
+                    <InfoLine label="Emplacement" value={locationLabel}/>
                     <InfoLine
                         label="Créé le"
                         value={

@@ -1,12 +1,14 @@
 "use client"
 
-import {useActionState} from "react"
+import {useActionState, useEffect} from "react"
 import {useFormStatus} from "react-dom"
 
 import {createWebhookAction} from "@/app/(dashboard)/dashboard/actions"
 import {Button} from "@/components/ui/button"
 import {Input} from "@/components/ui/input"
 import {Label} from "@/components/ui/label"
+import {Textarea} from "@/components/ui/textarea"
+import {toast} from "sonner"
 
 const metricOptions = [
     {value: "TEMPERATURE", label: "Température"},
@@ -24,17 +26,27 @@ const comparatorOptions = [
 
 type ActionState = Awaited<ReturnType<typeof createWebhookAction>>
 
-const initialState: ActionState = {}
+const initialState: ActionState | null = null
 
 export function NewWebhookForm({terrariumId}: { terrariumId: string }) {
-    const action = async (_state: ActionState, formData: FormData) => {
+    const action = async (_state: ActionState | null, formData: FormData) => {
         return createWebhookAction(terrariumId, formData)
     }
 
-    const [state, formAction] = useActionState<ActionState, FormData>(
+    const [state, formAction] = useActionState<ActionState | null, FormData>(
         action,
         initialState
     )
+    useEffect(() => {
+        if (!state?.message) {
+            return
+        }
+        if (state.success) {
+            toast.success(state.message)
+        } else {
+            toast.error(state.message)
+        }
+    }, [state])
 
     return (
         <form action={formAction} className="grid gap-4 md:grid-cols-2">
@@ -82,12 +94,6 @@ export function NewWebhookForm({terrariumId}: { terrariumId: string }) {
                 <Label htmlFor="cooldownSec">Cooldown (sec)</Label>
                 <Input id="cooldownSec" name="cooldownSec" type="number" defaultValue={900}/>
             </div>
-            {state?.error && (
-                <p className="text-sm text-red-600">{state.error}</p>
-            )}
-            {state?.success && (
-                <p className="text-sm text-emerald-600">{state.success}</p>
-            )}
             <div className="md:col-span-2">
                 <SubmitButton/>
             </div>

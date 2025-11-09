@@ -1,11 +1,12 @@
 "use client"
 
-import {useActionState, useState} from "react"
+import {useActionState, useEffect, useState} from "react"
 import {useFormStatus} from "react-dom"
 
 import {updateTerrariumAction} from "@/app/(dashboard)/dashboard/actions"
 import {Button} from "@/components/ui/button"
 import {Alert, AlertDescription, AlertTitle} from "@/components/ui/alert"
+import {toast} from "sonner"
 
 type Props = {
     terrariumId: string
@@ -13,19 +14,30 @@ type Props = {
 
 type ActionState = Awaited<ReturnType<typeof updateTerrariumAction>>
 
-const initialState: ActionState = {}
+const initialState: ActionState | null = null
 
 export function RotateTokenForm({terrariumId}: Props) {
-    const action = async (_state: ActionState, formData: FormData) => {
+    const action = async (_state: ActionState | null, formData: FormData) => {
         formData.set("regenerateToken", "true")
         return updateTerrariumAction(terrariumId, formData)
     }
 
-    const [state, formAction] = useActionState<ActionState, FormData>(
+    const [state, formAction] = useActionState<ActionState | null, FormData>(
         action,
         initialState
     )
     const [copied, setCopied] = useState(false)
+
+    useEffect(() => {
+        if (!state?.message) {
+            return
+        }
+        if (state.success) {
+            toast.success(state.message)
+        } else {
+            toast.error(state.message)
+        }
+    }, [state])
 
     const token = (state?.data as { deviceToken?: string } | undefined)?.deviceToken
 

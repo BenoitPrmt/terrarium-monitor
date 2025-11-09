@@ -14,7 +14,9 @@ import {Label} from "@/components/ui/label"
 import {Switch} from "@/components/ui/switch"
 import {Badge} from "@/components/ui/badge"
 import type {MetricType} from "@/models/constants"
-import {Loader2Icon, SaveIcon, SendIcon, Trash2Icon} from "lucide-react";
+import {Loader2Icon, SendIcon, Trash2Icon} from "lucide-react";
+import SaveSubmitButton from "@/components/form/SaveSubmitButton";
+import {toast} from "sonner"
 
 const metricOptions = [
     {value: "TEMPERATURE", label: "Température"},
@@ -48,14 +50,15 @@ type Props = {
 
 type ActionState = Awaited<ReturnType<typeof updateWebhookAction>>
 
-const initialState: ActionState = {}
+const initialState: ActionState | null = null
 
 export function WebhookCard({terrariumId, webhook}: Props) {
-    const action = async (_state: ActionState, formData: FormData) => {
+    const {pending} = useFormStatus();
+    const action = async (_state: ActionState | null, formData: FormData) => {
         return updateWebhookAction(terrariumId, webhook.id, formData)
     }
 
-    const [state, formAction] = useActionState<ActionState, FormData>(
+    const [state, formAction] = useActionState<ActionState | null, FormData>(
         action,
         initialState
     )
@@ -66,17 +69,23 @@ export function WebhookCard({terrariumId, webhook}: Props) {
     const [deletePending, startDelete] = useTransition()
 
     useEffect(() => {
-        if (state?.data) {
+        if (!state?.message) {
+            return
+        }
+        if (state.success) {
             const data = state.data as {
                 metric?: MetricType
                 comparator?: string
                 isActive?: boolean
-            }
-            if (data.metric) setMetric(data.metric)
-            if (data.comparator) setComparator(data.comparator)
-            if (typeof data.isActive === "boolean") setIsActive(data.isActive)
+            } | undefined
+            if (data?.metric) setMetric(data.metric)
+            if (data?.comparator) setComparator(data.comparator)
+            if (typeof data?.isActive === "boolean") setIsActive(data.isActive)
+            toast.success(state.message)
+        } else {
+            toast.error(state.message)
         }
-    }, [state?.data])
+    }, [state])
 
     return (
         <div className="space-y-4 rounded-lg border p-4">
@@ -167,12 +176,8 @@ export function WebhookCard({terrariumId, webhook}: Props) {
                             value={isActive ? "true" : "false"}
                         />
                     </div>
-                    <SubmitButton/>
+                    <SaveSubmitButton pending={pending}/>
                 </div>
-                {state?.error && <p className="text-sm text-red-600">{state.error}</p>}
-                {state?.success && (
-                    <p className="text-sm text-emerald-600">{state.success}</p>
-                )}
             </form>
             <div className="flex flex-wrap items-center gap-3 text-sm text-muted-foreground">
                 {webhook.secretId && (
@@ -191,7 +196,12 @@ export function WebhookCard({terrariumId, webhook}: Props) {
                     disabled={testPending}
                     onClick={() =>
                         startTest(async () => {
-                            await testWebhookAction(terrariumId, webhook.id)
+                            const result = await testWebhookAction(terrariumId, webhook.id)
+                            if (result.success) {
+                                toast.success(result.message)
+                            } else {
+                                toast.error(result.message)
+                            }
                         })
                     }
                 >
@@ -213,7 +223,12 @@ export function WebhookCard({terrariumId, webhook}: Props) {
                     disabled={deletePending}
                     onClick={() =>
                         startDelete(async () => {
-                            await deleteWebhookAction(terrariumId, webhook.id)
+                            const result = await deleteWebhookAction(terrariumId, webhook.id)
+                            if (result.success) {
+                                toast.success(result.message)
+                            } else {
+                                toast.error(result.message)
+                            }
                         })
                     }
                 >
@@ -231,24 +246,5 @@ export function WebhookCard({terrariumId, webhook}: Props) {
                 </Button>
             </div>
         </div>
-    )
-}
-
-function SubmitButton() {
-    const {pending} = useFormStatus()
-    return (
-        <Button type="submit" disabled={pending}>
-            {pending ? (
-                <>
-                    <Loader2Icon className="size-4 animate-spin" />
-                    Enregistrement...
-                </>
-            ) : (
-                <>
-                    <SaveIcon className="size-4" />
-                    Enregistrer
-                </>
-            )}
-        </Button>
     )
 }

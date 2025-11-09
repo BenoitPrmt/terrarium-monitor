@@ -8,6 +8,7 @@ import {Button} from "@/components/ui/button";
 import {Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage} from "@/components/ui/form";
 import {Input} from "@/components/ui/input";
 import {toast} from "sonner";
+import SaveSubmitButton from "@/components/form/SaveSubmitButton";
 
 const schema = z.object({
     name: z.string().min(2, "Votre nom doit comporter au moins 2 caractères"),
@@ -83,9 +84,7 @@ export function AccountSettingsForm({
                         )}
                     />
                     <div className="flex gap-2">
-                        <Button type="submit" disabled={loading}>
-                            {loading ? "Enregistrement..." : "Enregistrer"}
-                        </Button>
+                        <SaveSubmitButton pending={loading} />
                     </div>
                 </form>
             </Form>

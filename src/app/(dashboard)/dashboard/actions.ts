@@ -26,10 +26,10 @@ import {AggregateDailyModel} from "@/models/AggregateDaily"
 import {AggregateByHourOfDayModel} from "@/models/AggregateByHourOfDay"
 import {generateUuid, hashDeviceToken, sendWebhookWithRetry} from "@/lib/utils"
 
-type ActionResult<T = unknown> = {
-    error?: string
+type ActionResult<T = any> = {
+    success: boolean
+    message: string
     data?: T
-    success?: string
 }
 
 async function requireAuth() {
@@ -53,7 +53,7 @@ export async function createTerrariumAction(formData: FormData): Promise<ActionR
 
     const parsed = terrariumCreateSchema.safeParse(payload)
     if (!parsed.success) {
-        return {error: "invalid_payload"}
+        return {success: false, message: "Données invalides pour créer le terrarium."}
     }
 
     const uuid = generateUuid()
@@ -68,10 +68,11 @@ export async function createTerrariumAction(formData: FormData): Promise<ActionR
         deviceTokenHash: hashDeviceToken(deviceToken),
     })
 
-    revalidatePath("/dashboard")
+    revalidatePath("/dashboard");
 
     return {
-        success: "Terrarium créé",
+        success: true,
+        message: "Terrarium créé avec succès !",
         data: {terrarium: serializeTerrarium(terrarium), deviceToken},
     }
 }
@@ -93,7 +94,7 @@ export async function updateTerrariumAction(
 
     const parsed = terrariumUpdateSchema.safeParse(payload)
     if (!parsed.success) {
-        return {error: "invalid_payload"}
+        return {success: false, message: "Données invalides pour modifier le terrarium."}
     }
 
     const terrarium = await requireTerrariumForOwner(terrariumId, ownerId)
@@ -120,7 +121,8 @@ export async function updateTerrariumAction(
     revalidatePath("/dashboard")
 
     return {
-        success: "Terrarium mis à jour",
+        success: true,
+        message: "Terrarium mis à jour !",
         data: {terrarium: updated ? serializeTerrarium(updated) : null, deviceToken: newToken},
     }
 }
@@ -142,7 +144,7 @@ export async function deleteTerrariumAction(terrariumId: string): Promise<Action
 
     revalidatePath("/dashboard")
 
-    return {success: "Terrarium supprimé"}
+    return {success: true, message: "Terrarium supprimé !"};
 }
 
 export async function createWebhookAction(
@@ -165,7 +167,7 @@ export async function createWebhookAction(
 
     const parsed = webhookCreateSchema.safeParse(payload)
     if (!parsed.success) {
-        return {error: "invalid_payload"}
+        return {success: false, message: "Données invalides pour créer le webhook."}
     }
 
     const terrarium = await requireTerrariumForOwner(terrariumId, ownerId)
@@ -178,7 +180,7 @@ export async function createWebhookAction(
 
     revalidatePath(`/dashboard/terrariums/${terrariumId}/webhooks`)
 
-    return {success: "Webhook créé", data: webhook.toObject()}
+    return {success: true, message: "Webhook créé avec succès !", data: webhook.toObject()}
 }
 
 export async function updateWebhookAction(
@@ -206,7 +208,7 @@ export async function updateWebhookAction(
 
     const parsed = webhookUpdateSchema.safeParse(payload)
     if (!parsed.success) {
-        return {error: "invalid_payload"}
+        return {success: false, message: "Données invalides pour modifier le webhook."}
     }
 
     const terrarium = await requireTerrariumForOwner(terrariumId, ownerId)
@@ -217,12 +219,12 @@ export async function updateWebhookAction(
     )
 
     if (!webhook) {
-        return {error: "not_found"}
+        return {success: false, message: "Webhook introuvable."}
     }
 
     revalidatePath(`/dashboard/terrariums/${terrariumId}/webhooks`)
 
-    return {success: "Webhook mis à jour", data: webhook.toObject()}
+    return {success: true, message: "Webhook mis à jour avec succès !", data: webhook.toObject()}
 }
 
 export async function deleteWebhookAction(
@@ -238,7 +240,7 @@ export async function deleteWebhookAction(
 
     revalidatePath(`/dashboard/terrariums/${terrariumId}/webhooks`)
 
-    return {success: "Webhook supprimé"}
+    return {success: true, message: "Webhook supprimé avec succès !"}
 }
 
 export async function testWebhookAction(
@@ -256,7 +258,7 @@ export async function testWebhookAction(
     })
 
     if (!webhook) {
-        return {error: "not_found"}
+        return {success: false, message: "Webhook introuvable."}
     }
 
     const payload = {
@@ -281,5 +283,5 @@ export async function testWebhookAction(
         1
     )
 
-    return {success: "Webhook testé"}
+    return {success: true, message: "Payload de test envoyé avec succès !"}
 }

@@ -16,10 +16,11 @@ import {
     AlertDialogTitle,
     AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
+import {toast} from "sonner"
 
 type ActionState = Awaited<ReturnType<typeof deleteTerrariumAction>>
 
-const initialState: ActionState = {}
+const initialState: ActionState | null = null
 
 type Props = {
     terrariumId: string
@@ -27,20 +28,26 @@ type Props = {
 
 export function DeleteTerrariumForm({terrariumId}: Props) {
     const router = useRouter()
-    const action = async (_state: ActionState, _formData: FormData) => {
+    const action = async (_state: ActionState | null, _formData: FormData) => {
         return deleteTerrariumAction(terrariumId)
     }
-    const [state, formAction] = useActionState<ActionState, FormData>(
+    const [state, formAction] = useActionState<ActionState | null, FormData>(
         action,
         initialState
     )
     const [open, setOpen] = useState(false)
 
     useEffect(() => {
-        if (state?.success) {
-            router.push("/dashboard")
+        if (!state?.message) {
+            return
         }
-    }, [state?.success, router])
+        if (state.success) {
+            toast.success(state.message)
+            router.push("/dashboard")
+        } else {
+            toast.error(state.message)
+        }
+    }, [state, router])
 
     return (
         <AlertDialog open={open} onOpenChange={setOpen}>

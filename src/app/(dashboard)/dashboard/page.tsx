@@ -35,6 +35,7 @@ import {EyeIcon, SettingsIcon, SproutIcon, WebhookIcon} from "lucide-react";
 import {ButtonGroup} from "@/components/ui/button-group";
 import {timeAgoInWords} from "@/lib/utils";
 import CopyCode from "@/components/CopyCode";
+import {TerrariumLocationBadge} from "@/components/terrariums/TerrariumLocationBadge";
 
 export default async function DashboardPage() {
     const user = await currentUser()
@@ -130,7 +131,9 @@ export default async function DashboardPage() {
                                     <TableCell className="font-medium">
                                         {terrarium.name}
                                     </TableCell>
-                                    <TableCell>{terrarium.location || "—"}</TableCell>
+                                    <TableCell>
+                                        <TerrariumLocationBadge value={terrarium.location}/>
+                                    </TableCell>
                                     <TableCell>
                                         <CopyCode text={terrarium.uuid} />
                                     </TableCell>

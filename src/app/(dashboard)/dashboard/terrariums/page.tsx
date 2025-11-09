@@ -13,7 +13,7 @@ import {
     CardHeader,
     CardTitle,
 } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
+import {TerrariumLocationBadge} from "@/components/terrariums/TerrariumLocationBadge"
 import {SproutIcon} from "lucide-react";
 
 export default async function TerrariumsGridPage() {
@@ -56,9 +56,7 @@ export default async function TerrariumsGridPage() {
                             <CardHeader>
                                 <CardTitle className="flex items-center justify-between text-lg">
                                     <span className="truncate">{terrarium.name}</span>
-                                    <Badge variant="secondary">
-                                        {terrarium.location || "Non défini"}
-                                    </Badge>
+                                    <TerrariumLocationBadge value={terrarium.location}/>
                                 </CardTitle>
                                 <CardDescription>
                                     UUID&nbsp;: <span className="font-mono text-xs">{terrarium.uuid}</span>

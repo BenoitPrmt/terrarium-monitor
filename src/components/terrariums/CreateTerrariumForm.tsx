@@ -1,6 +1,6 @@
 "use client"
 
-import {useActionState, useState} from "react"
+import {useActionState, useEffect, useState} from "react"
 import {useFormStatus} from "react-dom"
 
 import {createTerrariumAction} from "@/app/(dashboard)/dashboard/actions"
@@ -9,22 +9,43 @@ import {Input} from "@/components/ui/input"
 import {Label} from "@/components/ui/label"
 import {Textarea} from "@/components/ui/textarea"
 import {Alert, AlertDescription, AlertTitle} from "@/components/ui/alert"
-import {Loader2Icon, SendIcon, SproutIcon} from "lucide-react";
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from "@/components/ui/select"
+import {Loader2Icon, SproutIcon} from "lucide-react";
+import {TERRARIUM_LOCATIONS} from "@/constants/terrarium-locations"
+import {getLocationIcon} from "@/components/terrariums/locationIcons"
+import {toast} from "sonner"
 
 type ActionState = Awaited<ReturnType<typeof createTerrariumAction>>
 
-const initialState: ActionState = {}
+const initialState: ActionState | null = null
 
 export function CreateTerrariumForm() {
-    const action = async (_: ActionState, formData: FormData): Promise<ActionState> => {
+    const action = async (_: ActionState | null, formData: FormData): Promise<ActionState> => {
         return createTerrariumAction(formData)
     }
 
-    const [state, formAction] = useActionState<ActionState, FormData>(
+    const [state, formAction] = useActionState<ActionState | null, FormData>(
         action,
         initialState
     )
     const [copied, setCopied] = useState(false)
+    const [location, setLocation] = useState<string>(TERRARIUM_LOCATIONS[0].value)
+    useEffect(() => {
+        if (!state?.message) {
+            return
+        }
+        if (state.success) {
+            toast.success(state.message)
+        } else {
+            toast.error(state.message)
+        }
+    }, [state])
 
     const token = (state?.data as { deviceToken?: string } | undefined)?.deviceToken
 
@@ -36,8 +57,26 @@ export function CreateTerrariumForm() {
                     <Input id="name" name="name" placeholder="Terrarium tropical" required/>
                 </div>
                 <div className="space-y-2">
-                    <Label htmlFor="location">Emplacement</Label>
-                    <Input id="location" name="location" placeholder="Salon"/>
+                    <Label>Emplacement</Label>
+                    <Select value={location} onValueChange={setLocation}>
+                        <SelectTrigger>
+                            <SelectValue placeholder="Choisir un emplacement"/>
+                        </SelectTrigger>
+                        <SelectContent>
+                            {TERRARIUM_LOCATIONS.map((option) => {
+                                const Icon = getLocationIcon(option.value)
+                                return (
+                                    <SelectItem key={option.value} value={option.value}>
+                                        <span className="flex items-center gap-2">
+                                            <Icon className="size-4"/>
+                                            {option.label}
+                                        </span>
+                                    </SelectItem>
+                                )
+                            })}
+                        </SelectContent>
+                    </Select>
+                    <input type="hidden" name="location" value={location}/>
                 </div>
                 <div className="space-y-2">
                     <Label htmlFor="description">Description</Label>
@@ -48,9 +87,6 @@ export function CreateTerrariumForm() {
                         rows={4}
                     />
                 </div>
-                {state.error && (
-                    <p className="text-sm text-red-600">{state.error}</p>
-                )}
                 <SubmitButton/>
             </form>
 
@@ -58,10 +94,10 @@ export function CreateTerrariumForm() {
                 <Alert>
                     <AlertTitle>Device token</AlertTitle>
                     <AlertDescription className="flex flex-col gap-2">
-            <span>
-              Ce token est affiché une seule fois. Copiez-le et configurez votre
-              appareil immédiatement.
-            </span>
+                        <span>
+                          Ce token est affiché une seule fois. Copiez-le et configurez votre
+                          appareil immédiatement.
+                        </span>
                         <div className="flex items-center gap-2">
                             <code className="flex-1 truncate rounded bg-muted px-2 py-1 text-sm">
                                 {token}

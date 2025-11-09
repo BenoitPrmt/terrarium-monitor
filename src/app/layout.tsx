@@ -1,7 +1,7 @@
-import type { Metadata } from "next";
-import { Outfit } from "next/font/google";
+import type {Metadata} from "next";
+import {Outfit} from "next/font/google";
 import "./globals.css";
-import { Toaster } from "@/components/ui/sonner";
+import {Toaster} from "@/components/ui/sonner";
 import {
     WEBSITE_URL,
     WEBSITE_NAME,
@@ -16,8 +16,8 @@ import {GoogleAnalytics} from "@next/third-parties/google";
 import {ThemeProvider} from "next-themes";
 
 const outfitSans = Outfit({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
+    variable: "--font-geist-sans",
+    subsets: ["latin"],
     weight: ["400", "500", "600", "700", "800"],
 });
 
@@ -56,26 +56,26 @@ export const metadata: Metadata = {
 };
 
 export default function RootLayout({
-  children,
-}: Readonly<{
-  children: React.ReactNode;
+                                       children,
+                                   }: Readonly<{
+    children: React.ReactNode;
 }>) {
-  return (
-    <html lang="fr" suppressHydrationWarning>
-      <body
-        className={`${outfitSans.variable} antialiased`}
-      >
-      <ThemeProvider
-          attribute="class"
-          defaultTheme="system"
-          enableSystem
-          disableTransitionOnChange
-      >
-        {children}
-        <GoogleAnalytics gaId={GOOGLE_ANALYTICS_ID} />
-        <Toaster richColors closeButton/>
-      </ThemeProvider>
-      </body>
-    </html>
-  );
+    return (
+        <html lang="fr" suppressHydrationWarning>
+        <body
+            className={`${outfitSans.variable} antialiased`}
+        >
+        <ThemeProvider
+            attribute="class"
+            defaultTheme="system"
+            enableSystem
+            disableTransitionOnChange
+        >
+            {children}
+            <GoogleAnalytics gaId={GOOGLE_ANALYTICS_ID}/>
+            <Toaster richColors closeButton position="top-right"/>
+        </ThemeProvider>
+        </body>
+        </html>
+    );
 }
