@@ -13,14 +13,14 @@ const data = {
     app: [
         {
             title: "Tableau de bord",
-            url: "/app",
+            url: "/dashboard",
             icon: Grid2X2,
         },
     ],
     terrariums: [
         {
             title: "Terrariums",
-            url: "/app/quests",
+            url: "/dashboard/terrariums",
             icon: SwordsIcon,
         },
     ],

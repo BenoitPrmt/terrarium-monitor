@@ -27,7 +27,7 @@ const Header = ({session}: HeaderProps) => {
                 <ThemeToggle/>
 
                 {isAuthenticated && (
-                    <Button onClick={() => window.location.href = '/app'}>
+                    <Button onClick={() => window.location.href = '/dashboard'}>
                         <Grid2X2/> Tableau de bord
                     </Button>
                 )}

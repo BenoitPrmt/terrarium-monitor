@@ -82,7 +82,7 @@ export function NavUser({user}: Props) {
                         <DropdownMenuSeparator/>
                         <DropdownMenuGroup>
                             <DropdownMenuItem asChild>
-                                <Link href="/app/settings">
+                                <Link href="/dashboard/settings">
                                     <BadgeCheck/>
                                     Mon compte
                                 </Link>
