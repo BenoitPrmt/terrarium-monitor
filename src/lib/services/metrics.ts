@@ -7,6 +7,7 @@ import {SampleModel} from "@/models/Sample"
 import type {
     AggregateGranularity,
     MetricType,
+    SampleUnit,
 } from "@/models/constants"
 
 type AggregateQuery = {
@@ -16,6 +17,85 @@ type AggregateQuery = {
     from?: Date
     to?: Date
     limit?: number
+}
+
+export type MetricSnapshot = {
+    type: MetricType
+    unit: SampleUnit | null
+    latestValue: number | null
+    lastUpdatedAt: Date | null
+    changeOver24h: number | null
+}
+
+export async function getMetricSnapshots(
+    terrariumId: Types.ObjectId,
+    types: MetricType[]
+) {
+    const twentyFourHoursAgo = new Date(Date.now() - 24 * 60 * 60 * 1000)
+
+    const snapshots = await Promise.all(
+        types.map(async (type) => {
+            const latestSample = await SampleModel.findOne({
+                terrariumId,
+                type,
+            })
+                .sort({ts: -1})
+                .lean()
+
+            if (!latestSample) {
+                return {
+                    type,
+                    unit: null,
+                    latestValue: null,
+                    lastUpdatedAt: null,
+                    changeOver24h: null,
+                } satisfies MetricSnapshot
+            }
+
+            const baselineSample =
+                (await SampleModel.findOne({
+                    terrariumId,
+                    type,
+                    ts: {$lte: twentyFourHoursAgo},
+                })
+                    .sort({ts: -1})
+                    .lean()) ?? null
+
+            let changeOver24h: number | null = null
+            if (baselineSample) {
+                changeOver24h = latestSample.value - baselineSample.value
+            } else {
+                const earliestWindowSample = await SampleModel.findOne({
+                    terrariumId,
+                    type,
+                    ts: {$gte: twentyFourHoursAgo, $lt: latestSample.ts},
+                })
+                    .sort({ts: 1})
+                    .lean()
+
+                if (earliestWindowSample) {
+                    changeOver24h =
+                        latestSample.value - earliestWindowSample.value
+                }
+            }
+
+            return {
+                type,
+                unit: latestSample.unit,
+                latestValue: latestSample.value,
+                lastUpdatedAt: latestSample.ts,
+                changeOver24h,
+            } satisfies MetricSnapshot
+        })
+    )
+
+    return snapshots.reduce<Record<MetricType, MetricSnapshot>>(
+        (acc, snapshot) => {
+            acc[snapshot.type] = snapshot
+            return acc
+        },
+        {} as Record<MetricType, MetricSnapshot>
+    )
 }
 
 export async function getAggregates(query: AggregateQuery) {

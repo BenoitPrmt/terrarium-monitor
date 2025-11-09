@@ -8,7 +8,7 @@ import {
     requireTerrariumForOwner,
     serializeTerrarium,
 } from "@/lib/services/terrariums"
-import {getAggregates} from "@/lib/services/metrics"
+import {getAggregates, getMetricSnapshots} from "@/lib/services/metrics"
 import {SampleModel} from "@/models/Sample"
 import type {MetricType} from "@/models/constants"
 import {Button} from "@/components/ui/button"
@@ -31,7 +31,15 @@ import {MetricsFilters} from "@/components/terrariums/MetricsFilters"
 import {HourMetricSelect} from "@/components/terrariums/HourMetricSelect"
 import {TimeSeriesChart, type TimeSeriesDatum} from "@/components/charts/TimeSeries"
 import {CompareHoursChart} from "@/components/charts/CompareHours"
-import {SettingsIcon, WebhookIcon} from "lucide-react";
+import type {LucideIcon} from "lucide-react"
+import {
+    Droplets,
+    Gauge,
+    Mountain,
+    SettingsIcon,
+    Thermometer,
+    WebhookIcon,
+} from "lucide-react";
 import {timeAgoInWords} from "@/lib/utils";
 import {Kbd} from "@/components/ui/kbd";
 import {CopyButton} from "@/components/ui/copy-button";
@@ -40,11 +48,51 @@ import {
     TERRARIUM_LOCATION_LABELS,
     type TerrariumLocationValue,
 } from "@/constants/terrarium-locations"
+import {MetricStatCard} from "@/components/terrariums/MetricStatCard"
 
 const metricConfigs = [
     {key: "TEMPERATURE", label: "Température (°C)", color: "#f97316"},
     {key: "HUMIDITY", label: "Humidité (%)", color: "#0ea5e9"},
     {key: "PRESSURE", label: "Pression (hPa)", color: "#8b5cf6"},
+]
+
+type MetricSummaryConfig = {
+    type: MetricType
+    label: string
+    unitLabel: string
+    icon: LucideIcon
+    accentClassName: string
+}
+
+const metricSummaryConfigs: MetricSummaryConfig[] = [
+    {
+        type: "TEMPERATURE",
+        label: "Température",
+        unitLabel: "°C",
+        icon: Thermometer,
+        accentClassName: "border-amber-200/70 bg-amber-50 text-amber-600",
+    },
+    {
+        type: "HUMIDITY",
+        label: "Humidité",
+        unitLabel: "%",
+        icon: Droplets,
+        accentClassName: "border-sky-200/70 bg-sky-50 text-sky-600",
+    },
+    {
+        type: "PRESSURE",
+        label: "Pression",
+        unitLabel: "hPa",
+        icon: Gauge,
+        accentClassName: "border-violet-200/70 bg-violet-50 text-violet-600",
+    },
+    {
+        type: "ALTITUDE",
+        label: "Altitude",
+        unitLabel: "m",
+        icon: Mountain,
+        accentClassName: "border-emerald-200/70 bg-emerald-50 text-emerald-600",
+    },
 ]
 
 const rangeMap: Record<string, number> = {
@@ -86,6 +134,11 @@ export default async function TerrariumDetailPage({
     const locationLabel =
         TERRARIUM_LOCATION_LABELS[terrarium.location as TerrariumLocationValue] ??
         TERRARIUM_LOCATION_LABELS.other
+
+    const metricSnapshots = await getMetricSnapshots(
+        terrariumDoc._id,
+        metricSummaryConfigs.map((config) => config.type)
+    )
 
     const seriesData = await Promise.all(
         metricConfigs.map((metric) =>
@@ -169,9 +222,21 @@ export default async function TerrariumDetailPage({
                                 : "—"
                         }
                     />
-                    {/*<InfoLine label="UUID public" value={terrarium.uuid}/>*/}
                 </CardContent>
             </Card>
+
+            <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+                {metricSummaryConfigs.map((config) => (
+                    <MetricStatCard
+                        key={config.type}
+                        label={config.label}
+                        unitLabel={config.unitLabel}
+                        icon={config.icon}
+                        accentClassName={config.accentClassName}
+                        snapshot={metricSnapshots[config.type]}
+                    />
+                ))}
+            </div>
 
             <Card>
                 <CardHeader className="space-y-4">
