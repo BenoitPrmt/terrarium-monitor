@@ -26,6 +26,14 @@ import {
     TableHeader,
     TableRow,
 } from "@/components/ui/table"
+import {
+    Tooltip,
+    TooltipContent,
+    TooltipTrigger,
+} from "@/components/ui/tooltip"
+import {EyeIcon, SettingsIcon, SproutIcon, WebhookIcon} from "lucide-react";
+import {ButtonGroup} from "@/components/ui/button-group";
+import {timeAgoInWords} from "@/lib/utils";
 
 export default async function DashboardPage() {
     const user = await currentUser()
@@ -61,7 +69,10 @@ export default async function DashboardPage() {
                     </p>
                 </div>
                 <Button asChild>
-                    <Link href="/dashboard/terrariums/new">Nouveau terrarium</Link>
+                    <Link href="/dashboard/terrariums/new">
+                        <SproutIcon className="size-4" />
+                        Nouveau terrarium
+                    </Link>
                 </Button>
             </div>
 
@@ -76,7 +87,7 @@ export default async function DashboardPage() {
                     <CardHeader>
                         <CardDescription>Dernière ingestion</CardDescription>
                         <CardTitle className="text-3xl">
-                            {lastSample ? new Date(lastSample.ts).toLocaleString() : "—"}
+                            {lastSample ? timeAgoInWords(new Date(lastSample.ts)) : "—"}
                         </CardTitle>
                     </CardHeader>
                 </Card>
@@ -95,7 +106,10 @@ export default async function DashboardPage() {
                         <CardDescription>Gestion de vos appareils connectés.</CardDescription>
                     </div>
                     <Button variant="outline" asChild>
-                        <Link href="/dashboard/terrariums/new">Ajouter</Link>
+                        <Link href="/dashboard/terrariums/new">
+                            <SproutIcon className="size-4" />
+                            Nouveau
+                        </Link>
                     </Button>
                 </CardHeader>
                 <CardContent>
@@ -128,18 +142,50 @@ export default async function DashboardPage() {
                                     </TableCell>
                                     <TableCell className="text-right">
                                         <div className="flex justify-end gap-2">
-                                            <Button variant="outline" size="sm" asChild>
-                                                <Link href={`/dashboard/terrariums/${terrarium.id}`}>
-                                                    Voir
-                                                </Link>
-                                            </Button>
-                                            <Button variant="outline" size="sm" asChild>
-                                                <Link
-                                                    href={`/dashboard/terrariums/${terrarium.id}/settings`}
-                                                >
-                                                    Paramètres
-                                                </Link>
-                                            </Button>
+                                            <ButtonGroup>
+                                                <Tooltip>
+                                                    <TooltipTrigger asChild>
+                                                        <Button variant="outline" size="sm" asChild>
+                                                            <Link
+                                                                href={`/dashboard/terrariums/${terrarium.id}`}
+                                                            >
+                                                                <EyeIcon className="size-4" />
+                                                            </Link>
+                                                        </Button>
+                                                    </TooltipTrigger>
+                                                    <TooltipContent>
+                                                        <p>Voir le terrarium</p>
+                                                    </TooltipContent>
+                                                </Tooltip>
+                                                <Tooltip>
+                                                    <TooltipTrigger asChild>
+                                                        <Button variant="outline" size="sm" asChild>
+                                                            <Link
+                                                                href={`/dashboard/terrariums/${terrarium.id}/settings`}
+                                                            >
+                                                                <SettingsIcon className="size-4" />
+                                                            </Link>
+                                                        </Button>
+                                                    </TooltipTrigger>
+                                                    <TooltipContent>
+                                                        <p>Paramètres du terrarium</p>
+                                                    </TooltipContent>
+                                                </Tooltip>
+                                                <Tooltip>
+                                                    <TooltipTrigger asChild>
+                                                        <Button variant="outline" size="sm" asChild>
+                                                            <Link
+                                                                href={`/dashboard/terrariums/${terrarium.id}/webhooks`}
+                                                            >
+                                                                <WebhookIcon className="size-4" />
+                                                            </Link>
+                                                        </Button>
+                                                    </TooltipTrigger>
+                                                    <TooltipContent>
+                                                        <p>Gérer les webhooks</p>
+                                                    </TooltipContent>
+                                                </Tooltip>
+                                            </ButtonGroup>
                                         </div>
                                     </TableCell>
                                 </TableRow>

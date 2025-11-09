@@ -31,6 +31,8 @@ import {MetricsFilters} from "@/components/terrariums/MetricsFilters"
 import {HourMetricSelect} from "@/components/terrariums/HourMetricSelect"
 import {TimeSeriesChart, type TimeSeriesDatum} from "@/components/charts/TimeSeries"
 import {CompareHoursChart} from "@/components/charts/CompareHours"
+import {SettingsIcon, WebhookIcon} from "lucide-react";
+import {timeAgoInWords} from "@/lib/utils";
 
 const metricConfigs = [
     {key: "TEMPERATURE", label: "Température (°C)", color: "#f97316"},
@@ -117,11 +119,13 @@ export default async function TerrariumDetailPage({
                 <div className="flex gap-2">
                     <Button variant="outline" asChild>
                         <Link href={`/dashboard/terrariums/${terrarium.id}/settings`}>
+                            <SettingsIcon className="size-4" />
                             Paramètres
                         </Link>
                     </Button>
                     <Button variant="outline" asChild>
                         <Link href={`/dashboard/terrariums/${terrarium.id}/webhooks`}>
+                            <WebhookIcon className="size-4"/>
                             Webhooks
                         </Link>
                     </Button>
@@ -139,7 +143,10 @@ export default async function TerrariumDetailPage({
                         label="Créé le"
                         value={
                             terrarium.createdAt
-                                ? new Date(terrarium.createdAt).toLocaleString()
+                                ? new Date(terrarium.createdAt).toLocaleString("fr-FR", {
+                                    dateStyle: "long",
+                                    timeStyle: "short",
+                                })
                                 : "—"
                         }
                     />
@@ -147,7 +154,7 @@ export default async function TerrariumDetailPage({
                         label="Dernière mise à jour"
                         value={
                             terrarium.updatedAt
-                                ? new Date(terrarium.updatedAt).toLocaleString()
+                                ? timeAgoInWords(new Date(terrarium.updatedAt))
                                 : "—"
                         }
                     />

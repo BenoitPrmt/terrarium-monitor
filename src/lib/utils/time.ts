@@ -39,3 +39,26 @@ export function clampToIngestionWindow(date: Date, windowHours = 24) {
     }
     return date
 }
+
+export function timeAgoInWords(date: Date, now = new Date()) {
+    const rtf = new Intl.RelativeTimeFormat("fr", { style: "short" });
+
+    const diffMs = now.getTime() - date.getTime();
+    const diffSeconds = Math.round(diffMs / 1000);
+    if (Math.abs(diffSeconds) < 60) {
+        return rtf.format(-diffSeconds, 'second');
+    }
+
+    const diffMinutes = Math.round(diffSeconds / 60);
+    if (Math.abs(diffMinutes) < 60) {
+        return rtf.format(-diffMinutes, 'minute');
+    }
+
+    const diffHours = Math.round(diffMinutes / 60);
+    if (Math.abs(diffHours) < 24) {
+        return rtf.format(-diffHours, 'hour');
+    }
+
+    const diffDays = Math.round(diffHours / 24);
+    return rtf.format(-diffDays, 'day');
+}

@@ -14,6 +14,7 @@ import {Label} from "@/components/ui/label"
 import {Switch} from "@/components/ui/switch"
 import {Badge} from "@/components/ui/badge"
 import type {MetricType} from "@/models/constants"
+import {Loader2Icon, SaveIcon, SendIcon, Trash2Icon} from "lucide-react";
 
 const metricOptions = [
     {value: "TEMPERATURE", label: "Température"},
@@ -175,18 +176,18 @@ export function WebhookCard({terrariumId, webhook}: Props) {
             </form>
             <div className="flex flex-wrap items-center gap-3 text-sm text-muted-foreground">
                 {webhook.secretId && (
-                    <Badge variant="secondary">secret: {webhook.secretId}</Badge>
+                    <Badge variant="default">Secret: {webhook.secretId}</Badge>
                 )}
                 {webhook.lastTriggeredAt && (
                     <span>
-            Dernier envoi: {new Date(webhook.lastTriggeredAt).toLocaleString()}
-          </span>
+                        Dernier envoi: {new Date(webhook.lastTriggeredAt).toLocaleString()}
+                    </span>
                 )}
             </div>
             <div className="flex gap-2">
                 <Button
                     type="button"
-                    variant="secondary"
+                    variant="outline"
                     disabled={testPending}
                     onClick={() =>
                         startTest(async () => {
@@ -194,7 +195,17 @@ export function WebhookCard({terrariumId, webhook}: Props) {
                         })
                     }
                 >
-                    {testPending ? "Test..." : "Tester"}
+                    {testPending ? (
+                        <>
+                            <Loader2Icon className="size-4 animate-spin" />
+                            Test...
+                        </>
+                    ) : (
+                        <>
+                            <SendIcon className="size-4" />
+                            Tester
+                        </>
+                    )}
                 </Button>
                 <Button
                     type="button"
@@ -206,7 +217,17 @@ export function WebhookCard({terrariumId, webhook}: Props) {
                         })
                     }
                 >
-                    {deletePending ? "Suppression..." : "Supprimer"}
+                    {deletePending ? (
+                        <>
+                            <Loader2Icon className="size-4 animate-spin" />
+                            Suppression...
+                        </>
+                    ) : (
+                        <>
+                            <Trash2Icon className="size-4" />
+                            Supprimer
+                        </>
+                    )}
                 </Button>
             </div>
         </div>
@@ -217,7 +238,17 @@ function SubmitButton() {
     const {pending} = useFormStatus()
     return (
         <Button type="submit" disabled={pending}>
-            {pending ? "Enregistrement..." : "Enregistrer"}
+            {pending ? (
+                <>
+                    <Loader2Icon className="size-4 animate-spin" />
+                    Enregistrement...
+                </>
+            ) : (
+                <>
+                    <SaveIcon className="size-4" />
+                    Enregistrer
+                </>
+            )}
         </Button>
     )
 }
