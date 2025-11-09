@@ -1,41 +1,50 @@
-import Link from "next/link"
-import {redirect} from "next/navigation"
-
-import {currentUser} from "@/auth/current-user"
-import {LogoutButton} from "@/components/auth/LogoutButton"
+import {SidebarInset, SidebarProvider, SidebarTrigger} from "@/components/ui/sidebar";
+import {Separator} from "@/components/ui/separator";
+import {AppSidebar} from "@/components/layout/sidebar/AppSidebar";
+import {redirect} from "next/navigation";
+import {requiredCurrentUser} from "@/auth/current-user";
+import {DashboardBreadcrumbs} from "@/components/dashboard/DashboardBreadcrumbs";
+import {ThemeToggle} from "@/components/theme/ThemeToggle";
 
 type Props = {
     children: React.ReactNode
 }
 
-export default async function DashboardLayout({children}: Props) {
-    const user = await currentUser()
+export default async function AppLayout({children}: Props) {
+    try {
+        const user = await requiredCurrentUser();
 
-    if (!user) {
-        redirect("/login")
+        if (!user) {
+            redirect('/login');
+        }
+
+        return (
+            <SidebarProvider>
+                <AppSidebar user={user}/>
+                <SidebarInset>
+                    <header
+                        className="flex h-16 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-[[data-collapsible=icon]]/sidebar-wrapper:h-12">
+                        <div className="flex flex-1 justify-between items-center px-4">
+                            <div className="flex items-center gap-2 px-4">
+                                <SidebarTrigger className="-ml-1"/>
+                                <Separator
+                                    orientation="vertical"
+                                    className="mr-2 data-[orientation=vertical]:h-4"
+                                />
+                                <DashboardBreadcrumbs/>
+                            </div>
+                            <div className="flex items-center gap-2 px-4">
+                                <ThemeToggle/>
+                            </div>
+                        </div>
+                    </header>
+                    <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
+                        {children}
+                    </div>
+                </SidebarInset>
+            </SidebarProvider>
+        );
+    } catch {
+        redirect('/login');
     }
-
-    return (
-        <div className="min-h-screen bg-slate-50">
-            <header className="border-b bg-white">
-                <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
-                    <div className="flex items-center gap-4">
-                        <Link href="/dashboard" className="text-xl font-semibold">
-                            Terrarium Monitor
-                        </Link>
-                        <nav className="flex items-center gap-3 text-sm text-muted-foreground">
-                            <Link href="/dashboard" className="hover:text-foreground">
-                                Dashboard
-                            </Link>
-                        </nav>
-                    </div>
-                    <div className="flex items-center gap-3">
-                        <span className="text-sm text-muted-foreground">{user.email}</span>
-                        <LogoutButton/>
-                    </div>
-                </div>
-            </header>
-            <main className="mx-auto max-w-6xl px-6 py-8">{children}</main>
-        </div>
-    )
 }

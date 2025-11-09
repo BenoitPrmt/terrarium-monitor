@@ -1,4 +1,4 @@
-export const WEBSITE_NAME = "Terrarium Monitor"
+export const WEBSITE_NAME = "Terra"
 export const WEBSITE_TAGLINE = "Supervisez vos terrariums en toute simplicité"
 export const WEBSITE_DESCRIPTION =
   "Ingestion de mesures, agrégations automatiques et alertes intelligentes pour vos terrariums."

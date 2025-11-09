@@ -1,27 +1,28 @@
 "use client"
 
 import * as React from "react"
-import {CircleGaugeIcon, Grid2X2, SwordsIcon,} from "lucide-react"
+import {LayoutPanelLeftIcon, SproutIcon} from "lucide-react"
 import {NavUser} from "@/components/layout/sidebar/nav/NavUser"
 import {NavSimple} from "@/components/layout/sidebar/nav/NavSimple";
 import {Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarRail, useSidebar,} from "@/components/ui/sidebar"
 import {WEBSITE_NAME} from "@/constants/website";
 import Link from "next/link";
 import {User} from "next-auth";
+import Image from "next/image";
 
 const data = {
     app: [
         {
             title: "Tableau de bord",
             url: "/dashboard",
-            icon: Grid2X2,
+            icon: LayoutPanelLeftIcon,
         },
     ],
     terrariums: [
         {
             title: "Terrariums",
             url: "/dashboard/terrariums",
-            icon: SwordsIcon,
+            icon: SproutIcon,
         },
     ],
 }
@@ -34,19 +35,20 @@ export function AppSidebar({user, ...props}: Props) {
     const {open} = useSidebar();
     
     return (
-        <Sidebar collapsible="icon" {...props}>
+        <Sidebar variant="floating" collapsible="icon" {...props}>
             <SidebarHeader className="flex items-center my-2">
                 {open && (
-                    <div
-                        className="text-2xl font-bold bg-gradient-to-r from-yellow-400 to-orange-500 text-transparent bg-clip-text">
-                        <Link href="/">{WEBSITE_NAME}</Link>
+                    <div className="flex items-center space-x-2">
+                        <Image src="/assets/logo.png" alt="Terra logo" width={30} height={30} />
+                        <div
+                            className="text-2xl font-extrabold text-transparent bg-clip-text bg-gradient-to-br from-primary to-secondary-foreground"
+                        >
+                            <Link href="/">{WEBSITE_NAME}</Link>
+                        </div>
                     </div>
                 )}
                 {!open && (
-                    <div
-                        className="text-2xl font-bold bg-gradient-to-r from-yellow-400 to-orange-500 text-transparent bg-clip-text">
-                        <Link href="/">{WEBSITE_NAME[0]}</Link>
-                    </div>
+                    <Image src="/assets/logo.png" alt="Terra logo" width={30} height={30} />
                 )}
             </SidebarHeader>
             <SidebarContent>

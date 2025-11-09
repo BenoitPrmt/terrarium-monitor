@@ -13,6 +13,7 @@ import {
     AUTHOR_URL, GOOGLE_ANALYTICS_ID,
 } from "@/constants/website";
 import {GoogleAnalytics} from "@next/third-parties/google";
+import {ThemeProvider} from "next-themes";
 
 const outfitSans = Outfit({
   variable: "--font-geist-sans",
@@ -64,16 +65,16 @@ export default function RootLayout({
       <body
         className={`${outfitSans.variable} antialiased`}
       >
-      {/*<ThemeProvider*/}
-      {/*    attribute="class"*/}
-      {/*    defaultTheme="system"*/}
-      {/*    enableSystem*/}
-      {/*    disableTransitionOnChange*/}
-      {/*>*/}
+      <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+      >
         {children}
         <GoogleAnalytics gaId={GOOGLE_ANALYTICS_ID} />
         <Toaster richColors closeButton/>
-      {/*</ThemeProvider>*/}
+      </ThemeProvider>
       </body>
     </html>
   );
