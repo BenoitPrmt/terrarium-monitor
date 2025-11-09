@@ -36,10 +36,10 @@ export function AppSidebar({user, ...props}: Props) {
     
     return (
         <Sidebar variant="floating" collapsible="icon" {...props}>
-            <SidebarHeader className="flex items-center my-2">
+            <SidebarHeader className="flex items-center mb-2 mt-1">
                 {open && (
                     <div className="flex items-center space-x-2">
-                        <Image src="/assets/logo.png" alt="Terra logo" width={30} height={30} />
+                        <Image src="/assets/logo.png" alt="Terra logo" width={30} height={30} className="rounded-lg" />
                         <div
                             className="text-2xl font-extrabold text-transparent bg-clip-text bg-gradient-to-br from-primary to-secondary-foreground"
                         >
@@ -48,7 +48,7 @@ export function AppSidebar({user, ...props}: Props) {
                     </div>
                 )}
                 {!open && (
-                    <Image src="/assets/logo.png" alt="Terra logo" width={30} height={30} />
+                    <Image src="/assets/logo.png" alt="Terra logo" width={30} height={30} className="rounded-lg" />
                 )}
             </SidebarHeader>
             <SidebarContent>

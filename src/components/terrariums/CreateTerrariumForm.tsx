@@ -9,6 +9,7 @@ import {Input} from "@/components/ui/input"
 import {Label} from "@/components/ui/label"
 import {Textarea} from "@/components/ui/textarea"
 import {Alert, AlertDescription, AlertTitle} from "@/components/ui/alert"
+import {Loader2Icon, SendIcon, SproutIcon} from "lucide-react";
 
 type ActionState = Awaited<ReturnType<typeof createTerrariumAction>>
 
@@ -88,7 +89,17 @@ function SubmitButton() {
     const {pending} = useFormStatus()
     return (
         <Button type="submit" disabled={pending}>
-            {pending ? "Création..." : "Créer le terrarium"}
+            {pending ? (
+                <>
+                    <Loader2Icon className="size-4 animate-spin" />
+                    Création...
+                </>
+            ) : (
+                <>
+                    <SproutIcon className="size-4" />
+                    Créer le terrarium
+                </>
+            )}
         </Button>
     )
 }
