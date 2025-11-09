@@ -13,20 +13,21 @@ import type {MetricType} from "@/models/constants"
 import {CompareHoursChart} from "@/components/charts/CompareHours"
 
 type Dataset = {
-    hourOfDay: number
-    value: number
+    hourOfDay: number;
+    value: number;
 }
 
 type MetricOption = {
-    value: MetricType
-    label: string
-    color: string
+    value: MetricType;
+    label: string;
+    color: string;
+    unitLabel?: string;
 }
 
 type Props = {
-    datasets: Record<MetricType, Dataset[]>
-    metricOptions: MetricOption[]
-    initialMetric: MetricType
+    datasets: Record<MetricType, Dataset[]>;
+    metricOptions: MetricOption[];
+    initialMetric: MetricType;
 }
 
 export function HourOfDayChart({
@@ -38,6 +39,7 @@ export function HourOfDayChart({
         return metricOptions.reduce<Record<MetricType, MetricOption>>(
             (acc, option) => {
                 acc[option.value] = option
+                console.log("MetricOption added to map:", option)
                 return acc
             },
             {} as Record<MetricType, MetricOption>
@@ -75,7 +77,7 @@ export function HourOfDayChart({
                     </SelectContent>
                 </Select>
             </div>
-            <CompareHoursChart data={data} color={color} label={selectedOption?.label}/>
+            <CompareHoursChart data={data} color={color} label={selectedOption?.label} unitLabel={selectedOption?.unitLabel} />
         </div>
     )
 }

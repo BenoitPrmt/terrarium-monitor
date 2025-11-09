@@ -1,12 +1,13 @@
 "use client"
 
-import {useActionState, useEffect, useState} from "react"
+import React, {useActionState, useEffect, useState} from "react"
 import {useFormStatus} from "react-dom"
 
 import {updateTerrariumAction} from "@/app/(dashboard)/dashboard/actions"
 import {Button} from "@/components/ui/button"
 import {Alert, AlertDescription, AlertTitle} from "@/components/ui/alert"
 import {toast} from "sonner"
+import {Loader2Icon, RotateCcwKeyIcon, SaveIcon} from "lucide-react";
 
 type Props = {
     terrariumId: string
@@ -75,7 +76,17 @@ function RotateButton() {
     const {pending} = useFormStatus()
     return (
         <Button type="submit" variant="destructive" disabled={pending}>
-            {pending ? "Rotation..." : "Regénérer le token"}
+            {pending ? (
+                <>
+                    <Loader2Icon className="size-4 animate-spin" />
+                    Regénération...
+                </>
+            ) : (
+                <>
+                    <RotateCcwKeyIcon className="size-4" />
+                    Regénérer le token...
+                </>
+            )}
         </Button>
     )
 }

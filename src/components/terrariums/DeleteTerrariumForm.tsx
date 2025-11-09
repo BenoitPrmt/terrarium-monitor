@@ -2,7 +2,6 @@
 
 import {useEffect, useState, useActionState} from "react"
 import {useRouter} from "next/navigation"
-
 import {deleteTerrariumAction} from "@/app/(dashboard)/dashboard/actions"
 import {Button} from "@/components/ui/button"
 import {
@@ -17,6 +16,7 @@ import {
     AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
 import {toast} from "sonner"
+import {CircleCheckIcon, Trash2Icon, Undo2Icon} from "lucide-react";
 
 type ActionState = Awaited<ReturnType<typeof deleteTerrariumAction>>
 
@@ -52,7 +52,10 @@ export function DeleteTerrariumForm({terrariumId}: Props) {
     return (
         <AlertDialog open={open} onOpenChange={setOpen}>
             <AlertDialogTrigger asChild>
-                <Button variant="destructive">Supprimer le terrarium</Button>
+                <Button variant="destructive">
+                    <Trash2Icon className="size-4" />
+                    Supprimer le terrarium
+                </Button>
             </AlertDialogTrigger>
             <AlertDialogContent>
                 <AlertDialogHeader>
@@ -64,9 +67,13 @@ export function DeleteTerrariumForm({terrariumId}: Props) {
                 </AlertDialogHeader>
                 <form action={formAction}>
                     <AlertDialogFooter>
-                        <AlertDialogCancel>Annuler</AlertDialogCancel>
+                        <AlertDialogCancel>
+                            <Undo2Icon className="size-4" />
+                            Annuler
+                        </AlertDialogCancel>
                         <AlertDialogAction asChild>
                             <Button type="submit" variant="destructive">
+                                <CircleCheckIcon className="size-4" />
                                 Confirmer
                             </Button>
                         </AlertDialogAction>

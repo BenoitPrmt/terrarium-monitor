@@ -12,15 +12,17 @@ type Props = {
     data: Array<{
         hourOfDay: number
         value: number
-    }>
-    color?: string
-    label?: string
+    }>;
+    color?: string;
+    label?: string;
+    unitLabel?: string;
 }
 
 export function CompareHoursChart({
                                       data,
                                       color = "#22c55e",
                                       label = "Moyenne",
+                                      unitLabel = "",
                                   }: Props) {
     const config: ChartConfig = {
         value: {
@@ -41,8 +43,8 @@ export function CompareHoursChart({
                 <YAxis/>
                 <ChartTooltip
                     content={<ChartTooltipContent/>}
-                    labelFormatter={(value) => `${value}h`}
-                    formatter={(value) => [`${value as number}`, label]}
+                    labelFormatter={(value) => `${value}`}
+                    formatter={(value) => [`${value as number}`, unitLabel]}
                 />
                 <Bar
                     dataKey="value"

@@ -149,7 +149,7 @@ export function MetricSeriesChart({
                             "—"}
                     </p>
                 </div>
-                <ButtonGroup className="flex flex-wrap justify-end gap-2">
+                <ButtonGroup className="flex flex-wrap justify-end">
                     <Select value={range} onValueChange={handleRangeChange}>
                         <SelectTrigger className="w-[130px]">
                             <SelectValue placeholder="Période"/>

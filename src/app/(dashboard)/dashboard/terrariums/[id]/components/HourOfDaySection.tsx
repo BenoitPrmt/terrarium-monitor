@@ -24,6 +24,7 @@ export function HourOfDaySection({
         value: config.key,
         label: config.label,
         color: config.color,
+        unitLabel: config.unitLabel,
     }))
 
     return (
