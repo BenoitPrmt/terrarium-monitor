@@ -44,12 +44,22 @@ void setup() {
   delay(200);
 
   if (!ensureWifi()) {
-    Serial.println("[WiFi] échec de connexion (on réessaiera plus tard)");
+    Serial.println("[WiFi] échec de connexion");
   } else {
     Serial.println("[WiFi] connecté");
   }
 
   configTime(0, 0, "pool.ntp.org", "time.nist.gov");
+
+  Serial.print("[TIME] Synchronisation NTP UTC en cours");
+  time_t now = time(nullptr);
+  while (now < 1577836800) {
+    delay(500);
+    Serial.print(".");
+    now = time(nullptr);
+  }
+  Serial.println();
+  Serial.printf("[TIME] Synchronisé UTC ! Timestamp actuel: %lu\n", (uint32_t)now);
 
   Wire.begin();
   if (!bme.begin(0x76)) {
@@ -67,37 +77,40 @@ static bool postSamples(float tempC, float humPct, float pressHpa, float altM) {
     return false;
   }
 
-  StaticJsonDocument<1536> doc;
+  StaticJsonDocument<2048> doc;
+
   doc["device_id"] = DEVICE_ID;
   doc["terrarium_uuid"] = TERRARIUM_UUID;
   doc["sent_at"] = nowEpoch();
 
   JsonArray samples = doc.createNestedArray("samples");
 
+  uint32_t measureTime = nowEpoch();
+
   {
     JsonObject o = samples.add<JsonObject>();
-    o["t"] = nowEpoch();
+    o["t"] = measureTime; // Timestamp UTC
     o["type"] = "TEMPERATURE";
     o["value"] = tempC;
     o["unit"] = "C";
   }
   {
     JsonObject o = samples.add<JsonObject>();
-    o["t"] = nowEpoch();
+    o["t"] = measureTime;
     o["type"] = "HUMIDITY";
     o["value"] = humPct;
     o["unit"] = "%";
   }
   {
     JsonObject o = samples.add<JsonObject>();
-    o["t"] = nowEpoch();
+    o["t"] = measureTime;
     o["type"] = "PRESSURE";
     o["value"] = pressHpa;
     o["unit"] = "hPa";
   }
   {
     JsonObject o = samples.add<JsonObject>();
-    o["t"] = nowEpoch();
+    o["t"] = measureTime;
     o["type"] = "ALTITUDE";
     o["value"] = altM;
     o["unit"] = "m";
@@ -106,38 +119,27 @@ static bool postSamples(float tempC, float humPct, float pressHpa, float altM) {
   String payload;
   serializeJson(doc, payload);
 
-  HTTPClient http;
+  if (WiFi.status() == WL_CONNECTED) {
+    HTTPClient http;
+    // For HTTPS with self-signed certificate
+    // WiFiClientSecure client;
 
-  bool isHttps = strncmp(BASE_URL, "https://", 8) == 0;
-  int code = -1;
+    // For dev, disable certificate verification
+    // client.setInsecure();
+    // http.begin(client, BASE_URL);
 
-  if (isHttps) {
-    WiFiClientSecure client;
-    client.setInsecure(); // DEV only
-    if (!http.begin(client, BASE_URL)) {
-      Serial.println("[HTTP] begin() a échoué (HTTPS)");
-      return false;
-    }
+    http.begin(BASE_URL);
+    http.addHeader("Content-Type", "application/json");
+    http.addHeader("X-Device-Token", DEVICE_TOKEN);
+
+    int code = http.POST(payload);
+    Serial.printf("[HTTP] POST %s -> %d\n", BASE_URL, code);
+
+    http.end();
+    return (code >= 200 && code < 300);
   } else {
-    if (!http.begin(BASE_URL)) {
-      Serial.println("[HTTP] begin() a échoué (HTTP)");
-      return false;
-    }
+    return false;
   }
-
-  http.addHeader("Content-Type", "application/json");
-  http.addHeader("X-Device-Token", DEVICE_TOKEN);
-
-  code = http.POST((uint8_t*)payload.c_str(), payload.length());
-  Serial.printf("[HTTP] POST %s -> %d\n", BASE_URL, code);
-
-  if (code > 0) {
-    String resp = http.getString();
-    Serial.println(resp);
-  }
-
-  http.end();
-  return (code >= 200 && code < 300);
 }
 
 void loop() {

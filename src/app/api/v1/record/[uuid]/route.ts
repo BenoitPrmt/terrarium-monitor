@@ -54,11 +54,13 @@ export async function POST(
     console.log("/v1/record/{uuid} called for uuid", uuid);
 
     if (!uuid) {
+        console.log("[/v1/record/{uuid}] Missing uuid, payload :", await request.json());
         return NextResponse.json({error: "missing_uuid"}, {status: 400})
     }
 
     const token = request.headers.get("x-device-token")
     if (!token) {
+        console.log(`[/v1/record/{uuid} - ${uuid}] Missing device token, payload :`, await request.json());
         return NextResponse.json({error: "missing_token"}, {status: 401})
     }
 
@@ -66,6 +68,7 @@ export async function POST(
         request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ?? "unknown"
     const bucketKey = `${uuid}:${ip}`
     if (!rateLimit(bucketKey, RATE_LIMIT_PER_MINUTE, 60_000)) {
+        console.log(`[/v1/record/{uuid} - ${uuid}] Rate limited for IP ${ip}`);
         return NextResponse.json({error: "rate_limited"}, {status: 429})
     }
 
@@ -73,6 +76,7 @@ export async function POST(
     try {
         payload = ingestPayloadSchema.parse(await request.json())
     } catch (error) {
+        console.log(`[/v1/record/{uuid} - ${uuid}] Invalid payload, error:`, error, "payload:", await request.json());
         return NextResponse.json({error: "invalid_payload"}, {status: 400})
     }
 
@@ -81,11 +85,13 @@ export async function POST(
 
     const terrarium = await TerrariumModel.findOne({uuid})
     if (!terrarium) {
+        console.log(`[/v1/record/{uuid} - ${uuid}] Terrarium not found, payload:`, payload);
         return NextResponse.json({error: "not_found"}, {status: 404})
     }
 
     const tokenValid = verifyDeviceToken(token, terrarium.deviceTokenHash)
     if (!tokenValid) {
+        console.log(`[/v1/record/{uuid} - ${uuid}] Invalid device token, payload:`, payload);
         return NextResponse.json({error: "invalid_token"}, {status: 401})
     }
 
@@ -111,6 +117,7 @@ export async function POST(
             }
         })
     } catch {
+        console.log(`[/v1/record/{uuid} - ${uuid}] Invalid samples in payload:`, payload);
         return NextResponse.json({error: "invalid_samples"}, {status: 400})
     }
 
