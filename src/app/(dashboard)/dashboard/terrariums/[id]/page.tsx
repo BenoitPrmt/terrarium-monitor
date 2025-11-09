@@ -33,6 +33,9 @@ import {TimeSeriesChart, type TimeSeriesDatum} from "@/components/charts/TimeSer
 import {CompareHoursChart} from "@/components/charts/CompareHours"
 import {SettingsIcon, WebhookIcon} from "lucide-react";
 import {timeAgoInWords} from "@/lib/utils";
+import {Kbd} from "@/components/ui/kbd";
+import {CopyButton} from "@/components/ui/copy-button";
+import CopyCode from "@/components/CopyCode";
 
 const metricConfigs = [
     {key: "TEMPERATURE", label: "Température (°C)", color: "#f97316"},
@@ -112,8 +115,9 @@ export default async function TerrariumDetailPage({
                 <div>
                     <p className="text-sm text-muted-foreground">Terrarium</p>
                     <h1 className="text-3xl font-semibold">{terrarium.name}</h1>
-                    <p className="text-muted-foreground">
-                        UUID: <code>{terrarium.uuid}</code>
+                    <p className="text-muted-foreground flex items-center gap-2">
+                        Identifiant :&nbsp;
+                        <CopyCode text={terrarium.uuid} />
                     </p>
                 </div>
                 <div className="flex gap-2">
@@ -137,7 +141,7 @@ export default async function TerrariumDetailPage({
                     <CardTitle>Vue d’ensemble</CardTitle>
                     <CardDescription>Détails généraux du terrarium.</CardDescription>
                 </CardHeader>
-                <CardContent className="grid gap-4 md:grid-cols-4">
+                <CardContent className="grid gap-4 md:grid-cols-3">
                     <InfoLine label="Emplacement" value={terrarium.location || "Non défini"}/>
                     <InfoLine
                         label="Créé le"
@@ -158,7 +162,7 @@ export default async function TerrariumDetailPage({
                                 : "—"
                         }
                     />
-                    <InfoLine label="UUID public" value={terrarium.uuid}/>
+                    {/*<InfoLine label="UUID public" value={terrarium.uuid}/>*/}
                 </CardContent>
             </Card>
 

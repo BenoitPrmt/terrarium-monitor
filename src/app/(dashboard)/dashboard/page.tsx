@@ -34,6 +34,7 @@ import {
 import {EyeIcon, SettingsIcon, SproutIcon, WebhookIcon} from "lucide-react";
 import {ButtonGroup} from "@/components/ui/button-group";
 import {timeAgoInWords} from "@/lib/utils";
+import CopyCode from "@/components/CopyCode";
 
 export default async function DashboardPage() {
     const user = await currentUser()
@@ -131,13 +132,14 @@ export default async function DashboardPage() {
                                     </TableCell>
                                     <TableCell>{terrarium.location || "—"}</TableCell>
                                     <TableCell>
-                                        <code className="rounded bg-muted px-2 py-1 text-xs">
-                                            {terrarium.uuid}
-                                        </code>
+                                        <CopyCode text={terrarium.uuid} />
                                     </TableCell>
                                     <TableCell>
                                         {terrarium.createdAt
-                                            ? new Date(terrarium.createdAt).toLocaleDateString()
+                                            ? new Date(terrarium.createdAt).toLocaleString("fr-FR", {
+                                                dateStyle: "long",
+                                                timeStyle: "short",
+                                            })
                                             : "—"}
                                     </TableCell>
                                     <TableCell className="text-right">
