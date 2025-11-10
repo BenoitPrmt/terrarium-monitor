@@ -1,5 +1,8 @@
 # Terrarium Monitor
 
+![Dashboard de l'app](/public/docs/dashboard.png)
+
+
 Next.js 16 dashboard for monitoring terrariums with MongoDB, NextAuth and Mongoose.
 
 ## Stack
