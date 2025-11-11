@@ -9,7 +9,7 @@ import {
 import {Card, CardContent, CardHeader, CardTitle} from "@/components/ui/card"
 import {TerrariumSettingsForm} from "@/components/terrariums/TerrariumSettingsForm"
 import {RotateTokenForm} from "@/components/terrariums/RotateTokenForm"
-import {DeleteTerrariumForm} from "@/components/terrariums/DeleteTerrariumForm"
+import {DeleteTerrariumForm} from "@/components/terrariums/form/DeleteTerrariumForm"
 
 type PageProps = {
     params: Promise<{ id: string }>

@@ -15,6 +15,7 @@ import {ensureDbIndexes} from "@/lib/db/ensureIndexes"
 import {connectMongoose} from "@/lib/db/mongoose"
 import {buildHourOfDaySeries, buildSeriesByMetricAndGranularity} from "@/lib/metrics/series"
 import {getAggregates, getMetricSnapshots} from "@/lib/services/metrics"
+import {listTerrariumActions} from "@/lib/services/terrariumActions"
 import {
     requireTerrariumForOwner,
     serializeTerrarium,
@@ -23,11 +24,12 @@ import {SampleModel} from "@/models/Sample"
 import type {AggregateGranularity} from "@/models/constants"
 import type {GranularityDataset, RecentSample} from "@/types/metrics"
 
-import {HourOfDaySection} from "./components/HourOfDaySection"
-import {MetricSeriesSection} from "./components/MetricSeriesSection"
-import {MetricSnapshotGrid} from "./components/MetricSnapshotGrid"
-import {RecentSamplesSection} from "./components/RecentSamplesSection"
-import {TerrariumHeader} from "./components/TerrariumHeader"
+import {HourOfDaySection} from "../../../../../components/terrariums/charts/HourOfDaySection"
+import {MetricSeriesSection} from "../../../../../components/terrariums/charts/MetricSeriesSection"
+import {MetricSnapshotGrid} from "../../../../../components/terrariums/MetricSnapshotGrid"
+import {RecentSamplesSection} from "../../../../../components/terrariums/RecentSamplesSection"
+import {TerrariumHeader} from "../../../../../components/terrariums/TerrariumHeader"
+import {TerrariumActionsSection} from "../../../../../components/terrariums/TerrariumActionsSection"
 
 type PageProps = {
     params: Promise<{id: string}>
@@ -116,10 +118,13 @@ export default async function TerrariumDetailPage({params, searchParams}: PagePr
         .limit(20)
         .lean<RecentSample[]>()
 
+    const terrariumActions = await listTerrariumActions(terrariumDoc._id)
+
     return (
         <div className="space-y-6">
             <TerrariumHeader terrarium={terrarium}/>
             <MetricSnapshotGrid configs={METRIC_DISPLAY_CONFIGS} snapshots={metricSnapshots}/>
+
             <MetricSeriesSection
                 metricSeriesData={metricSeriesData}
                 configs={METRIC_DISPLAY_CONFIGS}
@@ -129,16 +134,22 @@ export default async function TerrariumDetailPage({params, searchParams}: PagePr
                 initialGranularity={initialGranularity}
                 initialRange={rangeKey}
             />
-            <div className="grid gap-6 md:grid-cols-2">
-                <HourOfDaySection
-                    datasets={hourOfDayDatasets}
-                    configs={METRIC_DISPLAY_CONFIGS}
-                    initialMetric={DEFAULT_SECONDARY_METRIC_KEY}
+            <div className="grid gap-6 lg:grid-cols-[1fr_2fr]">
+                <TerrariumActionsSection
+                    terrariumId={terrarium.id}
+                    actions={terrariumActions}
                 />
-                <RecentSamplesSection
-                    samples={recentSamples}
-                    configMap={METRIC_DISPLAY_CONFIG_MAP}
-                />
+                <div className="space-y-6">
+                    <HourOfDaySection
+                        datasets={hourOfDayDatasets}
+                        configs={METRIC_DISPLAY_CONFIGS}
+                        initialMetric={DEFAULT_SECONDARY_METRIC_KEY}
+                    />
+                    <RecentSamplesSection
+                        samples={recentSamples}
+                        configMap={METRIC_DISPLAY_CONFIG_MAP}
+                    />
+                </div>
             </div>
         </div>
     )
