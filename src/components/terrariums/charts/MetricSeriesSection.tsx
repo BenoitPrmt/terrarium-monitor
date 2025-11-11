@@ -1,4 +1,4 @@
-import {MetricSeriesChart} from "@/components/terrariums/MetricSeriesChart"
+import {MetricSeriesChart} from "@/components/terrariums/charts/MetricSeriesChart"
 import {
     Card,
     CardContent,

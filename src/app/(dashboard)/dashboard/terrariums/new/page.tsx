@@ -2,7 +2,7 @@ import Link from "next/link"
 import {redirect} from "next/navigation"
 
 import {currentUser} from "@/auth/current-user"
-import {CreateTerrariumForm} from "@/components/terrariums/CreateTerrariumForm"
+import {CreateTerrariumForm} from "@/components/terrariums/form/CreateTerrariumForm"
 import {Button} from "@/components/ui/button"
 import {Card, CardContent, CardHeader, CardTitle} from "@/components/ui/card"
 

@@ -5,6 +5,7 @@ import {revalidatePath} from "next/cache"
 import {auth} from "@/auth"
 import {ensureDbIndexes} from "@/lib/db/ensureIndexes"
 import {connectMongoose} from "@/lib/db/mongoose"
+import {serializeTerrariumAction} from "@/lib/services/terrariumActions"
 import {
     terrariumCreateSchema,
     terrariumUpdateSchema,
@@ -13,6 +14,7 @@ import {
     webhookCreateSchema,
     webhookUpdateSchema,
 } from "@/lib/validation/webhook"
+import {terrariumActionCreateSchema} from "@/lib/validation/terrarium-action"
 import {
     requireTerrariumForOwner,
     serializeTerrarium,
@@ -24,6 +26,7 @@ import {SampleModel} from "@/models/Sample"
 import {AggregateHourlyModel} from "@/models/AggregateHourly"
 import {AggregateDailyModel} from "@/models/AggregateDaily"
 import {AggregateByHourOfDayModel} from "@/models/AggregateByHourOfDay"
+import {TerrariumActionModel} from "@/models/TerrariumAction"
 import {generateUuid, hashDeviceToken, sendWebhookWithRetry} from "@/lib/utils"
 
 type ActionResult<T = any> = {
@@ -124,6 +127,45 @@ export async function updateTerrariumAction(
         success: true,
         message: "Terrarium mis à jour !",
         data: {terrarium: updated ? serializeTerrarium(updated) : null, deviceToken: newToken},
+    }
+}
+
+export async function logTerrariumCareAction(
+    terrariumId: string,
+    formData: FormData
+): Promise<ActionResult> {
+    const ownerId = await requireAuth()
+    await connectMongoose()
+    await ensureDbIndexes()
+
+    const payload = {
+        type: formData.get("type"),
+        notes: formData.get("notes"),
+    }
+
+    const parsed = terrariumActionCreateSchema.safeParse(payload)
+    if (!parsed.success) {
+        return {
+            success: false,
+            message: "Données invalides pour journaliser l'action.",
+        }
+    }
+
+    const terrarium = await requireTerrariumForOwner(terrariumId, ownerId)
+
+    const action = await TerrariumActionModel.create({
+        terrariumId: terrarium._id,
+        type: parsed.data.type,
+        notes: parsed.data.notes,
+        performedAt: new Date(),
+    })
+
+    revalidatePath(`/dashboard/terrariums/${terrariumId}`)
+
+    return {
+        success: true,
+        message: "Action ajoutée au journal !",
+        data: {action: serializeTerrariumAction(action)},
     }
 }
 
