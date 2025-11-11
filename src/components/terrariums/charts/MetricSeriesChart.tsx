@@ -93,12 +93,17 @@ export function MetricSeriesChart({
 
     const updateSearchParam = (key: string, value: string) => {
         const params = new URLSearchParams(searchParams)
+        if (params.get(key) === value) {
+            return
+        }
         params.set(key, value)
         router.replace(`${pathname}?${params.toString()}`)
     }
 
     const handleMetricChange = (value: string) => {
-        setMetric(value as MetricType)
+        const casted = value as MetricType
+        setMetric(casted)
+        updateSearchParam("metric", casted)
     }
 
     const handleGranularityChange = (value: string) => {

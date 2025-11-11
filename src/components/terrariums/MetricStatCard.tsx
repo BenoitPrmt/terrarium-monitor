@@ -64,7 +64,7 @@ export function MetricStatCard({
                             {label}
                             {lastUpdatedAt && (
                                 <Tooltip>
-                                    <TooltipTrigger asChild>
+                                    <TooltipTrigger asChild className="cursor-help">
                                         <button
                                             type="button"
                                             className="text-muted-foreground transition-colors hover:text-foreground"
