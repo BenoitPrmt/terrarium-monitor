@@ -85,7 +85,7 @@ export function RegisterForm({className, ...props}: React.ComponentProps<"div">)
 
     return (
         <div className={cn("flex flex-col gap-6", className)} {...props}>
-            <Card className="overflow-hidden">
+            <Card className="overflow-hidden py-0">
                 <CardContent className="grid p-0 md:grid-cols-2">
                     <div className="p-6 md:p-8">
                         <div className="flex flex-col items-center text-center">
@@ -155,7 +155,13 @@ export function RegisterForm({className, ...props}: React.ComponentProps<"div">)
                             </div>
                         </form>
                     </div>
-                    <div className="relative hidden bg-muted md:block" />
+                    <div className="relative hidden bg-muted md:block">
+                        <img
+                            src="/assets/auth/terrarium.jpeg"
+                            alt="Image"
+                            className="absolute inset-0 h-full w-full object-cover dark:brightness-[0.2] dark:grayscale"
+                        />
+                    </div>
                 </CardContent>
             </Card>
             <div
