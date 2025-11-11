@@ -1,4 +1,4 @@
-import {HourOfDayChart} from "@/components/terrariums/HourOfDayChart"
+import {HourOfDayChart} from "@/components/terrariums/charts/HourOfDayChart"
 import {
     Card,
     CardContent,
