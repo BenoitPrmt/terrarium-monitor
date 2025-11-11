@@ -36,6 +36,14 @@ Please take a moment to follow the guidelines below to ensure a smooth and consi
 
     * Follow the **Clean Code** and **UI Consistency** guidelines below.
     * Test your changes locally and verify there are no regressions or unintended side effects.
+    * Commit your changes with clear, concise messages and follow conventional commit style:
+
+      ```
+      feat: add daily aggregates for temperature
+      fix: correct humidity scale conversion
+      chore: update dependencies
+      ```
+      [Git conventional commits cheatsheet](https://gist.github.com/qoomon/5dfcdf8eec66a051ecd85625518cfd13)
 
 4. **Open a Pull Request**
 
