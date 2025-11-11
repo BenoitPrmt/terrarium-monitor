@@ -84,7 +84,7 @@ function RotateButton() {
             ) : (
                 <>
                     <RotateCcwKeyIcon className="size-4" />
-                    Regénérer le token...
+                    Regénérer le token
                 </>
             )}
         </Button>
