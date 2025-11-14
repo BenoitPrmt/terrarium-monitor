@@ -21,8 +21,6 @@ export async function requireTerrariumForOwner(terrariumId: string, ownerId: str
     const ownerObjectId = maybeObjectId(ownerId)
     const terrariumObjectId = maybeObjectId(terrariumId)
 
-    console.log("ownerObjectId", ownerObjectId, "terrariumObjectId", terrariumObjectId)
-
     const baseFilter = terrariumObjectId
         ? {_id: terrariumObjectId}
         : {uuid: terrariumId}
@@ -30,8 +28,6 @@ export async function requireTerrariumForOwner(terrariumId: string, ownerId: str
     const ownerFilters = ownerObjectId
         ? [{ownerId: ownerObjectId}, {ownerId}]
         : [{ownerId}]
-
-    console.log('baseFilter', baseFilter, 'ownerFilters', ownerFilters)
 
     let terrarium = await TerrariumModel.findOne({
         ...baseFilter,
@@ -47,13 +43,6 @@ export async function requireTerrariumForOwner(terrariumId: string, ownerId: str
             })
         }
     }
-
-    console.log("requireTerrariumForOwner", {
-        terrariumId,
-        ownerId,
-        terrariumFound: !!terrarium,
-        terrarium: terrarium,
-    })
 
     if (!terrarium) {
         throw new Error("Terrarium not found")

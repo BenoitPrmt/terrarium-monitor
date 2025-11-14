@@ -87,3 +87,5 @@ export const CHART_RANGE_OPTIONS: ChartRangeOption[] = [
     {value: "7d", label: "7 jours"},
     {value: "30d", label: "30 jours"},
 ]
+
+export const CHART_Y_AXIS_DELTA = 0.05;
