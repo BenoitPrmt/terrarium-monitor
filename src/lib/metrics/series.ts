@@ -9,6 +9,7 @@ import type {
     MetricSeriesData,
     SeriesPoint,
 } from "@/types/metrics"
+import {CHART_Y_AXIS_DELTA} from "@/constants/metrics";
 
 export function buildSeriesByMetricAndGranularity(
     configs: MetricDisplayConfig[],
@@ -65,4 +66,25 @@ export function buildHourOfDaySeries(
         },
         {} as Record<MetricType, HourOfDayPoint[]>
     )
+}
+
+export function expand(value: number, direction: "min" | "max"): number {
+    if (value === 0) {
+        return direction === "min" ? -1 : 1
+    }
+
+    const multiplier =
+        value > 0
+            ? direction === "min"
+                ? 1 - CHART_Y_AXIS_DELTA
+                : 1 + CHART_Y_AXIS_DELTA
+            : direction === "min"
+                ? 1 + CHART_Y_AXIS_DELTA
+                : 1 - CHART_Y_AXIS_DELTA
+
+    const candidate = value * multiplier
+
+    return direction === "min"
+        ? Math.min(candidate, value)
+        : Math.max(candidate, value)
 }
