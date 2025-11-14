@@ -16,6 +16,8 @@ import {SidebarMenu, SidebarMenuButton, SidebarMenuItem, useSidebar,} from "@/co
 import Link from "next/link";
 import {signOut} from "next-auth/react";
 import {User} from "next-auth";
+import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select";
+import {getLocaleFlag, locales} from "@/i18n/config";
 
 type Props = {
     user: User
@@ -63,20 +65,44 @@ export function NavUser({user}: Props) {
                         sideOffset={4}
                     >
                         <DropdownMenuLabel className="p-0 font-normal">
-                            <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
-                                <Avatar className="h-8 w-8 rounded-lg">
-                                    <AvatarFallback className="rounded-lg">
-                                        {fallback}
-                                    </AvatarFallback>
-                                </Avatar>
-                                <div className="grid flex-1 text-left text-sm leading-tight">
+                            <div className="flex items-center gap-6 px-1 py-1.5 text-left text-sm">
+                                <div className="flex items-center gap-2">
+                                    <Avatar className="h-8 w-8 rounded-lg">
+                                        <AvatarFallback className="rounded-lg">
+                                            {fallback}
+                                        </AvatarFallback>
+                                    </Avatar>
+                                    <div className="grid flex-1 text-left text-sm leading-tight">
                                   <span className="truncate font-semibold">
                                     {displayName}
                                   </span>
-                                    <span className="truncate text-xs">
+                                        <span className="truncate text-xs">
                                     {user.email}
                                   </span>
+                                    </div>
                                 </div>
+                                {/* Language selector */}
+
+                                <Select defaultValue="fr">
+                                    <SelectTrigger
+                                        className="w-[60px] h-8 px-2">
+                                        <SelectValue/>
+                                    </SelectTrigger>
+
+                                    <SelectContent className="min-w-[60px]">
+                                        {locales.map(locale => (
+                                            <SelectItem
+                                                key={locale}
+                                                value={locale}
+                                                aria-label={locale}
+                                                className="text-center mx-auto cursor-pointer justify-center [&>span:first-child]:hidden [&>span]:text-center [&>span]:w-full pr-0 pl-0"
+                                            >
+                                                <span className="text-xl mx-auto">{getLocaleFlag(locale)}</span>
+                                            </SelectItem>
+                                        ))}
+                                    </SelectContent>
+                                </Select>
+
                             </div>
                         </DropdownMenuLabel>
                         <DropdownMenuSeparator/>
