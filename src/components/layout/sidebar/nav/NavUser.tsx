@@ -17,7 +17,9 @@ import Link from "next/link";
 import {signOut} from "next-auth/react";
 import {User} from "next-auth";
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select";
-import {getLocaleFlag, locales} from "@/i18n/config";
+import {getLocaleFlag, Locale, locales} from "@/i18n/config";
+import {useLocale} from "next-intl";
+import {setUserLocale} from "@/services/locale";
 
 type Props = {
     user: User
@@ -25,6 +27,7 @@ type Props = {
 
 export function NavUser({user}: Props) {
     const {isMobile} = useSidebar();
+    const locale = useLocale();
     const displayName = user.name ?? user.email ?? "Utilisateur";
     const fallback = displayName.slice(0, 2).toUpperCase();
 
@@ -81,9 +84,15 @@ export function NavUser({user}: Props) {
                                   </span>
                                     </div>
                                 </div>
-                                {/* Language selector */}
 
-                                <Select defaultValue="fr">
+                                {/* Language selector */}
+                                <Select
+                                    defaultValue={locale}
+                                    aria-label="Select Language"
+                                    onValueChange={async (value) => {
+                                        await setUserLocale(value as Locale)
+                                    }}
+                                >
                                     <SelectTrigger
                                         className="w-[60px] h-8 px-2">
                                         <SelectValue/>
