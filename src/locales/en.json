@@ -1,0 +1,9 @@
+{
+  "HomePage": {
+    "title": "Hello world!"
+  },
+  "DashboardPage": {
+    "title": "Dashboard",
+    "subtitle": "Track all your terrariums and their latest measurements."
+  }
+}

@@ -14,6 +14,8 @@ import {
 } from "@/constants/website";
 import {GoogleAnalytics} from "@next/third-parties/google";
 import {ThemeProvider} from "next-themes";
+import {NextIntlClientProvider} from "next-intl";
+import {ReactNode} from "react";
 
 const outfitSans = Outfit({
     variable: "--font-geist-sans",
@@ -58,23 +60,25 @@ export const metadata: Metadata = {
 export default function RootLayout({
                                        children,
                                    }: Readonly<{
-    children: React.ReactNode;
+    children: ReactNode;
 }>) {
     return (
         <html lang="fr" suppressHydrationWarning>
         <body
             className={`${outfitSans.variable} antialiased`}
         >
-        <ThemeProvider
-            attribute="class"
-            defaultTheme="system"
-            enableSystem
-            disableTransitionOnChange
-        >
-            {children}
-            <GoogleAnalytics gaId={GOOGLE_ANALYTICS_ID}/>
-            <Toaster richColors closeButton position="top-right"/>
-        </ThemeProvider>
+        <NextIntlClientProvider>
+            <ThemeProvider
+                attribute="class"
+                defaultTheme="system"
+                enableSystem
+                disableTransitionOnChange
+            >
+                {children}
+                <GoogleAnalytics gaId={GOOGLE_ANALYTICS_ID}/>
+                <Toaster richColors closeButton position="top-right"/>
+            </ThemeProvider>
+        </NextIntlClientProvider>
         </body>
         </html>
     );

@@ -36,9 +36,13 @@ import {ButtonGroup} from "@/components/ui/button-group";
 import {timeAgoInWords} from "@/lib/utils";
 import CopyCode from "@/components/CopyCode";
 import {TerrariumLocationBadge} from "@/components/terrariums/TerrariumLocationBadge";
+import {useTranslations} from 'next-intl';
+import {getTranslations} from "next-intl/server";
 
 export default async function DashboardPage() {
-    const user = await currentUser()
+    const user = await currentUser();
+    const t = await getTranslations('DashboardPage');
+
     if (!user) {
         redirect("/login")
     }
@@ -65,9 +69,11 @@ export default async function DashboardPage() {
         <div className="space-y-6">
             <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
                 <div>
-                    <h1 className="text-2xl font-semibold">Dashboard</h1>
+                    <h1 className="text-2xl font-semibold">
+                        {t('title')}
+                    </h1>
                     <p className="text-muted-foreground">
-                        Suivez tous vos terrariums et leurs dernières mesures.
+                        {t('subtitle')}
                     </p>
                 </div>
                 <Button asChild>
