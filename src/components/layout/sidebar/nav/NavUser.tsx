@@ -16,11 +16,8 @@ import {SidebarMenu, SidebarMenuButton, SidebarMenuItem, useSidebar,} from "@/co
 import Link from "next/link";
 import {signOut} from "next-auth/react";
 import {User} from "next-auth";
-import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select";
-import {getLocaleFlag, Locale, locales} from "@/i18n/config";
-import {useLocale} from "next-intl";
-import {setUserLocale} from "@/services/locale";
 import {useTranslations} from "next-intl";
+import LanguageSelector from "@/components/locale/LanguageSelector";
 
 type Props = {
     user: User
@@ -28,7 +25,6 @@ type Props = {
 
 export function NavUser({user}: Props) {
     const {isMobile} = useSidebar();
-    const locale = useLocale();
     const t = useTranslations('Navigation.User');
     const displayName = user.name ?? user.email ?? t('anonymous');
     const fallback = displayName.slice(0, 2).toUpperCase();
@@ -87,32 +83,7 @@ export function NavUser({user}: Props) {
                                     </div>
                                 </div>
 
-                                {/* Language selector */}
-                                <Select
-                                    defaultValue={locale}
-                                    aria-label={t('languageSelector')}
-                                    onValueChange={async (value) => {
-                                        await setUserLocale(value as Locale)
-                                    }}
-                                >
-                                    <SelectTrigger
-                                        className="w-[60px] h-8 px-2">
-                                        <SelectValue/>
-                                    </SelectTrigger>
-
-                                    <SelectContent className="min-w-[60px]">
-                                        {locales.map(locale => (
-                                            <SelectItem
-                                                key={locale}
-                                                value={locale}
-                                                aria-label={locale}
-                                                className="text-center mx-auto cursor-pointer justify-center [&>span:first-child]:hidden [&>span]:text-center [&>span]:w-full pr-0 pl-0"
-                                            >
-                                                <span className="text-xl mx-auto">{getLocaleFlag(locale)}</span>
-                                            </SelectItem>
-                                        ))}
-                                    </SelectContent>
-                                </Select>
+                                <LanguageSelector />
 
                             </div>
                         </DropdownMenuLabel>

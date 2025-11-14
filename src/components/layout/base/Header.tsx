@@ -7,6 +7,7 @@ import Link from "next/link";
 import {ThemeToggle} from "@/components/theme/ThemeToggle";
 import {WEBSITE_NAME} from "@/constants/website";
 import {useTranslations} from "next-intl";
+import LanguageSelector from "@/components/locale/LanguageSelector";
 
 type HeaderProps = {
     session: User | null;
@@ -23,9 +24,8 @@ const Header = ({session}: HeaderProps) => {
                 <Link href="/">{WEBSITE_NAME}</Link>
             </div>
             <div className="space-x-4 flex flex-row items-center">
-                <Button variant="ghost">{t('links.features')}</Button>
-                <Button variant="ghost" onClick={() => window.location.href = '/pricing'}>{t('links.pricing')}</Button>
 
+                <LanguageSelector />
                 <ThemeToggle/>
 
                 {isAuthenticated && (
