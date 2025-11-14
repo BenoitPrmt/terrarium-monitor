@@ -21,7 +21,7 @@ import {
     serializeTerrarium,
 } from "@/lib/services/terrariums"
 import {SampleModel} from "@/models/Sample"
-import type {AggregateGranularity} from "@/models/constants"
+import type {AggregateGranularity, MetricType} from "@/models/constants"
 import type {GranularityDataset, RecentSample} from "@/types/metrics"
 
 import {HourOfDaySection} from "../../../../../components/terrariums/charts/HourOfDaySection"
@@ -36,6 +36,8 @@ type PageProps = {
     searchParams: {
         granularity?: AggregateGranularity
         range?: string
+        metric?: MetricType
+        hourOfDayMetric?: MetricType
     }
 }
 
@@ -55,6 +57,21 @@ export default async function TerrariumDetailPage({params, searchParams}: PagePr
         granularityParam && CHART_GRANULARITIES.includes(granularityParam as AggregateGranularity)
             ? (granularityParam as AggregateGranularity)
             : "raw"
+
+    const metricParam = searchParams.metric
+    const hourOfDayMetricParam = searchParams.hourOfDayMetric
+
+    const isMetricKey = (value: unknown): value is MetricType =>
+        typeof value === "string" &&
+        METRIC_DISPLAY_CONFIGS.some((config) => config.key === value)
+
+    const initialMetric = isMetricKey(metricParam)
+        ? metricParam
+        : DEFAULT_METRIC_KEY
+
+    const initialHourOfDayMetric = isMetricKey(hourOfDayMetricParam)
+        ? hourOfDayMetricParam
+        : DEFAULT_SECONDARY_METRIC_KEY
 
     const rangeKey =
         searchParams.range && METRIC_RANGE_MAP[searchParams.range]
@@ -130,7 +147,7 @@ export default async function TerrariumDetailPage({params, searchParams}: PagePr
                 configs={METRIC_DISPLAY_CONFIGS}
                 granularityOptions={CHART_GRANULARITY_OPTIONS}
                 rangeOptions={CHART_RANGE_OPTIONS}
-                initialMetric={DEFAULT_METRIC_KEY}
+                initialMetric={initialMetric}
                 initialGranularity={initialGranularity}
                 initialRange={rangeKey}
             />
@@ -143,7 +160,7 @@ export default async function TerrariumDetailPage({params, searchParams}: PagePr
                     <HourOfDaySection
                         datasets={hourOfDayDatasets}
                         configs={METRIC_DISPLAY_CONFIGS}
-                        initialMetric={DEFAULT_SECONDARY_METRIC_KEY}
+                        initialMetric={initialHourOfDayMetric}
                     />
                     <RecentSamplesSection
                         samples={recentSamples}

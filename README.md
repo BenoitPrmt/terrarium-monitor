@@ -68,6 +68,11 @@ Next.js 16 dashboard for monitoring terrariums with MongoDB, NextAuth and Mongoo
 
 All `/api/v1/terrariums/*` routes (except ingestion) require an authenticated session.
 
+## Data retention
+
+- Raw samples are stored in MongoDB with a TTL index of 31 days. This covers the 30-day “raw” range exposed in the dashboard while leaving 1 extra day of buffer.
+- Aggregated collections (hourly, daily, hour-of-day) are retained indefinitely so historical views keep working even after raw samples expire.
+
 ## Ingestion example
 
 ```bash

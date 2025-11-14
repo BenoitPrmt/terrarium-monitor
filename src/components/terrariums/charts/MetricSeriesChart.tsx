@@ -19,27 +19,10 @@ import {
     ChartTooltipContent,
 } from "@/components/ui/chart"
 import type {AggregateGranularity, MetricType} from "@/models/constants"
-
-type SeriesPoint = {
-    bucket: string
-    value: number
-}
-
-type MetricOption = {
-    value: MetricType
-    label: string
-    color: string
-}
-
-type GranularityOption = {
-    value: AggregateGranularity
-    label: string
-}
-
-type RangeOption = {
-    value: string
-    label: string
-}
+import {CHART_Y_AXIS_DELTA} from "@/constants/metrics";
+import {expand} from "@/lib/metrics/series";
+import {GranularityOption, MetricOption, RangeOption} from "@/types/series-chart";
+import {SeriesPoint} from "@/types/metrics";
 
 type Props = {
     dataByMetric: Record<
@@ -93,12 +76,17 @@ export function MetricSeriesChart({
 
     const updateSearchParam = (key: string, value: string) => {
         const params = new URLSearchParams(searchParams)
+        if (params.get(key) === value) {
+            return
+        }
         params.set(key, value)
         router.replace(`${pathname}?${params.toString()}`)
     }
 
     const handleMetricChange = (value: string) => {
-        setMetric(value as MetricType)
+        const casted = value as MetricType
+        setMetric(casted)
+        updateSearchParam("metric", casted)
     }
 
     const handleGranularityChange = (value: string) => {
@@ -118,6 +106,29 @@ export function MetricSeriesChart({
     const chartData = dataByMetric[metric]?.[granularity] ?? []
     const color = selectedOption?.color ?? "#0ea5e9"
     const gradientId = `${gradientBaseId}-${metric}-fill`
+    const yDomain = useMemo<[number, number]>(() => {
+        const values = chartData
+            .map((point) => point.value)
+            .filter((value): value is number => Number.isFinite(value))
+
+        if (values.length === 0) {
+            return [0, 1]
+        }
+
+        const minValue = Math.min(...values);
+        const maxValue = Math.max(...values);
+
+        if (minValue === maxValue) {
+            const padding =
+                minValue === 0 ? 1 : Math.abs(minValue) * CHART_Y_AXIS_DELTA;
+            return [minValue - padding, maxValue + padding];
+        }
+
+        return [
+            Math.floor(expand(minValue, "min")),
+            Math.floor(expand(maxValue, "max"))
+        ];
+    }, [chartData])
 
     const chartConfig: ChartConfig = useMemo(
         () => ({
@@ -203,7 +214,7 @@ export function MetricSeriesChart({
                         tickMargin={12}
                         minTickGap={24}
                     />
-                    <YAxis width={64}/>
+                    <YAxis width={64} domain={yDomain}/>
                     <ChartTooltip
                         cursor={false}
                         content={<ChartTooltipContent indicator="dot"/>}
