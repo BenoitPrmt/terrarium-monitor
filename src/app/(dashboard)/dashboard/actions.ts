@@ -28,6 +28,8 @@ import {AggregateDailyModel} from "@/models/AggregateDaily"
 import {AggregateByHourOfDayModel} from "@/models/AggregateByHourOfDay"
 import {TerrariumActionModel} from "@/models/TerrariumAction"
 import {generateUuid, hashDeviceToken, sendWebhookWithRetry} from "@/lib/utils"
+import {createTranslator} from "next-intl";
+import {getUserLocale} from "@/services/locale";
 
 type ActionResult<T = any> = {
     success: boolean
@@ -43,10 +45,17 @@ async function requireAuth() {
     return session.user.id
 }
 
+async function getActionsTranslator() {
+    const locale = await getUserLocale();
+    const messages = (await import(`@/locales/${locale}.json`)).default;
+    return createTranslator({locale, messages, namespace: "Actions"});
+}
+
 export async function createTerrariumAction(formData: FormData): Promise<ActionResult> {
     const ownerId = await requireAuth()
     await connectMongoose()
     await ensureDbIndexes()
+    const t = await getActionsTranslator();
 
     const payload = {
         name: formData.get("name"),
@@ -56,7 +65,7 @@ export async function createTerrariumAction(formData: FormData): Promise<ActionR
 
     const parsed = terrariumCreateSchema.safeParse(payload)
     if (!parsed.success) {
-        return {success: false, message: "Données invalides pour créer le terrarium."}
+        return {success: false, message: t('terrarium.create.invalidPayload')}
     }
 
     const uuid = generateUuid()
@@ -75,7 +84,7 @@ export async function createTerrariumAction(formData: FormData): Promise<ActionR
 
     return {
         success: true,
-        message: "Terrarium créé avec succès !",
+        message: t('terrarium.create.success'),
         data: {terrarium: serializeTerrarium(terrarium), deviceToken},
     }
 }
@@ -87,6 +96,7 @@ export async function updateTerrariumAction(
     const ownerId = await requireAuth()
     await connectMongoose()
     await ensureDbIndexes()
+    const t = await getActionsTranslator();
 
     const payload = {
         name: formData.get("name") || undefined,
@@ -97,7 +107,7 @@ export async function updateTerrariumAction(
 
     const parsed = terrariumUpdateSchema.safeParse(payload)
     if (!parsed.success) {
-        return {success: false, message: "Données invalides pour modifier le terrarium."}
+        return {success: false, message: t('terrarium.update.invalidPayload')}
     }
 
     const terrarium = await requireTerrariumForOwner(terrariumId, ownerId)
@@ -125,7 +135,7 @@ export async function updateTerrariumAction(
 
     return {
         success: true,
-        message: "Terrarium mis à jour !",
+        message: t('terrarium.update.success'),
         data: {terrarium: updated ? serializeTerrarium(updated) : null, deviceToken: newToken},
     }
 }
@@ -137,6 +147,7 @@ export async function logTerrariumCareAction(
     const ownerId = await requireAuth()
     await connectMongoose()
     await ensureDbIndexes()
+    const t = await getActionsTranslator();
 
     const payload = {
         type: formData.get("type"),
@@ -147,7 +158,7 @@ export async function logTerrariumCareAction(
     if (!parsed.success) {
         return {
             success: false,
-            message: "Données invalides pour journaliser l'action.",
+            message: t('terrarium.log.invalidPayload'),
         }
     }
 
@@ -164,7 +175,7 @@ export async function logTerrariumCareAction(
 
     return {
         success: true,
-        message: "Action ajoutée au journal !",
+        message: t('terrarium.log.success'),
         data: {action: serializeTerrariumAction(action)},
     }
 }
@@ -173,6 +184,7 @@ export async function deleteTerrariumAction(terrariumId: string): Promise<Action
     const ownerId = await requireAuth()
     await connectMongoose()
     await ensureDbIndexes()
+    const t = await getActionsTranslator();
 
     const terrarium = await requireTerrariumForOwner(terrariumId, ownerId)
     await Promise.all([
@@ -186,7 +198,7 @@ export async function deleteTerrariumAction(terrariumId: string): Promise<Action
 
     revalidatePath("/dashboard")
 
-    return {success: true, message: "Terrarium supprimé !"};
+    return {success: true, message: t('terrarium.delete.success')};
 }
 
 export async function createWebhookAction(
@@ -196,6 +208,7 @@ export async function createWebhookAction(
     const ownerId = await requireAuth()
     await connectMongoose()
     await ensureDbIndexes()
+    const t = await getActionsTranslator();
 
     const payload = {
         name: formData.get("name"),
@@ -209,7 +222,7 @@ export async function createWebhookAction(
 
     const parsed = webhookCreateSchema.safeParse(payload)
     if (!parsed.success) {
-        return {success: false, message: "Données invalides pour créer le webhook."}
+        return {success: false, message: t('webhook.create.invalidPayload')}
     }
 
     const terrarium = await requireTerrariumForOwner(terrariumId, ownerId)
@@ -222,7 +235,7 @@ export async function createWebhookAction(
 
     revalidatePath(`/dashboard/terrariums/${terrariumId}/webhooks`)
 
-    return {success: true, message: "Webhook créé avec succès !", data: webhook.toObject()}
+    return {success: true, message: t('webhook.create.success'), data: webhook.toObject()}
 }
 
 export async function updateWebhookAction(
@@ -233,6 +246,7 @@ export async function updateWebhookAction(
     const ownerId = await requireAuth()
     await connectMongoose()
     await ensureDbIndexes()
+    const t = await getActionsTranslator();
 
     const payload = {
         name: formData.get("name") || undefined,
@@ -250,7 +264,7 @@ export async function updateWebhookAction(
 
     const parsed = webhookUpdateSchema.safeParse(payload)
     if (!parsed.success) {
-        return {success: false, message: "Données invalides pour modifier le webhook."}
+        return {success: false, message: t('webhook.update.invalidPayload')}
     }
 
     const terrarium = await requireTerrariumForOwner(terrariumId, ownerId)
@@ -261,12 +275,12 @@ export async function updateWebhookAction(
     )
 
     if (!webhook) {
-        return {success: false, message: "Webhook introuvable."}
+        return {success: false, message: t('webhook.common.notFound')}
     }
 
     revalidatePath(`/dashboard/terrariums/${terrariumId}/webhooks`)
 
-    return {success: true, message: "Webhook mis à jour avec succès !", data: webhook.toObject()}
+    return {success: true, message: t('webhook.update.success'), data: webhook.toObject()}
 }
 
 export async function deleteWebhookAction(
@@ -276,13 +290,14 @@ export async function deleteWebhookAction(
     const ownerId = await requireAuth()
     await connectMongoose()
     await ensureDbIndexes()
+    const t = await getActionsTranslator();
 
     const terrarium = await requireTerrariumForOwner(terrariumId, ownerId)
     await WebhookModel.deleteOne({_id: webhookId, terrariumId: terrarium._id})
 
     revalidatePath(`/dashboard/terrariums/${terrariumId}/webhooks`)
 
-    return {success: true, message: "Webhook supprimé avec succès !"}
+    return {success: true, message: t('webhook.delete.success')}
 }
 
 export async function testWebhookAction(
@@ -292,6 +307,7 @@ export async function testWebhookAction(
     const ownerId = await requireAuth()
     await connectMongoose()
     await ensureDbIndexes()
+    const t = await getActionsTranslator();
 
     const terrarium = await requireTerrariumForOwner(terrariumId, ownerId)
     const webhook = await WebhookModel.findOne({
@@ -300,7 +316,7 @@ export async function testWebhookAction(
     })
 
     if (!webhook) {
-        return {success: false, message: "Webhook introuvable."}
+        return {success: false, message: t('webhook.common.notFound')}
     }
 
     const payload = {
@@ -325,5 +341,5 @@ export async function testWebhookAction(
         1
     )
 
-    return {success: true, message: "Payload de test envoyé avec succès !"}
+    return {success: true, message: t('webhook.test.success')}
 }

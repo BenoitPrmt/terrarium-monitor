@@ -1,10 +1,12 @@
 import React from 'react';
 import Link from 'next/link';
-import {WEBSITE_CONTACT_EMAIL, WEBSITE_NAME, WEBSITE_TAGLINE} from '@/constants/website';
-import { Separator } from '@/components/ui/separator';
+import {WEBSITE_CONTACT_EMAIL, WEBSITE_NAME} from '@/constants/website';
+import {Separator} from '@/components/ui/separator';
+import {useTranslations} from "next-intl";
 
 export const Footer = () => {
   const currentYear = new Date().getFullYear();
+  const t = useTranslations('Navigation.Footer');
   
   return (
     <footer className="bg-muted/30 border-t">
@@ -15,7 +17,7 @@ export const Footer = () => {
               {WEBSITE_NAME}
             </h3>
             <p className="text-sm text-muted-foreground">
-              {WEBSITE_TAGLINE}
+              {t('tagline')}
             </p>
             <div className="flex items-center space-x-4">
               <a 
@@ -28,21 +30,21 @@ export const Footer = () => {
           </div>
 
           <div className="space-y-4">
-            <h3 className="text-lg font-medium">Liens rapides</h3>
+            <h3 className="text-lg font-medium">{t('sections.quickLinks')}</h3>
             <ul className="space-y-2">
               <li>
                 <Link href="/" className="text-sm text-muted-foreground hover:text-primary transition-colors">
-                  Accueil
+                  {t('links.home')}
                 </Link>
               </li>
               <li>
                 <Link href="/pricing" className="text-sm text-muted-foreground hover:text-primary transition-colors">
-                  Tarifs
+                  {t('links.pricing')}
                 </Link>
               </li>
               <li>
                 <Link href="/login" className="text-sm text-muted-foreground hover:text-primary transition-colors">
-                  Connexion
+                  {t('links.login')}
                 </Link>
               </li>
             </ul>
@@ -50,21 +52,21 @@ export const Footer = () => {
           
 
           <div className="space-y-4">
-            <h3 className="text-lg font-medium">Informations légales</h3>
+            <h3 className="text-lg font-medium">{t('sections.legal')}</h3>
             <ul className="space-y-2">
               <li>
                 <Link href="/terms" className="text-sm text-muted-foreground hover:text-primary transition-colors">
-                  Conditions d'utilisation
+                  {t('links.terms')}
                 </Link>
               </li>
               <li>
                 <Link href="/privacy" className="text-sm text-muted-foreground hover:text-primary transition-colors">
-                  Politique de confidentialité
+                  {t('links.privacy')}
                 </Link>
               </li>
               <li>
                 <Link href="/legal" className="text-sm text-muted-foreground hover:text-primary transition-colors">
-                  Mentions légales
+                  {t('links.legal')}
                 </Link>
               </li>
             </ul>
@@ -75,7 +77,7 @@ export const Footer = () => {
         
         <div className="flex flex-col md:flex-row justify-between items-center">
           <p className="text-xs text-muted-foreground">
-            &copy; {currentYear} {WEBSITE_NAME}. Tous droits réservés.
+            {t('copyright', {year: currentYear, brand: WEBSITE_NAME})}
           </p>
           <div className="mt-4 md:mt-0 flex items-center space-x-4">
             <a 

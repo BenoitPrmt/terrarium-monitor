@@ -8,10 +8,10 @@ export type MetricOption = {
 
 export type GranularityOption = {
     value: AggregateGranularity
-    label: string
+    labelKey: string
 }
 
 export type RangeOption = {
     value: string
-    label: string
+    labelKey: string
 }

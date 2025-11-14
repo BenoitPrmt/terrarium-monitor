@@ -5,6 +5,7 @@ import {Card, CardContent, CardHeader, CardTitle} from "@/components/ui/card"
 import {Tooltip, TooltipContent, TooltipTrigger} from "@/components/ui/tooltip"
 import type {MetricSnapshot} from "@/lib/services/metrics"
 import {cn, timeAgoInWords} from "@/lib/utils"
+import {getLocale, getTranslations} from "next-intl/server";
 
 type MetricStatCardProps = {
     label: string
@@ -12,15 +13,20 @@ type MetricStatCardProps = {
     icon: LucideIcon
     accentClassName?: string
     snapshot?: MetricSnapshot
+    locale: string
 }
 
-export function MetricStatCard({
+export async function MetricStatCard({
     label,
     unitLabel,
     icon: Icon,
     accentClassName,
     snapshot,
+    locale,
 }: MetricStatCardProps) {
+    const t = await getTranslations('Terrariums.metrics');
+    const common = await getTranslations('Common');
+    const resolvedLocale = locale || (await getLocale());
     const latestValue =
         typeof snapshot?.latestValue === "number" ? snapshot.latestValue : null
     const lastUpdatedAt = snapshot?.lastUpdatedAt
@@ -49,11 +55,11 @@ export function MetricStatCard({
                 : "text-muted-foreground"
 
     const tooltipLabel = lastUpdatedAt
-        ? new Intl.DateTimeFormat("fr-FR", {
+        ? new Intl.DateTimeFormat(resolvedLocale, {
               dateStyle: "long",
               timeStyle: "short",
           }).format(lastUpdatedAt)
-        : "Aucune mesure disponible"
+        : common('status.notAvailable')
 
     return (
         <Card>
@@ -68,21 +74,21 @@ export function MetricStatCard({
                                         <button
                                             type="button"
                                             className="text-muted-foreground transition-colors hover:text-foreground"
-                                            aria-label={`Dernière mise à jour ${tooltipLabel}`}
+                                            aria-label={t('ariaLastUpdated', {date: tooltipLabel})}
                                         >
                                             <InfoIcon className="size-4" />
                                         </button>
                                     </TooltipTrigger>
                                     <TooltipContent>
-                                        Dernière mise à jour&nbsp;: {tooltipLabel}
+                                        {t('tooltip', {date: tooltipLabel})}
                                     </TooltipContent>
                                 </Tooltip>
                             )}
                         </CardTitle>
                         <p className="text-sm text-muted-foreground">
                             {lastUpdatedAt
-                                ? `Actualisé ${timeAgoInWords(lastUpdatedAt)}`
-                                : "Aucune donnée récente"}
+                                ? t('updatedAgo', {value: timeAgoInWords(lastUpdatedAt, {locale: resolvedLocale})})
+                                : t('noRecentData')}
                         </p>
                     </div>
                     <div
@@ -101,8 +107,8 @@ export function MetricStatCard({
                 </p>
                 <p className={cn("text-sm font-medium", changeClassName)}>
                     {changeDisplay
-                        ? `${changeDisplay} sur 24h`
-                        : "Pas assez de données sur 24h"}
+                        ? t('changeWindow', {value: changeDisplay})
+                        : t('noChange')}
                 </p>
             </CardContent>
         </Card>

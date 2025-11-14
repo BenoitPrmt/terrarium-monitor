@@ -40,8 +40,14 @@ export function clampToIngestionWindow(date: Date, windowHours = 24) {
     return date
 }
 
-export function timeAgoInWords(date: Date, now = new Date()) {
-    const rtf = new Intl.RelativeTimeFormat("fr", { style: "short" });
+type TimeAgoOptions = {
+    locale?: string;
+    now?: Date;
+}
+
+export function timeAgoInWords(date: Date, options?: TimeAgoOptions) {
+    const {locale = "fr", now = new Date()} = options ?? {};
+    const rtf = new Intl.RelativeTimeFormat(locale, {style: "short"});
 
     const diffMs = now.getTime() - date.getTime();
     const diffSeconds = Math.round(diffMs / 1000);

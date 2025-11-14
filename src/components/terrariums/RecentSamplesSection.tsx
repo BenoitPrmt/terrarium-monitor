@@ -19,26 +19,31 @@ import type {
     MetricDisplayConfig,
     RecentSample,
 } from "@/types/metrics"
+import {getLocale, getTranslations} from "next-intl/server";
 
 type RecentSamplesSectionProps = {
     samples: RecentSample[]
     configMap: Record<MetricType, MetricDisplayConfig>
 }
 
-export function RecentSamplesSection({samples, configMap}: RecentSamplesSectionProps) {
+export async function RecentSamplesSection({samples, configMap}: RecentSamplesSectionProps) {
+    const t = await getTranslations('Terrariums.samples');
+    const metricsT = await getTranslations('Common.metrics');
+    const locale = await getLocale();
+
     return (
         <Card>
             <CardHeader>
-                <CardTitle>Mesures récentes</CardTitle>
-                <CardDescription>20 derniers échantillons ingérés.</CardDescription>
+                <CardTitle>{t('title')}</CardTitle>
+                <CardDescription>{t('description')}</CardDescription>
             </CardHeader>
             <CardContent>
                 <Table>
                     <TableHeader>
                         <TableRow>
-                            <TableHead>Type</TableHead>
-                            <TableHead>Valeur</TableHead>
-                            <TableHead>Horodatage</TableHead>
+                            <TableHead>{t('headers.type')}</TableHead>
+                            <TableHead>{t('headers.value')}</TableHead>
+                            <TableHead>{t('headers.timestamp')}</TableHead>
                         </TableRow>
                     </TableHeader>
                     <TableBody>
@@ -52,7 +57,7 @@ export function RecentSamplesSection({samples, configMap}: RecentSamplesSectionP
                                         {config && Icon ? (
                                             <div className="flex items-center gap-2">
                                                 <Icon className="size-4 text-muted-foreground"/>
-                                                <span>{config.label}</span>
+                                                <span>{metricsT(config.labelKey)}</span>
                                             </div>
                                         ) : (
                                             sample.type
@@ -62,7 +67,7 @@ export function RecentSamplesSection({samples, configMap}: RecentSamplesSectionP
                                         {sample.value.toFixed(2)} {sample.unit}
                                     </TableCell>
                                     <TableCell>
-                                        {timeAgoInWords(new Date(sample.ts))}
+                                        {timeAgoInWords(new Date(sample.ts), {locale})}
                                     </TableCell>
                                 </TableRow>
                             )
@@ -70,7 +75,7 @@ export function RecentSamplesSection({samples, configMap}: RecentSamplesSectionP
                         {samples.length === 0 && (
                             <TableRow>
                                 <TableCell colSpan={4} className="text-center text-muted-foreground">
-                                    Pas encore de données.
+                                    {t('empty')}
                                 </TableCell>
                             </TableRow>
                         )}

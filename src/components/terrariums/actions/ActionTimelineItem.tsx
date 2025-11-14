@@ -1,7 +1,10 @@
+"use client"
+
 import React from 'react';
-import {TERRARIUM_ACTION_LABELS, TERRARIUM_ACTION_VISUALS} from "@/constants/terrarium-actions";
+import {TERRARIUM_ACTION_LABEL_KEYS, TERRARIUM_ACTION_VISUALS} from "@/constants/terrarium-actions";
 import {cn, timeAgoInWords} from "@/lib/utils";
 import type {TerrariumActionEntry} from "@/types/terrarium";
+import {useLocale, useTranslations} from "next-intl";
 
 type Props = {
     action: TerrariumActionEntry
@@ -13,6 +16,9 @@ const ActionTimelineItem = ({action, isLast, dateFormatter}: Props) => {
     const visuals = TERRARIUM_ACTION_VISUALS[action.type]
     const Icon = visuals.icon
     const performedAt = new Date(action.performedAt)
+    const locale = useLocale();
+    const actionsT = useTranslations('Terrarium.actions');
+    const labelKey = TERRARIUM_ACTION_LABEL_KEYS[action.type]
 
     return (
         <li className="flex gap-4">
@@ -32,10 +38,10 @@ const ActionTimelineItem = ({action, isLast, dateFormatter}: Props) => {
             <div className="flex-1 rounded-lg border bg-background/70 p-4 shadow-sm">
                 <div className="flex flex-wrap items-center justify-between gap-2">
                     <div className="font-medium">
-                        {TERRARIUM_ACTION_LABELS[action.type]}
+                        {actionsT(labelKey)}
                     </div>
                     <div className="text-xs text-muted-foreground">
-                        {timeAgoInWords(performedAt)}
+                        {timeAgoInWords(performedAt, {locale})}
                     </div>
                 </div>
                 <p className="mt-2 text-sm text-muted-foreground">

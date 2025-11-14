@@ -1,28 +1,28 @@
 "use client"
 
-import {useEffect, useId, useMemo, useState} from "react"
-import {usePathname, useRouter, useSearchParams} from "next/navigation"
-import {Area, AreaChart, CartesianGrid, XAxis, YAxis} from "recharts"
-
+import {useEffect, useId, useMemo, useState} from "react";
+import {usePathname, useRouter, useSearchParams} from "next/navigation";
+import {Area, AreaChart, CartesianGrid, XAxis, YAxis} from "recharts";
 import {
     Select,
     SelectContent,
     SelectItem,
     SelectTrigger,
     SelectValue,
-} from "@/components/ui/select"
-import {ButtonGroup} from "@/components/ui/button-group"
+} from "@/components/ui/select";
+import {ButtonGroup} from "@/components/ui/button-group";
 import {
     ChartConfig,
     ChartContainer,
     ChartTooltip,
     ChartTooltipContent,
-} from "@/components/ui/chart"
-import type {AggregateGranularity, MetricType} from "@/models/constants"
+} from "@/components/ui/chart";
+import type {AggregateGranularity, MetricType} from "@/models/constants";
 import {CHART_Y_AXIS_DELTA} from "@/constants/metrics";
 import {expand} from "@/lib/metrics/series";
 import {GranularityOption, MetricOption, RangeOption} from "@/types/series-chart";
 import {SeriesPoint} from "@/types/metrics";
+import {useTranslations, useLocale} from "next-intl";
 
 type Props = {
     dataByMetric: Record<
@@ -46,6 +46,10 @@ export function MetricSeriesChart({
                                        initialGranularity,
                                        initialRange,
                                    }: Props) {
+    const t = useTranslations('Terrariums.series');
+    const rangeT = useTranslations('Dashboard.metrics.range');
+    const granularityT = useTranslations('Dashboard.metrics.granularity');
+    const locale = useLocale();
     const metricMap = useMemo(() => {
         return metricOptions.reduce<Record<MetricType, MetricOption>>(
             (acc, option) => {
@@ -133,7 +137,7 @@ export function MetricSeriesChart({
     const chartConfig: ChartConfig = useMemo(
         () => ({
             value: {
-                label: selectedOption?.label ?? "Valeur",
+                label: selectedOption?.label ?? t('valueLabel'),
                 color,
             },
         }),
@@ -145,49 +149,59 @@ export function MetricSeriesChart({
             granularity === "daily"
                 ? {month: "short", day: "numeric"}
                 : {day: "2-digit", month: "short", hour: "2-digit", minute: "2-digit"}
-        return new Intl.DateTimeFormat("fr-FR", options)
-    }, [granularity])
+        return new Intl.DateTimeFormat(locale, options)
+    }, [granularity, locale])
+    const numberFormatter = useMemo(
+        () => new Intl.NumberFormat(locale, {maximumFractionDigits: 2}),
+        [locale]
+    );
+
+    const selectedRangeOption = useMemo(
+        () => rangeOptions.find((option) => option.value === range),
+        [range, rangeOptions]
+    );
+    const selectedRangeLabel = selectedRangeOption
+        ? rangeT(selectedRangeOption.labelKey)
+        : "—";
 
     return (
         <div className="space-y-4">
             <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
                 <div className="space-y-1">
-                    <p className="text-sm text-muted-foreground">Vue actuelle</p>
+                    <p className="text-sm text-muted-foreground">{t('currentView')}</p>
                     <p className="text-base font-semibold">{selectedOption?.label}</p>
                     <p className="text-xs text-muted-foreground">
-                        Intervalle&nbsp;:{" "}
-                        {rangeOptions.find((option) => option.value === range)?.label ??
-                            "—"}
+                        {t('rangeLabel', {range: selectedRangeLabel})}
                     </p>
                 </div>
                 <ButtonGroup className="flex flex-wrap justify-end">
                     <Select value={range} onValueChange={handleRangeChange}>
                         <SelectTrigger className="w-[130px]">
-                            <SelectValue placeholder="Période"/>
+                            <SelectValue placeholder={t('placeholders.range')}/>
                         </SelectTrigger>
                         <SelectContent>
                             {rangeOptions.map((option) => (
                                 <SelectItem key={option.value} value={option.value}>
-                                    {option.label}
+                                    {rangeT(option.labelKey)}
                                 </SelectItem>
                             ))}
                         </SelectContent>
                     </Select>
                     <Select value={granularity} onValueChange={handleGranularityChange}>
                         <SelectTrigger className="w-[150px]">
-                            <SelectValue placeholder="Granularité"/>
+                            <SelectValue placeholder={t('placeholders.granularity')}/>
                         </SelectTrigger>
                         <SelectContent>
                             {granularityOptions.map((option) => (
                                 <SelectItem key={option.value} value={option.value}>
-                                    {option.label}
+                                    {granularityT(option.labelKey)}
                                 </SelectItem>
                             ))}
                         </SelectContent>
                     </Select>
                     <Select value={metric} onValueChange={handleMetricChange}>
                         <SelectTrigger className="w-[170px]">
-                            <SelectValue placeholder="Métrique"/>
+                            <SelectValue placeholder={t('placeholders.metric')}/>
                         </SelectTrigger>
                         <SelectContent>
                             {metricOptions.map((option) => (
@@ -220,8 +234,8 @@ export function MetricSeriesChart({
                         content={<ChartTooltipContent indicator="dot"/>}
                         labelFormatter={(value) => labelFormatter.format(new Date(value))}
                         formatter={(value) => [
-                            `${Number(value).toFixed(2)}`,
-                            selectedOption?.label ?? "Valeur",
+                            numberFormatter.format(Number(value)),
+                            selectedOption?.label ?? t('valueLabel'),
                         ]}
                     />
                     <Area

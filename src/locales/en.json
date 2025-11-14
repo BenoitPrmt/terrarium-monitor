@@ -1,9 +1,347 @@
 {
-  "HomePage": {
-    "title": "Hello world!"
+  "Navigation": {
+    "Header": {
+      "links": {
+        "features": "Features",
+        "pricing": "Pricing",
+        "dashboard": "Dashboard",
+        "login": "Sign in"
+      }
+    },
+    "Footer": {
+      "tagline": "Monitor every terrarium effortlessly.",
+      "sections": {
+        "quickLinks": "Quick links",
+        "legal": "Legal"
+      },
+      "links": {
+        "home": "Home",
+        "pricing": "Pricing",
+        "login": "Sign in",
+        "terms": "Terms of Service",
+        "privacy": "Privacy Policy",
+        "legal": "Imprint"
+      },
+      "copyright": "© {year} {brand}. All rights reserved."
+    },
+    "Sidebar": {
+      "links": {
+        "dashboard": "Dashboard",
+        "terrariums": "Terrariums"
+      },
+      "logoAlt": "Terra logo",
+      "sections": {
+        "terrariums": "Terrariums",
+        "management": "Management"
+      }
+    },
+    "User": {
+      "anonymous": "User",
+      "languageSelector": "Select language",
+      "account": "My account",
+      "logout": "Sign out"
+    },
+    "Breadcrumbs": {
+      "segments": {
+        "dashboard": "Dashboard",
+        "terrariums": "Terrariums",
+        "new": "New",
+        "settings": "Settings",
+        "webhooks": "Webhooks"
+      },
+      "ariaLabel": "Breadcrumb navigation"
+    }
   },
-  "DashboardPage": {
-    "title": "Dashboard",
-    "subtitle": "Track all your terrariums and their latest measurements."
+  "Common": {
+    "fields": {
+      "name": "Name",
+      "location": "Location",
+      "createdAt": "Created on",
+      "actions": "Actions",
+      "description": "Description"
+    },
+    "actions": {
+      "newTerrarium": "New terrarium",
+      "back": "Back",
+      "copy": "Copy",
+      "copied": "Copied",
+      "cancel": "Cancel",
+      "confirm": "Confirm",
+      "delete": "Delete"
+    },
+    "placeholders": {
+      "location": "Choose a location"
+    },
+    "status": {
+      "notAvailable": "N/A"
+    },
+    "metrics": {
+      "temperature": "Temperature",
+      "humidity": "Humidity",
+      "pressure": "Pressure",
+      "altitude": "Altitude"
+    },
+    "locations": {
+      "living_room": "Living room",
+      "bedroom": "Bedroom",
+      "kitchen": "Kitchen",
+      "bathroom": "Bathroom",
+      "dining_room": "Dining room",
+      "garden": "Garden",
+      "balcony": "Balcony",
+      "office": "Office",
+      "toilet": "Restroom",
+      "other": "Other"
+    }
+  },
+  "ThemeToggle": {
+    "label": "Change theme",
+    "options": {
+      "light": "Light",
+      "dark": "Dark",
+      "system": "System"
+    }
+  },
+  "NotFound": {
+    "title": "Page not found",
+    "description": "Oops! This page does not exist or has been moved.",
+    "cta": "Back to home"
+  },
+  "Landing": {
+    "title": "Landing page"
+  },
+  "Dashboard": {
+    "Home": {
+      "title": "Dashboard",
+      "subtitle": "Track all of your terrariums and their latest measurements.",
+      "stats": {
+        "terrariums": "Terrariums",
+        "lastIngestion": "Latest ingestion",
+        "activeWebhooks": "Active webhooks"
+      },
+      "table": {
+        "title": "Terrariums",
+        "description": "Manage your connected devices.",
+        "actions": {
+          "new": "New",
+          "view": "View terrarium",
+          "settings": "Terrarium settings",
+          "webhooks": "Manage webhooks"
+        },
+        "empty": "No terrariums yet."
+      }
+    },
+    "metrics": {
+      "granularity": {
+        "raw": "Raw points",
+        "hourly": "Hourly aggregation",
+        "daily": "Daily aggregation"
+      },
+      "range": {
+        "24h": "Last 24h",
+        "7d": "7 days",
+        "30d": "30 days"
+      }
+    }
+  },
+  "Forms": {
+    "saveButton": {
+      "label": "Save",
+      "pending": "Saving..."
+    }
+  },
+  "Terrariums": {
+    "list": {
+      "title": "Your terrariums",
+      "description": "Select a terrarium to inspect the data or adjust settings.",
+      "emptyDescription": "No description provided.",
+      "createdOn": "Created on",
+      "emptyState": "No terrariums yet. Create one to get started!"
+    },
+    "new": {
+      "title": "New terrarium",
+      "description": "Set up a device and retrieve its access token.",
+      "formTitle": "Details"
+    },
+    "settings": {
+      "title": "Settings",
+      "description": "Manage public details and device access.",
+      "sections": {
+        "details": "Details",
+        "token": "Device token",
+        "deletion": "Deletion"
+      },
+      "tokenDescription": "Tokens are not stored in clear text. Regenerate a token to connect a new device or replace a sensor.",
+      "deletionDescription": "This action is irreversible and removes all related data."
+    },
+    "form": {
+      "placeholders": {
+        "name": "Tropical terrarium",
+        "description": "Notes about the setup, sensors, etc."
+      },
+      "submit": {
+        "label": "Create terrarium",
+        "pending": "Creating..."
+      }
+    },
+    "token": {
+      "title": "New token",
+      "pending": "Regenerating...",
+      "cta": "Regenerate token"
+    },
+    "delete": {
+      "trigger": "Delete terrarium",
+      "title": "Delete this terrarium?",
+      "description": "All measurements, aggregates and webhooks will be removed permanently."
+    },
+    "header": {
+      "label": "Terrarium",
+      "identifier": "Identifier:",
+      "createdOn": "Created on {date}",
+      "actions": {
+        "settings": "Settings",
+        "webhooks": "Webhooks"
+      }
+    },
+    "metrics": {
+      "ariaLastUpdated": "Last updated {date}",
+      "tooltip": "Last updated: {date}",
+      "updatedAgo": "Updated {value} ago",
+      "noRecentData": "No recent data",
+      "changeWindow": "{value} over 24h",
+      "noChange": "Not enough data over 24h"
+    },
+    "series": {
+      "title": "Time series",
+      "description": "Analyze each metric over the selected interval.",
+      "valueLabel": "Value",
+      "currentView": "Current view",
+      "rangeLabel": "Range: {range}",
+      "placeholders": {
+        "range": "Range",
+        "granularity": "Granularity",
+        "metric": "Metric"
+      }
+    },
+    "hourOfDay": {
+      "title": "Hour-of-day analysis",
+      "description": "Identify typical peaks or dips for each metric.",
+      "subtitle": "Analyzed metric",
+      "placeholder": "Choose a metric",
+      "averageLabel": "Average",
+      "hourLabel": "{value}h"
+    },
+    "samples": {
+      "title": "Recent measurements",
+      "description": "Last 20 ingested samples.",
+      "headers": {
+        "type": "Type",
+        "value": "Value",
+        "timestamp": "Timestamp"
+      },
+      "empty": "No data yet."
+    }
+  },
+  "Terrarium": {
+    "care": {
+      "title": "Recent actions",
+      "description": "Keep track of the care provided to this terrarium.",
+      "form": {
+        "type": "Action type",
+        "notes": "Notes",
+        "placeholder": "Ex: Light watering this morning.",
+        "submit": "Add"
+      },
+      "logTitle": "Action log",
+      "logEmpty": "No actions have been logged yet.",
+      "actions": {
+        "showMore": "Show more"
+      }
+    },
+    "actions": {
+      "watering": "Watering",
+      "feeding": "Feeding",
+      "cleaning": "Cleaning",
+      "maintenance": "Maintenance",
+      "other": "Other"
+    }
+  },
+  "Webhooks": {
+    "page": {
+      "title": "Webhooks",
+      "description": "Automate alerts for {name}.",
+      "newWebhook": "New webhook",
+      "empty": "No webhooks yet."
+    },
+    "form": {
+      "fields": {
+        "name": "Name",
+        "url": "URL",
+        "metric": "Metric",
+        "comparator": "Comparator",
+        "threshold": "Threshold",
+        "cooldown": "Cooldown (sec)"
+      },
+      "submit": {
+        "label": "Create",
+        "pending": "Creating..."
+      }
+    },
+    "card": {
+      "fields": {
+        "name": "Name",
+        "url": "URL",
+        "metric": "Metric",
+        "comparator": "Comparator",
+        "threshold": "Threshold",
+        "cooldown": "Cooldown (sec)",
+        "active": "Active"
+      },
+      "secretLabel": "Secret: {id}",
+      "lastTriggered": "Last delivery: {date}",
+      "actions": {
+        "testing": "Testing...",
+        "test": "Test",
+        "deleting": "Deleting..."
+      }
+    }
+  },
+  "Actions": {
+    "terrarium": {
+      "create": {
+        "invalidPayload": "Invalid data to create the terrarium.",
+        "success": "Terrarium created successfully!"
+      },
+      "update": {
+        "invalidPayload": "Invalid data to update the terrarium.",
+        "success": "Terrarium updated!"
+      },
+      "log": {
+        "invalidPayload": "Invalid data to log the action.",
+        "success": "Action added to the log!"
+      },
+      "delete": {
+        "success": "Terrarium deleted!"
+      }
+    },
+    "webhook": {
+      "common": {
+        "notFound": "Webhook not found."
+      },
+      "create": {
+        "invalidPayload": "Invalid data to create the webhook.",
+        "success": "Webhook created successfully!"
+      },
+      "update": {
+        "invalidPayload": "Invalid data to update the webhook.",
+        "success": "Webhook updated successfully!"
+      },
+      "delete": {
+        "success": "Webhook deleted successfully!"
+      },
+      "test": {
+        "success": "Test payload sent successfully!"
+      }
+    }
   }
 }

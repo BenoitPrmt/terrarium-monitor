@@ -20,6 +20,7 @@ import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/c
 import {getLocaleFlag, Locale, locales} from "@/i18n/config";
 import {useLocale} from "next-intl";
 import {setUserLocale} from "@/services/locale";
+import {useTranslations} from "next-intl";
 
 type Props = {
     user: User
@@ -28,7 +29,8 @@ type Props = {
 export function NavUser({user}: Props) {
     const {isMobile} = useSidebar();
     const locale = useLocale();
-    const displayName = user.name ?? user.email ?? "Utilisateur";
+    const t = useTranslations('Navigation.User');
+    const displayName = user.name ?? user.email ?? t('anonymous');
     const fallback = displayName.slice(0, 2).toUpperCase();
 
     const handleLogout = async () => {
@@ -88,7 +90,7 @@ export function NavUser({user}: Props) {
                                 {/* Language selector */}
                                 <Select
                                     defaultValue={locale}
-                                    aria-label="Select Language"
+                                    aria-label={t('languageSelector')}
                                     onValueChange={async (value) => {
                                         await setUserLocale(value as Locale)
                                     }}
@@ -119,14 +121,14 @@ export function NavUser({user}: Props) {
                             <DropdownMenuItem asChild>
                                 <Link href="/dashboard/settings">
                                     <BadgeCheck/>
-                                    Mon compte
+                                    {t('account')}
                                 </Link>
                             </DropdownMenuItem>
                         </DropdownMenuGroup>
                         <DropdownMenuSeparator/>
                         <DropdownMenuItem onClick={handleLogout} className="text-red-600">
                             <LogOut/>
-                            Déconnexion
+                            {t('logout')}
                         </DropdownMenuItem>
                     </DropdownMenuContent>
                 </DropdownMenu>

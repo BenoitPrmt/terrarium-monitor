@@ -7,7 +7,8 @@ import {updateTerrariumAction} from "@/app/(dashboard)/dashboard/actions"
 import {Button} from "@/components/ui/button"
 import {Alert, AlertDescription, AlertTitle} from "@/components/ui/alert"
 import {toast} from "sonner"
-import {Loader2Icon, RotateCcwKeyIcon, SaveIcon} from "lucide-react";
+import {Loader2Icon, RotateCcwKeyIcon} from "lucide-react";
+import {useTranslations} from "next-intl";
 
 type Props = {
     terrariumId: string
@@ -28,6 +29,8 @@ export function RotateTokenForm({terrariumId}: Props) {
         initialState
     )
     const [copied, setCopied] = useState(false)
+    const t = useTranslations('Terrariums.token');
+    const common = useTranslations('Common');
 
     useEffect(() => {
         if (!state?.message) {
@@ -49,7 +52,7 @@ export function RotateTokenForm({terrariumId}: Props) {
             </form>
             {token && (
                 <Alert>
-                    <AlertTitle>Nouveau token</AlertTitle>
+                    <AlertTitle>{t('title')}</AlertTitle>
                     <AlertDescription className="flex items-center gap-2">
                         <code className="flex-1 truncate rounded bg-muted px-2 py-1 text-sm">
                             {token}
@@ -63,7 +66,7 @@ export function RotateTokenForm({terrariumId}: Props) {
                                 setTimeout(() => setCopied(false), 2000)
                             }}
                         >
-                            {copied ? "Copié" : "Copier"}
+                            {copied ? common('actions.copied') : common('actions.copy')}
                         </Button>
                     </AlertDescription>
                 </Alert>
@@ -74,17 +77,18 @@ export function RotateTokenForm({terrariumId}: Props) {
 
 function RotateButton() {
     const {pending} = useFormStatus()
+    const t = useTranslations('Terrariums.token');
     return (
         <Button type="submit" variant="destructive" disabled={pending}>
             {pending ? (
                 <>
                     <Loader2Icon className="size-4 animate-spin" />
-                    Regénération...
+                    {t('pending')}
                 </>
             ) : (
                 <>
                     <RotateCcwKeyIcon className="size-4" />
-                    Regénérer le token
+                    {t('cta')}
                 </>
             )}
         </Button>

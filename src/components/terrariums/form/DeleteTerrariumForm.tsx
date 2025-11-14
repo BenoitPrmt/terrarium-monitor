@@ -17,6 +17,7 @@ import {
 } from "@/components/ui/alert-dialog"
 import {toast} from "sonner"
 import {CircleCheckIcon, Trash2Icon, Undo2Icon} from "lucide-react";
+import {useTranslations} from "next-intl";
 
 type ActionState = Awaited<ReturnType<typeof deleteTerrariumAction>>
 
@@ -36,6 +37,8 @@ export function DeleteTerrariumForm({terrariumId}: Props) {
         initialState
     )
     const [open, setOpen] = useState(false)
+    const t = useTranslations('Terrariums.delete');
+    const common = useTranslations('Common');
 
     useEffect(() => {
         if (!state?.message) {
@@ -54,27 +57,26 @@ export function DeleteTerrariumForm({terrariumId}: Props) {
             <AlertDialogTrigger asChild>
                 <Button variant="destructive">
                     <Trash2Icon className="size-4" />
-                    Supprimer le terrarium
+                    {t('trigger')}
                 </Button>
             </AlertDialogTrigger>
             <AlertDialogContent>
                 <AlertDialogHeader>
-                    <AlertDialogTitle>Supprimer ce terrarium ?</AlertDialogTitle>
+                    <AlertDialogTitle>{t('title')}</AlertDialogTitle>
                     <AlertDialogDescription>
-                        Toutes les mesures, agrégations et webhooks liés seront supprimés
-                        définitivement.
+                        {t('description')}
                     </AlertDialogDescription>
                 </AlertDialogHeader>
                 <form action={formAction}>
                     <AlertDialogFooter>
                         <AlertDialogCancel>
                             <Undo2Icon className="size-4" />
-                            Annuler
+                            {common('actions.cancel')}
                         </AlertDialogCancel>
                         <AlertDialogAction asChild>
                             <Button type="submit" variant="destructive">
                                 <CircleCheckIcon className="size-4" />
-                                Confirmer
+                                {common('actions.confirm')}
                             </Button>
                         </AlertDialogAction>
                     </AlertDialogFooter>

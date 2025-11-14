@@ -15,7 +15,7 @@ import type {
 export const METRIC_DISPLAY_CONFIGS: MetricDisplayConfig[] = [
     {
         key: "TEMPERATURE",
-        label: "Température",
+        labelKey: "temperature",
         unitLabel: "°C",
         color: "#f97316",
         icon: Thermometer,
@@ -23,7 +23,7 @@ export const METRIC_DISPLAY_CONFIGS: MetricDisplayConfig[] = [
     },
     {
         key: "HUMIDITY",
-        label: "Humidité",
+        labelKey: "humidity",
         unitLabel: "%",
         color: "#0ea5e9",
         icon: Droplets,
@@ -31,7 +31,7 @@ export const METRIC_DISPLAY_CONFIGS: MetricDisplayConfig[] = [
     },
     {
         key: "PRESSURE",
-        label: "Pression",
+        labelKey: "pressure",
         unitLabel: "hPa",
         color: "#8b5cf6",
         icon: Gauge,
@@ -39,7 +39,7 @@ export const METRIC_DISPLAY_CONFIGS: MetricDisplayConfig[] = [
     },
     {
         key: "ALTITUDE",
-        label: "Altitude",
+        labelKey: "altitude",
         unitLabel: "m",
         color: "#059669",
         icon: Mountain,
@@ -77,15 +77,15 @@ export const CHART_GRANULARITIES: AggregateGranularity[] = [
 ]
 
 export const CHART_GRANULARITY_OPTIONS: ChartGranularityOption[] = [
-    {value: "raw", label: "Points bruts"},
-    {value: "hourly", label: "Agrégation horaire"},
-    {value: "daily", label: "Agrégation journalière"},
+    {value: "raw", labelKey: "raw"},
+    {value: "hourly", labelKey: "hourly"},
+    {value: "daily", labelKey: "daily"},
 ]
 
 export const CHART_RANGE_OPTIONS: ChartRangeOption[] = [
-    {value: "24h", label: "Dernières 24h"},
-    {value: "7d", label: "7 jours"},
-    {value: "30d", label: "30 jours"},
+    {value: "24h", labelKey: "24h"},
+    {value: "7d", labelKey: "7d"},
+    {value: "30d", labelKey: "30d"},
 ]
 
 export const CHART_Y_AXIS_DELTA = 0.05;

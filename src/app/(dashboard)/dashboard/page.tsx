@@ -36,12 +36,13 @@ import {ButtonGroup} from "@/components/ui/button-group";
 import {timeAgoInWords} from "@/lib/utils";
 import CopyCode from "@/components/CopyCode";
 import {TerrariumLocationBadge} from "@/components/terrariums/TerrariumLocationBadge";
-import {useTranslations} from 'next-intl';
-import {getTranslations} from "next-intl/server";
+import {getLocale, getTranslations} from "next-intl/server";
 
 export default async function DashboardPage() {
     const user = await currentUser();
-    const t = await getTranslations('DashboardPage');
+    const locale = await getLocale();
+    const t = await getTranslations('Dashboard.Home');
+    const common = await getTranslations('Common');
 
     if (!user) {
         redirect("/login")
@@ -64,6 +65,10 @@ export default async function DashboardPage() {
             ? WebhookModel.countDocuments({terrariumId: {$in: terrariumIds}})
             : 0,
     ])
+    const createdAtFormatter = new Intl.DateTimeFormat(locale, {
+        dateStyle: "long",
+        timeStyle: "short",
+    });
 
     return (
         <div className="space-y-6">
@@ -79,7 +84,7 @@ export default async function DashboardPage() {
                 <Button asChild>
                     <Link href="/dashboard/terrariums/new">
                         <SproutIcon className="size-4" />
-                        Nouveau terrarium
+                        {common('actions.newTerrarium')}
                     </Link>
                 </Button>
             </div>
@@ -87,21 +92,21 @@ export default async function DashboardPage() {
             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
                 <Card>
                     <CardHeader>
-                        <CardDescription>Terrariums</CardDescription>
+                        <CardDescription>{t('stats.terrariums')}</CardDescription>
                         <CardTitle className="text-3xl">{terrariums.length}</CardTitle>
                     </CardHeader>
                 </Card>
                 <Card>
                     <CardHeader>
-                        <CardDescription>Dernière ingestion</CardDescription>
+                        <CardDescription>{t('stats.lastIngestion')}</CardDescription>
                         <CardTitle className="text-3xl">
-                            {lastSample ? timeAgoInWords(new Date(lastSample.ts)) : "—"}
+                            {lastSample ? timeAgoInWords(new Date(lastSample.ts), {locale}) : "—"}
                         </CardTitle>
                     </CardHeader>
                 </Card>
                 <Card>
                     <CardHeader>
-                        <CardDescription>Webhooks actifs</CardDescription>
+                        <CardDescription>{t('stats.activeWebhooks')}</CardDescription>
                         <CardTitle className="text-3xl">{webhookCount}</CardTitle>
                     </CardHeader>
                 </Card>
@@ -110,13 +115,13 @@ export default async function DashboardPage() {
             <Card>
                 <CardHeader className="flex flex-row items-center justify-between">
                     <div>
-                        <CardTitle>Terrariums</CardTitle>
-                        <CardDescription>Gestion de vos appareils connectés.</CardDescription>
+                        <CardTitle>{t('table.title')}</CardTitle>
+                        <CardDescription>{t('table.description')}</CardDescription>
                     </div>
                     <Button variant="outline" asChild>
                         <Link href="/dashboard/terrariums/new">
                             <SproutIcon className="size-4" />
-                            Nouveau
+                            {t('table.actions.new')}
                         </Link>
                     </Button>
                 </CardHeader>
@@ -124,11 +129,11 @@ export default async function DashboardPage() {
                     <Table>
                         <TableHeader>
                             <TableRow>
-                                <TableHead>Nom</TableHead>
-                                <TableHead>Lieu</TableHead>
+                                <TableHead>{common('fields.name')}</TableHead>
+                                <TableHead>{common('fields.location')}</TableHead>
                                 <TableHead>UUID</TableHead>
-                                <TableHead>Créé le</TableHead>
-                                <TableHead className="text-right">Actions</TableHead>
+                                <TableHead>{common('fields.createdAt')}</TableHead>
+                                <TableHead className="text-right">{common('fields.actions')}</TableHead>
                             </TableRow>
                         </TableHeader>
                         <TableBody>
@@ -145,11 +150,8 @@ export default async function DashboardPage() {
                                     </TableCell>
                                     <TableCell>
                                         {terrarium.createdAt
-                                            ? new Date(terrarium.createdAt).toLocaleString("fr-FR", {
-                                                dateStyle: "long",
-                                                timeStyle: "short",
-                                            })
-                                            : "—"}
+                                            ? createdAtFormatter.format(new Date(terrarium.createdAt))
+                                            : common('status.notAvailable')}
                                     </TableCell>
                                     <TableCell className="text-right">
                                         <div className="flex justify-end gap-2">
@@ -165,7 +167,7 @@ export default async function DashboardPage() {
                                                         </Button>
                                                     </TooltipTrigger>
                                                     <TooltipContent>
-                                                        <p>Voir le terrarium</p>
+                                                        <p>{t('table.actions.view')}</p>
                                                     </TooltipContent>
                                                 </Tooltip>
                                                 <Tooltip>
@@ -179,7 +181,7 @@ export default async function DashboardPage() {
                                                         </Button>
                                                     </TooltipTrigger>
                                                     <TooltipContent>
-                                                        <p>Paramètres du terrarium</p>
+                                                        <p>{t('table.actions.settings')}</p>
                                                     </TooltipContent>
                                                 </Tooltip>
                                                 <Tooltip>
@@ -193,7 +195,7 @@ export default async function DashboardPage() {
                                                         </Button>
                                                     </TooltipTrigger>
                                                     <TooltipContent>
-                                                        <p>Gérer les webhooks</p>
+                                                        <p>{t('table.actions.webhooks')}</p>
                                                     </TooltipContent>
                                                 </Tooltip>
                                             </ButtonGroup>
@@ -204,7 +206,7 @@ export default async function DashboardPage() {
                             {terrariums.length === 0 && (
                                 <TableRow>
                                     <TableCell colSpan={5} className="text-center text-muted-foreground">
-                                        Aucun terrarium pour le moment.
+                                        {t('table.empty')}
                                     </TableCell>
                                 </TableRow>
                             )}

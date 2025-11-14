@@ -21,6 +21,7 @@ import {toast} from "sonner"
 import SaveSubmitButton from "@/components/form/SaveSubmitButton";
 import {CirclePlusIcon} from "lucide-react";
 import ActionTimeline from "@/components/terrariums/actions/ActionTimeline";
+import {useLocale, useTranslations} from "next-intl";
 
 type ActionState = Awaited<ReturnType<typeof logTerrariumCareAction>>
 
@@ -37,6 +38,9 @@ export function TerrariumActionsSection({
                                         }: TerrariumActionsSectionProps) {
     const {pending} = useFormStatus();
     const formRef = useRef<HTMLFormElement | null>(null)
+    const t = useTranslations('Terrarium.care');
+    const actionsT = useTranslations('Terrarium.actions');
+    const locale = useLocale();
     const [visibleCount, setVisibleCount] = useState(() =>
         Math.min(actions.length, 8)
     )
@@ -69,35 +73,31 @@ export function TerrariumActionsSection({
         }
     }, [state])
 
-    const dateFormatter = useMemo(
-        () =>
-            new Intl.DateTimeFormat("fr-FR", {
-                dateStyle: "medium",
-                timeStyle: "short",
-            }),
-        []
-    )
+    const actionOptions = TERRARIUM_ACTION_OPTIONS.map((option) => ({
+        ...option,
+        label: actionsT(option.labelKey),
+    }));
 
     return (
         <Card className="h-full">
             <CardHeader>
-                <CardTitle>Actions récentes</CardTitle>
+                <CardTitle>{t('title')}</CardTitle>
                 <CardDescription>
-                    Gardez un historique des soins apportés à ce terrarium.
+                    {t('description')}
                 </CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
                 <form ref={formRef} action={formAction} className="space-y-4">
                     <div className="space-y-2">
-                        <Label htmlFor="type">Type d&apos;action</Label>
+                        <Label htmlFor="type">{t('form.type')}</Label>
                         <select
                             id="type"
                             name="type"
                             className="w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm"
-                            defaultValue={TERRARIUM_ACTION_OPTIONS[0]?.value}
+                            defaultValue={actionOptions[0]?.value}
                             required
                         >
-                            {TERRARIUM_ACTION_OPTIONS.map((option) => (
+                            {actionOptions.map((option) => (
                                 <option key={option.value} value={option.value}>
                                     {option.label}
                                 </option>
@@ -105,11 +105,11 @@ export function TerrariumActionsSection({
                         </select>
                     </div>
                     <div className="space-y-2">
-                        <Label htmlFor="notes">Notes</Label>
+                        <Label htmlFor="notes">{t('form.notes')}</Label>
                         <Textarea
                             id="notes"
                             name="notes"
-                            placeholder="Ex: Arrosage léger ce matin."
+                            placeholder={t('form.placeholder')}
                             minLength={3}
                             maxLength={500}
                             required
@@ -118,18 +118,18 @@ export function TerrariumActionsSection({
                     <div className="flex justify-end">
                         <SaveSubmitButton
                             pending={pending}
-                            label="Ajouter"
+                            label={t('form.submit')}
                             icon={<CirclePlusIcon className="size-4"/>}
                         />
                     </div>
                 </form>
                 <div className="space-y-4">
                     <div className="text-sm font-medium text-muted-foreground">
-                        Journal des actions
+                        {t('logTitle')}
                     </div>
                     <ActionTimeline
                         actions={actions.slice(0, visibleCount)}
-                        dateFormatter={dateFormatter}
+                        locale={locale}
                     />
                     {actions.length > visibleCount && (
                         <Button
@@ -141,7 +141,7 @@ export function TerrariumActionsSection({
                                 )
                             }
                         >
-                            Voir plus
+                            {t('actions.showMore')}
                         </Button>
                     )}
                 </div>

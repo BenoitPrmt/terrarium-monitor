@@ -20,6 +20,8 @@ import {Loader2Icon, SproutIcon} from "lucide-react";
 import {TERRARIUM_LOCATIONS} from "@/constants/terrarium-locations"
 import {getLocationIcon} from "@/components/terrariums/locationIcons"
 import {toast} from "sonner"
+import {useTranslations} from "next-intl";
+import SaveSubmitButton from "@/components/form/SaveSubmitButton";
 
 type ActionState = Awaited<ReturnType<typeof createTerrariumAction>>
 
@@ -36,6 +38,9 @@ export function CreateTerrariumForm() {
     )
     const [copied, setCopied] = useState(false)
     const [location, setLocation] = useState<string>(TERRARIUM_LOCATIONS[0].value)
+    const t = useTranslations('Terrariums.form');
+    const common = useTranslations('Common');
+    const locationsT = useTranslations('Common.locations');
     useEffect(() => {
         if (!state?.message) {
             return
@@ -53,14 +58,14 @@ export function CreateTerrariumForm() {
         <div className="space-y-6">
             <form action={formAction} className="space-y-4">
                 <div className="space-y-2">
-                    <Label htmlFor="name">Nom</Label>
-                    <Input id="name" name="name" placeholder="Terrarium tropical" required/>
+                    <Label htmlFor="name">{common('fields.name')}</Label>
+                    <Input id="name" name="name" placeholder={t('placeholders.name')} required/>
                 </div>
                 <div className="space-y-2">
-                    <Label>Emplacement</Label>
+                    <Label>{common('fields.location')}</Label>
                     <Select value={location} onValueChange={setLocation}>
                         <SelectTrigger>
-                            <SelectValue placeholder="Choisir un emplacement"/>
+                            <SelectValue placeholder={common('placeholders.location')}/>
                         </SelectTrigger>
                         <SelectContent>
                             {TERRARIUM_LOCATIONS.map((option) => {
@@ -69,7 +74,7 @@ export function CreateTerrariumForm() {
                                     <SelectItem key={option.value} value={option.value}>
                                         <span className="flex items-center gap-2">
                                             <Icon className="size-4"/>
-                                            {option.label}
+                                            {locationsT(option.labelKey)}
                                         </span>
                                     </SelectItem>
                                 )
@@ -79,11 +84,11 @@ export function CreateTerrariumForm() {
                     <input type="hidden" name="location" value={location}/>
                 </div>
                 <div className="space-y-2">
-                    <Label htmlFor="description">Description</Label>
+                    <Label htmlFor="description">{common('fields.description')}</Label>
                     <Textarea
                         id="description"
                         name="description"
-                        placeholder="Notes sur le dispositif, capteurs, etc."
+                        placeholder={t('placeholders.description')}
                         rows={4}
                     />
                 </div>
@@ -92,11 +97,10 @@ export function CreateTerrariumForm() {
 
             {token && (
                 <Alert>
-                    <AlertTitle>Device token</AlertTitle>
+                    <AlertTitle>{t('token.title')}</AlertTitle>
                     <AlertDescription className="flex flex-col gap-2">
                         <span>
-                          Ce token est affiché une seule fois. Copiez-le et configurez votre
-                          appareil immédiatement.
+                          {t('token.description')}
                         </span>
                         <div className="flex items-center gap-2">
                             <code className="flex-1 truncate rounded bg-muted px-2 py-1 text-sm">
@@ -111,7 +115,7 @@ export function CreateTerrariumForm() {
                                     setTimeout(() => setCopied(false), 2000)
                                 }}
                             >
-                                {copied ? "Copié" : "Copier"}
+                                {copied ? common('actions.copied') : common('actions.copy')}
                             </Button>
                         </div>
                     </AlertDescription>
@@ -123,19 +127,14 @@ export function CreateTerrariumForm() {
 
 function SubmitButton() {
     const {pending} = useFormStatus()
+    const t = useTranslations('Terrariums.form');
     return (
-        <Button type="submit" disabled={pending}>
-            {pending ? (
-                <>
-                    <Loader2Icon className="size-4 animate-spin" />
-                    Création...
-                </>
-            ) : (
-                <>
-                    <SproutIcon className="size-4" />
-                    Créer le terrarium
-                </>
-            )}
-        </Button>
+        <SaveSubmitButton
+            pending={pending}
+            label={t('submit.label')}
+            pendingLabel={t('submit.pending')}
+            icon={<SproutIcon className="size-4" />}
+            pendingIcon={<Loader2Icon className="size-4 animate-spin" />}
+        />
     )
 }

@@ -10,12 +10,14 @@ import {
     WEBSITE_KEYWORDS,
     WEBSITE_CATEGORY,
     AUTHOR_NAME,
-    AUTHOR_URL, GOOGLE_ANALYTICS_ID,
+    AUTHOR_URL,
+    GOOGLE_ANALYTICS_ID,
 } from "@/constants/website";
 import {GoogleAnalytics} from "@next/third-parties/google";
 import {ThemeProvider} from "next-themes";
 import {NextIntlClientProvider} from "next-intl";
 import {ReactNode} from "react";
+import {getLocale, getMessages} from "next-intl/server";
 
 const outfitSans = Outfit({
     variable: "--font-geist-sans",
@@ -57,17 +59,20 @@ export const metadata: Metadata = {
     category: WEBSITE_CATEGORY,
 };
 
-export default function RootLayout({
-                                       children,
-                                   }: Readonly<{
+export default async function RootLayout({
+                                             children,
+                                         }: Readonly<{
     children: ReactNode;
 }>) {
+    const locale = await getLocale();
+    const messages = await getMessages();
+
     return (
-        <html lang="fr" suppressHydrationWarning>
+        <html lang={locale} suppressHydrationWarning>
         <body
             className={`${outfitSans.variable} antialiased`}
         >
-        <NextIntlClientProvider>
+        <NextIntlClientProvider locale={locale} messages={messages}>
             <ThemeProvider
                 attribute="class"
                 defaultTheme="system"

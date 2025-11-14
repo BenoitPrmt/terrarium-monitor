@@ -15,9 +15,13 @@ import {
 } from "@/components/ui/card"
 import {TerrariumLocationBadge} from "@/components/terrariums/TerrariumLocationBadge"
 import {SproutIcon} from "lucide-react";
+import {getLocale, getTranslations} from "next-intl/server";
 
 export default async function TerrariumsGridPage() {
     const user = await currentUser()
+    const locale = await getLocale();
+    const t = await getTranslations('Terrariums.list');
+    const common = await getTranslations('Common');
     if (!user) {
         redirect("/login")
     }
@@ -32,15 +36,15 @@ export default async function TerrariumsGridPage() {
         <div className="space-y-6">
             <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
                 <div>
-                    <h1 className="text-2xl font-semibold">Vos terrariums</h1>
+                    <h1 className="text-2xl font-semibold">{t('title')}</h1>
                     <p className="text-muted-foreground">
-                        Sélectionnez un terrarium pour consulter les mesures ou gérer les paramètres.
+                        {t('description')}
                     </p>
                 </div>
                 <Button asChild>
                     <Link href="/dashboard/terrariums/new">
                         <SproutIcon className="size-4" />
-                        Nouveau terrarium
+                        {common('actions.newTerrarium')}
                     </Link>
                 </Button>
             </div>
@@ -64,15 +68,15 @@ export default async function TerrariumsGridPage() {
                             </CardHeader>
                             <CardContent className="space-y-2 text-sm">
                                 <p className="text-muted-foreground line-clamp-3">
-                                    {terrarium.description || "Aucune description fournie."}
+                                    {terrarium.description || t('emptyDescription')}
                                 </p>
                                 <div className="text-xs text-muted-foreground">
-                                    Créé le{" "}
+                                    {t('createdOn')}{" "}
                                     {terrarium.createdAt
-                                        ? new Date(terrarium.createdAt).toLocaleDateString("fr-FR", {
+                                        ? new Intl.DateTimeFormat(locale, {
                                               dateStyle: "long",
-                                          })
-                                        : "—"}
+                                          }).format(new Date(terrarium.createdAt))
+                                        : common('status.notAvailable')}
                                 </div>
                             </CardContent>
                         </Card>
@@ -81,7 +85,7 @@ export default async function TerrariumsGridPage() {
                 {terrariums.length === 0 && (
                     <Card className="sm:col-span-2 lg:col-span-3">
                         <CardContent className="py-10 text-center text-muted-foreground">
-                            Aucun terrarium pour le moment. Créez-en un pour commencer !
+                            {t('emptyState')}
                         </CardContent>
                     </Card>
                 )}

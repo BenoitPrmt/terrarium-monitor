@@ -1,6 +1,5 @@
-import {redirect} from "next/navigation"
-
-import {currentUser} from "@/auth/current-user"
+import {redirect} from "next/navigation";
+import {currentUser} from "@/auth/current-user";
 import {
     CHART_GRANULARITIES,
     CHART_GRANULARITY_OPTIONS,
@@ -10,26 +9,25 @@ import {
     METRIC_DISPLAY_CONFIGS,
     METRIC_DISPLAY_CONFIG_MAP,
     METRIC_RANGE_MAP,
-} from "@/constants/metrics"
-import {ensureDbIndexes} from "@/lib/db/ensureIndexes"
-import {connectMongoose} from "@/lib/db/mongoose"
-import {buildHourOfDaySeries, buildSeriesByMetricAndGranularity} from "@/lib/metrics/series"
-import {getAggregates, getMetricSnapshots} from "@/lib/services/metrics"
-import {listTerrariumActions} from "@/lib/services/terrariumActions"
+} from "@/constants/metrics";
+import {ensureDbIndexes} from "@/lib/db/ensureIndexes";
+import {connectMongoose} from "@/lib/db/mongoose";
+import {buildHourOfDaySeries, buildSeriesByMetricAndGranularity} from "@/lib/metrics/series";
+import {getAggregates, getMetricSnapshots} from "@/lib/services/metrics";
+import {listTerrariumActions} from "@/lib/services/terrariumActions";
 import {
     requireTerrariumForOwner,
     serializeTerrarium,
-} from "@/lib/services/terrariums"
-import {SampleModel} from "@/models/Sample"
-import type {AggregateGranularity, MetricType} from "@/models/constants"
-import type {GranularityDataset, RecentSample} from "@/types/metrics"
-
-import {HourOfDaySection} from "../../../../../components/terrariums/charts/HourOfDaySection"
-import {MetricSeriesSection} from "../../../../../components/terrariums/charts/MetricSeriesSection"
-import {MetricSnapshotGrid} from "../../../../../components/terrariums/MetricSnapshotGrid"
-import {RecentSamplesSection} from "../../../../../components/terrariums/RecentSamplesSection"
-import {TerrariumHeader} from "../../../../../components/terrariums/TerrariumHeader"
-import {TerrariumActionsSection} from "../../../../../components/terrariums/TerrariumActionsSection"
+} from "@/lib/services/terrariums";
+import {SampleModel} from "@/models/Sample";
+import type {AggregateGranularity, MetricType} from "@/models/constants";
+import type {GranularityDataset, RecentSample} from "@/types/metrics";
+import {HourOfDaySection} from "@/components/terrariums/charts/HourOfDaySection";
+import {MetricSeriesSection} from "@/components/terrariums/charts/MetricSeriesSection";
+import {MetricSnapshotGrid} from "@/components/terrariums/MetricSnapshotGrid";
+import {RecentSamplesSection} from "@/components/terrariums/RecentSamplesSection";
+import {TerrariumHeader} from "@/components/terrariums/TerrariumHeader";
+import {TerrariumActionsSection} from "@/components/terrariums/TerrariumActionsSection";
 
 type PageProps = {
     params: Promise<{id: string}>

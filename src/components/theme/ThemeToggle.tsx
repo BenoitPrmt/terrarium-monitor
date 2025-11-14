@@ -6,9 +6,11 @@ import {useTheme} from "next-themes"
 
 import {Button} from "@/components/ui/button"
 import {DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger,} from "@/components/ui/dropdown-menu"
+import {useTranslations} from "next-intl";
 
 export function ThemeToggle() {
     const {setTheme} = useTheme()
+    const t = useTranslations('ThemeToggle');
 
     return (
         <DropdownMenu>
@@ -19,22 +21,22 @@ export function ThemeToggle() {
                     <Moon
                         className="absolute h-[1.2rem] w-[1.2rem] rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100"/>
                     <span className="sr-only">
-                        Changer de thème
+                        {t('label')}
                     </span>
                 </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
                 <DropdownMenuItem onClick={() => setTheme("light")}>
                     <SunIcon className="mr-2 size-4"/>
-                    <p>Mode clair</p>
+                    <p>{t('options.light')}</p>
                 </DropdownMenuItem>
                 <DropdownMenuItem onClick={() => setTheme("dark")}>
                     <MoonIcon className="mr-2 size-4"/>
-                    <p>Mode sombre</p>
+                    <p>{t('options.dark')}</p>
                 </DropdownMenuItem>
                 <DropdownMenuItem onClick={() => setTheme("system")}>
                     <SunMoonIcon className="mr-2 size-4"/>
-                    <p>Système</p>
+                    <p>{t('options.system')}</p>
                 </DropdownMenuItem>
             </DropdownMenuContent>
         </DropdownMenu>
