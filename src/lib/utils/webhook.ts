@@ -1,14 +1,6 @@
 import {createWebhookSignature} from "./crypto"
 
-export type WebhookPayload = {
-    terrariumId: string
-    metric: string
-    comparator: string
-    threshold: number
-    current: number
-    at: string
-    samplesCountInBatch: number
-}
+export type WebhookPayload = Record<string, unknown>
 
 type WebhookHeaders = {
     terrariumId: string

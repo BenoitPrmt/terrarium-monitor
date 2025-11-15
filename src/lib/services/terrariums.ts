@@ -52,6 +52,16 @@ export async function requireTerrariumForOwner(terrariumId: string, ownerId: str
 }
 
 export function serializeTerrarium(doc: TerrariumDocument) {
+    const healthCheck = doc.healthCheck
+        ? {
+              url: doc.healthCheck.url ?? "",
+              delayMinutes: doc.healthCheck.delayMinutes ?? 60,
+              isEnabled: Boolean(doc.healthCheck.isEnabled),
+              lastTriggeredAt: doc.healthCheck.lastTriggeredAt?.toISOString(),
+              secretId: doc.healthCheck.secretId ?? undefined,
+          }
+        : null
+
     return {
         id: doc._id.toString(),
         ownerId: doc.ownerId.toString(),
@@ -61,12 +71,8 @@ export function serializeTerrarium(doc: TerrariumDocument) {
         uuid: doc.uuid,
         createdAt: doc.createdAt?.toISOString(),
         updatedAt: doc.updatedAt?.toISOString(),
+        healthCheck,
     }
-}
-
-export async function getTerrariumByUuid(uuid: string) {
-    await connectMongoose()
-    return TerrariumModel.findOne({uuid})
 }
 
 export async function listTerrariumsForOwner(ownerId: string) {

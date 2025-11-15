@@ -1,14 +1,14 @@
 "use client"
 
-import {useActionState, useEffect} from "react"
-import {useFormStatus} from "react-dom"
-
-import {createWebhookAction} from "@/app/(dashboard)/dashboard/actions"
-import {Button} from "@/components/ui/button"
-import {Input} from "@/components/ui/input"
-import {Label} from "@/components/ui/label"
-import {toast} from "sonner"
+import {useActionState, useEffect} from "react";
+import {useFormStatus} from "react-dom";
+import {createWebhookAction} from "@/app/(dashboard)/dashboard/actions";
+import {Input} from "@/components/ui/input";
+import {Label} from "@/components/ui/label";
+import {toast} from "sonner";
 import {useTranslations} from "next-intl";
+import SaveSubmitButton from "@/components/form/SaveSubmitButton";
+import {CirclePlusIcon} from "lucide-react";
 
 const comparatorOptions = [
     {value: "gt", label: ">"},
@@ -17,19 +17,20 @@ const comparatorOptions = [
     {value: "lte", label: "<="},
 ]
 
-type ActionState = Awaited<ReturnType<typeof createWebhookAction>>
+type ActionState = Awaited<ReturnType<typeof createWebhookAction>>;
 
-const initialState: ActionState | null = null
+const initialState: ActionState | null = null;
 
 export function NewWebhookForm({terrariumId}: { terrariumId: string }) {
     const action = async (_state: ActionState | null, formData: FormData) => {
         return createWebhookAction(terrariumId, formData)
-    }
+    };
 
+    const {pending} = useFormStatus();
     const [state, formAction] = useActionState<ActionState | null, FormData>(
         action,
         initialState
-    )
+    );
     useEffect(() => {
         if (!state?.message) {
             return
@@ -97,18 +98,13 @@ export function NewWebhookForm({terrariumId}: { terrariumId: string }) {
                 <Input id="cooldownSec" name="cooldownSec" type="number" defaultValue={900}/>
             </div>
             <div className="md:col-span-2">
-                <SubmitButton/>
+                <SaveSubmitButton
+                    pending={pending}
+                    label={t('submit.label')}
+                    pendingLabel={t('submit.label')}
+                    icon={<CirclePlusIcon className="size-4"/>}
+                />
             </div>
         </form>
-    )
-}
-
-function SubmitButton() {
-    const {pending} = useFormStatus()
-    const t = useTranslations('Webhooks.form');
-    return (
-        <Button type="submit" disabled={pending}>
-            {pending ? t('submit.pending') : t('submit.label')}
-        </Button>
     )
 }

@@ -146,6 +146,18 @@ export async function POST(
 
     await Promise.all([aggregatesPromise, webhookPromise])
 
+    if (terrarium.healthCheck?.lastTriggeredAt) {
+        await TerrariumModel.updateOne(
+            {
+                _id: terrarium._id,
+                "healthCheck.lastTriggeredAt": {$ne: null},
+            },
+            {
+                $set: {"healthCheck.lastTriggeredAt": null},
+            }
+        )
+    }
+
     return NextResponse.json(
         {status: "accepted", ingested: inserted.length},
         {status: 202}

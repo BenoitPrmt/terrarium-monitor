@@ -9,6 +9,20 @@ import {
 
 import {TERRARIUM_LOCATION_VALUES} from "@/constants/terrarium-locations"
 
+const HealthCheckSchema = new Schema(
+    {
+        url: {type: String, trim: true, maxlength: 500},
+        delayMinutes: {type: Number, default: 60},
+        isEnabled: {type: Boolean, default: false},
+        lastTriggeredAt: {type: Date},
+        secretId: {type: String},
+    },
+    {
+        _id: false,
+        id: false,
+    }
+)
+
 const TerrariumSchema = new Schema(
     {
         ownerId: {type: Schema.Types.ObjectId, required: true},
@@ -21,6 +35,7 @@ const TerrariumSchema = new Schema(
         description: {type: String, trim: true, maxlength: 2000},
         uuid: {type: String, required: true, unique: true},
         deviceTokenHash: {type: String, required: true},
+        healthCheck: {type: HealthCheckSchema, default: undefined},
     },
     {
         timestamps: true,

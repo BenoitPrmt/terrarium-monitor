@@ -14,6 +14,7 @@ import {
     webhookCreateSchema,
     webhookUpdateSchema,
 } from "@/lib/validation/webhook"
+import {healthCheckUpdateSchema} from "@/lib/validation/health-check"
 import {terrariumActionCreateSchema} from "@/lib/validation/terrarium-action"
 import {
     requireTerrariumForOwner,
@@ -342,4 +343,69 @@ export async function testWebhookAction(
     )
 
     return {success: true, message: t('webhook.test.success')}
+}
+
+export async function updateHealthCheckWebhookAction(
+    terrariumId: string,
+    formData: FormData
+): Promise<ActionResult> {
+    const ownerId = await requireAuth()
+    await connectMongoose()
+    await ensureDbIndexes()
+    const t = await getActionsTranslator()
+
+    const rawUrl = (formData.get("url") ?? "").toString().trim()
+    const payload = {
+        url: rawUrl.length ? rawUrl : undefined,
+        delayMinutes: formData.get("delayMinutes")
+            ? Number(formData.get("delayMinutes"))
+            : undefined,
+        isEnabled: formData.get("isEnabled") === "true",
+    }
+
+    const parsed = healthCheckUpdateSchema.safeParse(payload)
+    if (!parsed.success) {
+        return {
+            success: false,
+            message: t("webhook.healthCheck.invalidPayload"),
+        }
+    }
+
+    const terrarium = await requireTerrariumForOwner(terrariumId, ownerId)
+
+    const nextConfig = {
+        url:
+            parsed.data.url ??
+            terrarium.healthCheck?.url ??
+            "",
+        delayMinutes:
+            parsed.data.delayMinutes ??
+            terrarium.healthCheck?.delayMinutes ??
+            60,
+        isEnabled: parsed.data.isEnabled,
+        secretId: terrarium.healthCheck?.secretId ?? generateUuid(),
+        lastTriggeredAt: parsed.data.isEnabled
+            ? terrarium.healthCheck?.lastTriggeredAt ?? null
+            : null,
+    }
+
+    const updated = await TerrariumModel.findByIdAndUpdate(
+        terrarium._id,
+        {
+            $set: {
+                healthCheck: nextConfig,
+            },
+        },
+        {new: true}
+    )
+
+    return {
+        success: true,
+        message: parsed.data.isEnabled
+            ? t("webhook.healthCheck.enabled")
+            : t("webhook.healthCheck.disabled"),
+        data: updated
+            ? serializeTerrarium(updated).healthCheck
+            : nextConfig,
+    }
 }

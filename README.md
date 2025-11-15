@@ -65,6 +65,7 @@ Next.js 16 dashboard for monitoring terrariums with MongoDB, NextAuth and Mongoo
 | GET/POST       | `/api/v1/terrariums/:id/webhooks`      | List/create webhooks               |
 | PUT/DELETE     | `/api/v1/terrariums/:id/webhooks/:wid` | Update/delete webhooks             |
 | POST           | `/api/v1/record/:uuid`                 | Public ingestion endpoint          |
+| POST           | `/api/v1/health-check`                 | Trigger downtime health-checks     |
 
 All `/api/v1/terrariums/*` routes (except ingestion) require an authenticated session.
 
@@ -113,3 +114,9 @@ Active webhooks with thresholds that match the ingested values will fire with:
   "samplesCountInBatch": 1
 }
 ```
+
+## Healthcheck webhooks
+
+Enable the “Healthcheck webhook” card in the dashboard to be notified when a terrarium stops sending samples. Schedule a cron job (for example with Vercel Cron) that hits `POST /api/v1/health-check` with the header `Authorization: Bearer ${HEALTHCHECK_CRON_SECRET}`.
+
+The endpoint scans all enabled terrariums, sends a single webhook per downtime window, and keeps quiet until a new measurement is ingested (which automatically resets the health check status).
