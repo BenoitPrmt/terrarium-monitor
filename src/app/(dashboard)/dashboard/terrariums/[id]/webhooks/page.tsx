@@ -8,9 +8,16 @@ import {
     serializeTerrarium,
 } from "@/lib/services/terrariums"
 import {WebhookModel} from "@/models/Webhook"
-import {Card, CardContent, CardHeader, CardTitle} from "@/components/ui/card"
+import {
+    Card,
+    CardContent,
+    CardDescription,
+    CardHeader,
+    CardTitle,
+} from "@/components/ui/card"
 import {NewWebhookForm} from "@/components/webhooks/NewWebhookForm"
 import {WebhookCard} from "@/components/webhooks/WebhookCard"
+import {HealthCheckWebhookCard} from "@/components/webhooks/HealthCheckWebhookCard"
 import {getTranslations} from "next-intl/server";
 
 type PageProps = {
@@ -37,6 +44,23 @@ export default async function WebhooksPage({params}: PageProps) {
         .sort({createdAt: -1})
         .lean()
 
+    const healthCheckConfig = terrariumDoc.healthCheck
+        ? {
+              url: terrariumDoc.healthCheck.url ?? "",
+              delayMinutes: terrariumDoc.healthCheck.delayMinutes ?? 60,
+              isEnabled: Boolean(terrariumDoc.healthCheck.isEnabled),
+              lastTriggeredAt:
+                  terrariumDoc.healthCheck.lastTriggeredAt?.toISOString(),
+              secretId: terrariumDoc.healthCheck.secretId ?? undefined,
+          }
+        : {
+              url: "",
+              delayMinutes: 60,
+              isEnabled: false,
+              lastTriggeredAt: undefined,
+              secretId: undefined,
+          }
+
     return (
         <div className="space-y-6">
             <div>
@@ -46,14 +70,30 @@ export default async function WebhooksPage({params}: PageProps) {
                 </p>
             </div>
 
-            <Card>
-                <CardHeader>
-                    <CardTitle>{t('newWebhook')}</CardTitle>
-                </CardHeader>
-                <CardContent>
-                    <NewWebhookForm terrariumId={terrarium.id}/>
-                </CardContent>
-            </Card>
+            <div className="grid gap-6 lg:grid-cols-2">
+                <Card>
+                    <CardHeader>
+                        <CardTitle>{t('newWebhook')}</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                        <NewWebhookForm terrariumId={terrarium.id}/>
+                    </CardContent>
+                </Card>
+                <Card>
+                    <CardHeader>
+                        <CardTitle>{t('healthCheck.title')}</CardTitle>
+                        <CardDescription>
+                            {t('healthCheck.description')}
+                        </CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                        <HealthCheckWebhookCard
+                            terrariumId={terrarium.id}
+                            config={healthCheckConfig}
+                        />
+                    </CardContent>
+                </Card>
+            </div>
 
             <div className="space-y-4">
                 {webhooks.map((webhook) => (

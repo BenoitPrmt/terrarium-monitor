@@ -271,7 +271,11 @@
       "title": "Webhooks",
       "description": "Automatisez des alertes pour {name}.",
       "newWebhook": "Nouveau webhook",
-      "empty": "Aucun webhook pour le moment."
+      "empty": "Aucun webhook pour le moment.",
+      "healthCheck": {
+        "title": "Webhook de surveillance",
+        "description": "Recevez une alerte quand aucun échantillon n’est reçu pendant la durée choisie."
+      }
     },
     "form": {
       "fields": {
@@ -286,6 +290,16 @@
         "label": "Créer",
         "pending": "Création..."
       }
+    },
+    "healthCheck": {
+      "fields": {
+        "url": "URL du webhook",
+        "delay": "Délai d’inactivité (minutes)",
+        "enabled": "Activer la surveillance"
+      },
+      "helper": "Nous enverrons ce webhook une seule fois lorsque le terrarium arrête d’envoyer des données pendant la durée configurée.",
+      "secretLabel": "Secret : {id}",
+      "lastTriggered": "Dernière alerte : {date}"
     },
     "card": {
       "fields": {
@@ -341,6 +355,11 @@
       },
       "test": {
         "success": "Payload de test envoyé avec succès !"
+      },
+      "healthCheck": {
+        "invalidPayload": "Données invalides pour configurer le webhook de surveillance.",
+        "enabled": "Webhook de surveillance activé !",
+        "disabled": "Webhook de surveillance désactivé."
       }
     }
   }

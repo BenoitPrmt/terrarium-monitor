@@ -1,5 +1,13 @@
 import type {TerrariumActionType} from "@/constants/terrarium-actions"
 
+export type HealthCheckConfig = {
+    url: string
+    delayMinutes: number
+    isEnabled: boolean
+    lastTriggeredAt?: string | null
+    secretId?: string
+}
+
 export type TerrariumSummary = {
     id: string
     ownerId: string
@@ -9,6 +17,7 @@ export type TerrariumSummary = {
     uuid: string
     createdAt?: string | null
     updatedAt?: string | null
+    healthCheck?: HealthCheckConfig | null
 }
 
 export type TerrariumActionEntry = {

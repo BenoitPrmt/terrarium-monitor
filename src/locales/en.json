@@ -271,7 +271,11 @@
       "title": "Webhooks",
       "description": "Automate alerts for {name}.",
       "newWebhook": "New webhook",
-      "empty": "No webhooks yet."
+      "empty": "No webhooks yet.",
+      "healthCheck": {
+        "title": "Healthcheck webhook",
+        "description": "Trigger an alert when no samples are received for the configured delay."
+      }
     },
     "form": {
       "fields": {
@@ -286,6 +290,16 @@
         "label": "Create",
         "pending": "Creating..."
       }
+    },
+    "healthCheck": {
+      "fields": {
+        "url": "Webhook URL",
+        "delay": "Downtime delay (minutes)",
+        "enabled": "Enable the healthcheck"
+      },
+      "helper": "We will trigger this webhook once when the terrarium stops sending data for the specified delay.",
+      "secretLabel": "Secret: {id}",
+      "lastTriggered": "Last downtime alert: {date}"
     },
     "card": {
       "fields": {
@@ -341,6 +355,11 @@
       },
       "test": {
         "success": "Test payload sent successfully!"
+      },
+      "healthCheck": {
+        "invalidPayload": "Invalid data to update the healthcheck webhook.",
+        "enabled": "Healthcheck webhook enabled!",
+        "disabled": "Healthcheck webhook disabled."
       }
     }
   }
