@@ -29,6 +29,8 @@ import {RecentSamplesSection} from "@/components/terrariums/RecentSamplesSection
 import {TerrariumHeader} from "@/components/terrariums/TerrariumHeader";
 import {TerrariumActionsSection} from "@/components/terrariums/TerrariumActionsSection";
 
+export const dynamic = "force-dynamic";
+
 type PageProps = {
     params: Promise<{id: string}>
     searchParams: {
@@ -50,11 +52,27 @@ export default async function TerrariumDetailPage({params, searchParams}: PagePr
     await connectMongoose()
     await ensureDbIndexes()
 
+    const rangeKey =
+        searchParams.range && METRIC_RANGE_MAP[searchParams.range]
+            ? searchParams.range
+            : "24h"
+
     const granularityParam = searchParams.granularity
+    const isGranularityValue = (
+        value: unknown
+    ): value is AggregateGranularity =>
+        typeof value === "string" &&
+        CHART_GRANULARITIES.includes(value as AggregateGranularity)
+
+    const defaultGranularityForRange: AggregateGranularity =
+        rangeKey === "24h" ? "raw" : "hourly"
+    const requestedGranularity: AggregateGranularity = isGranularityValue(granularityParam)
+        ? granularityParam
+        : defaultGranularityForRange
     const initialGranularity: AggregateGranularity =
-        granularityParam && CHART_GRANULARITIES.includes(granularityParam as AggregateGranularity)
-            ? (granularityParam as AggregateGranularity)
-            : "raw"
+        rangeKey === "24h" || requestedGranularity !== "raw"
+            ? requestedGranularity
+            : "hourly"
 
     const metricParam = searchParams.metric
     const hourOfDayMetricParam = searchParams.hourOfDayMetric
@@ -71,14 +89,19 @@ export default async function TerrariumDetailPage({params, searchParams}: PagePr
         ? hourOfDayMetricParam
         : DEFAULT_SECONDARY_METRIC_KEY
 
-    const rangeKey =
-        searchParams.range && METRIC_RANGE_MAP[searchParams.range]
-            ? searchParams.range
-            : "24h"
-
-    const hours = METRIC_RANGE_MAP[rangeKey]
-    const to = new Date()
-    const from = new Date(to.getTime() - hours * 60 * 60 * 1000)
+    const to = new Date();
+    const granularityRangeHours: Record<AggregateGranularity, number> = {
+        raw: METRIC_RANGE_MAP["24h"],
+        hourly: METRIC_RANGE_MAP["30d"],
+        daily: METRIC_RANGE_MAP["30d"],
+        byHourOfDay: METRIC_RANGE_MAP["30d"],
+    };
+    const granularityLimits: Record<AggregateGranularity, number> = {
+        raw: 5000,
+        hourly: 2000,
+        daily: 2000,
+        byHourOfDay: 2000,
+    };
 
     const terrariumDoc = await requireTerrariumForOwner(id, user.id)
     const terrarium = serializeTerrarium(terrariumDoc)
@@ -90,6 +113,8 @@ export default async function TerrariumDetailPage({params, searchParams}: PagePr
 
     const granularityDatasets: GranularityDataset[] = await Promise.all(
         CHART_GRANULARITIES.map(async (granularity) => {
+            const rangeHours = granularityRangeHours[granularity] ?? METRIC_RANGE_MAP["30d"]
+            const from = new Date(to.getTime() - rangeHours * 60 * 60 * 1000)
             const datasets = await Promise.all(
                 METRIC_DISPLAY_CONFIGS.map((metric) =>
                     getAggregates({
@@ -98,7 +123,7 @@ export default async function TerrariumDetailPage({params, searchParams}: PagePr
                         granularity,
                         from,
                         to,
-                        limit: 500,
+                        limit: granularityLimits[granularity],
                     })
                 )
             )
@@ -148,6 +173,7 @@ export default async function TerrariumDetailPage({params, searchParams}: PagePr
                 initialMetric={initialMetric}
                 initialGranularity={initialGranularity}
                 initialRange={rangeKey}
+                requestedAt={to.toISOString()}
             />
             <div className="grid gap-6 lg:grid-cols-[1fr_2fr]">
                 <TerrariumActionsSection
