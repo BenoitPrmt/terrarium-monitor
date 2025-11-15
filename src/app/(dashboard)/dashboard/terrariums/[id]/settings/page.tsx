@@ -10,6 +10,7 @@ import {Card, CardContent, CardHeader, CardTitle} from "@/components/ui/card"
 import {TerrariumSettingsForm} from "@/components/terrariums/TerrariumSettingsForm"
 import {RotateTokenForm} from "@/components/terrariums/RotateTokenForm"
 import {DeleteTerrariumForm} from "@/components/terrariums/form/DeleteTerrariumForm"
+import {getTranslations} from "next-intl/server";
 
 type PageProps = {
     params: Promise<{ id: string }>
@@ -17,6 +18,7 @@ type PageProps = {
 
 export default async function TerrariumSettingsPage({params}: PageProps) {
     const user = await currentUser()
+    const t = await getTranslations('Terrariums.settings');
     if (!user) {
         redirect("/login")
     }
@@ -31,15 +33,15 @@ export default async function TerrariumSettingsPage({params}: PageProps) {
     return (
         <div className="space-y-6">
             <div>
-                <h1 className="text-2xl font-semibold">Paramètres</h1>
+                <h1 className="text-2xl font-semibold">{t('title')}</h1>
                 <p className="text-muted-foreground">
-                    Gérez les informations publiques et les accès de votre terrarium.
+                    {t('description')}
                 </p>
             </div>
 
             <Card>
                 <CardHeader>
-                    <CardTitle>Informations</CardTitle>
+                    <CardTitle>{t('sections.details')}</CardTitle>
                 </CardHeader>
                 <CardContent>
                     <TerrariumSettingsForm
@@ -53,13 +55,11 @@ export default async function TerrariumSettingsPage({params}: PageProps) {
 
             <Card>
                 <CardHeader>
-                    <CardTitle>Token d’accès appareil</CardTitle>
+                    <CardTitle>{t('sections.token')}</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-3">
                     <p className="text-sm text-muted-foreground">
-                        Le token n’est pas stocké en clair. Pour connecter un nouvel appareil ou
-                        remplacer un capteur, régénérez un token et mettez à jour votre
-                        configuration.
+                        {t('tokenDescription')}
                     </p>
                     <RotateTokenForm terrariumId={terrarium.id}/>
                 </CardContent>
@@ -67,11 +67,11 @@ export default async function TerrariumSettingsPage({params}: PageProps) {
 
             <Card className="border-red-300">
                 <CardHeader>
-                    <CardTitle className="text-red-600">Suppression</CardTitle>
+                    <CardTitle className="text-red-600">{t('sections.deletion')}</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-3">
                     <p className="text-sm text-muted-foreground">
-                        Cette action est irréversible et supprimera toutes les données associées.
+                        {t('deletionDescription')}
                     </p>
                     <DeleteTerrariumForm terrariumId={terrarium.id}/>
                 </CardContent>

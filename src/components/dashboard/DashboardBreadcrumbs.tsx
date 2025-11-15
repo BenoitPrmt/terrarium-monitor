@@ -11,32 +11,33 @@ import {
     BreadcrumbPage,
     BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb"
-
-const labelMap: Record<string, string> = {
-    terrariums: "Terrariums",
-    new: "Nouveau",
-    settings: "Paramètres",
-    webhooks: "Webhooks",
-    dashboard: "Dashboard",
-}
-
-function formatLabel(segment: string) {
-    if (labelMap[segment]) {
-        return labelMap[segment]
-    }
-
-    return segment
-        .split("-")
-        .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
-        .join(" ")
-}
+import {useTranslations} from "next-intl";
 
 export function DashboardBreadcrumbs() {
     const segments = useSelectedLayoutSegments()
+    const t = useTranslations('Navigation.Breadcrumbs');
+    const labelKeyMap: Record<string, string> = {
+        terrariums: 'segments.terrariums',
+        new: 'segments.new',
+        settings: 'segments.settings',
+        webhooks: 'segments.webhooks',
+        dashboard: 'segments.dashboard',
+    };
+
+    const formatLabel = React.useCallback((segment: string) => {
+        const key = labelKeyMap[segment];
+        if (key) {
+            return t(key);
+        }
+        return segment
+            .split("-")
+            .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+            .join(" ");
+    }, [t]);
 
     const items = React.useMemo(() => {
         const list: Array<{ href: string; label: string }> = [
-            {href: "/dashboard", label: "Dashboard"},
+            {href: "/dashboard", label: formatLabel("dashboard")},
         ]
 
         let href = "/dashboard"
@@ -49,10 +50,10 @@ export function DashboardBreadcrumbs() {
         })
 
         return list
-    }, [segments])
+    }, [formatLabel, segments])
 
     return (
-        <Breadcrumb>
+        <Breadcrumb aria-label={t('ariaLabel')}>
             <BreadcrumbList>
                 <BreadcrumbSeparator/>
 

@@ -17,12 +17,13 @@ import type {MetricType} from "@/models/constants"
 import {Loader2Icon, SendIcon, Trash2Icon} from "lucide-react";
 import SaveSubmitButton from "@/components/form/SaveSubmitButton";
 import {toast} from "sonner"
+import {useLocale, useTranslations} from "next-intl";
 
-const metricOptions = [
-    {value: "TEMPERATURE", label: "Température"},
-    {value: "HUMIDITY", label: "Humidité"},
-    {value: "PRESSURE", label: "Pression"},
-    {value: "ALTITUDE", label: "Altitude"},
+const metricOptionsBase = [
+    {value: "TEMPERATURE", key: "temperature"},
+    {value: "HUMIDITY", key: "humidity"},
+    {value: "PRESSURE", key: "pressure"},
+    {value: "ALTITUDE", key: "altitude"},
 ]
 
 const comparatorOptions = [
@@ -54,6 +55,14 @@ const initialState: ActionState | null = null
 
 export function WebhookCard({terrariumId, webhook}: Props) {
     const {pending} = useFormStatus();
+    const t = useTranslations('Webhooks.card');
+    const common = useTranslations('Common');
+    const metricsT = useTranslations('Common.metrics');
+    const locale = useLocale();
+    const metricOptions = metricOptionsBase.map((option) => ({
+        value: option.value,
+        label: metricsT(option.key as keyof Record<string, string>),
+    }));
     const action = async (_state: ActionState | null, formData: FormData) => {
         return updateWebhookAction(terrariumId, webhook.id, formData)
     }
@@ -92,7 +101,7 @@ export function WebhookCard({terrariumId, webhook}: Props) {
             <form action={formAction} className="space-y-4">
                 <div className="grid gap-4 md:grid-cols-2">
                     <div className="space-y-2">
-                        <Label htmlFor={`name-${webhook.id}`}>Nom</Label>
+                        <Label htmlFor={`name-${webhook.id}`}>{t('fields.name')}</Label>
                         <Input
                             id={`name-${webhook.id}`}
                             name="name"
@@ -101,7 +110,7 @@ export function WebhookCard({terrariumId, webhook}: Props) {
                         />
                     </div>
                     <div className="space-y-2">
-                        <Label htmlFor={`url-${webhook.id}`}>URL</Label>
+                        <Label htmlFor={`url-${webhook.id}`}>{t('fields.url')}</Label>
                         <Input
                             id={`url-${webhook.id}`}
                             name="url"
@@ -113,7 +122,7 @@ export function WebhookCard({terrariumId, webhook}: Props) {
                 </div>
                 <div className="grid gap-4 md:grid-cols-4">
                     <div className="space-y-2">
-                        <Label>Metric</Label>
+                        <Label>{t('fields.metric')}</Label>
                         <select
                             className="w-full rounded-md border border-input bg-transparent px-3 py-2"
                             value={metric}
@@ -128,7 +137,7 @@ export function WebhookCard({terrariumId, webhook}: Props) {
                         <input type="hidden" name="metric" value={metric}/>
                     </div>
                     <div className="space-y-2">
-                        <Label>Comparateur</Label>
+                        <Label>{t('fields.comparator')}</Label>
                         <select
                             className="w-full rounded-md border border-input bg-transparent px-3 py-2"
                             value={comparator}
@@ -143,7 +152,7 @@ export function WebhookCard({terrariumId, webhook}: Props) {
                         <input type="hidden" name="comparator" value={comparator}/>
                     </div>
                     <div className="space-y-2">
-                        <Label htmlFor={`threshold-${webhook.id}`}>Seuil</Label>
+                        <Label htmlFor={`threshold-${webhook.id}`}>{t('fields.threshold')}</Label>
                         <Input
                             id={`threshold-${webhook.id}`}
                             name="threshold"
@@ -153,7 +162,7 @@ export function WebhookCard({terrariumId, webhook}: Props) {
                         />
                     </div>
                     <div className="space-y-2">
-                        <Label htmlFor={`cooldown-${webhook.id}`}>Cooldown (sec)</Label>
+                        <Label htmlFor={`cooldown-${webhook.id}`}>{t('fields.cooldown')}</Label>
                         <Input
                             id={`cooldown-${webhook.id}`}
                             name="cooldownSec"
@@ -169,7 +178,7 @@ export function WebhookCard({terrariumId, webhook}: Props) {
                             checked={isActive}
                             onCheckedChange={(checked) => setIsActive(checked)}
                         />
-                        <Label htmlFor={`active-${webhook.id}`}>Actif</Label>
+                        <Label htmlFor={`active-${webhook.id}`}>{t('fields.active')}</Label>
                         <input
                             type="hidden"
                             name="isActive"
@@ -181,11 +190,16 @@ export function WebhookCard({terrariumId, webhook}: Props) {
             </form>
             <div className="flex flex-wrap items-center gap-3 text-sm text-muted-foreground">
                 {webhook.secretId && (
-                    <Badge variant="default">Secret: {webhook.secretId}</Badge>
+                    <Badge variant="default">{t('secretLabel', {id: webhook.secretId})}</Badge>
                 )}
                 {webhook.lastTriggeredAt && (
                     <span>
-                        Dernier envoi: {new Date(webhook.lastTriggeredAt).toLocaleString()}
+                        {t('lastTriggered', {
+                            date: new Intl.DateTimeFormat(locale, {
+                                dateStyle: "medium",
+                                timeStyle: "short",
+                            }).format(new Date(webhook.lastTriggeredAt)),
+                        })}
                     </span>
                 )}
             </div>
@@ -208,12 +222,12 @@ export function WebhookCard({terrariumId, webhook}: Props) {
                     {testPending ? (
                         <>
                             <Loader2Icon className="size-4 animate-spin" />
-                            Test...
+                            {t('actions.testing')}
                         </>
                     ) : (
                         <>
                             <SendIcon className="size-4" />
-                            Tester
+                            {t('actions.test')}
                         </>
                     )}
                 </Button>
@@ -235,12 +249,12 @@ export function WebhookCard({terrariumId, webhook}: Props) {
                     {deletePending ? (
                         <>
                             <Loader2Icon className="size-4 animate-spin" />
-                            Suppression...
+                            {t('actions.deleting')}
                         </>
                     ) : (
                         <>
                             <Trash2Icon className="size-4" />
-                            Supprimer
+                            {common('actions.delete')}
                         </>
                     )}
                 </Button>

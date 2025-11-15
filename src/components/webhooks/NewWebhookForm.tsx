@@ -1,21 +1,14 @@
 "use client"
 
-import {useActionState, useEffect} from "react"
-import {useFormStatus} from "react-dom"
-
-import {createWebhookAction} from "@/app/(dashboard)/dashboard/actions"
-import {Button} from "@/components/ui/button"
-import {Input} from "@/components/ui/input"
-import {Label} from "@/components/ui/label"
-import {Textarea} from "@/components/ui/textarea"
-import {toast} from "sonner"
-
-const metricOptions = [
-    {value: "TEMPERATURE", label: "Température"},
-    {value: "HUMIDITY", label: "Humidité"},
-    {value: "PRESSURE", label: "Pression"},
-    {value: "ALTITUDE", label: "Altitude"},
-]
+import {useActionState, useEffect} from "react";
+import {useFormStatus} from "react-dom";
+import {createWebhookAction} from "@/app/(dashboard)/dashboard/actions";
+import {Input} from "@/components/ui/input";
+import {Label} from "@/components/ui/label";
+import {toast} from "sonner";
+import {useTranslations} from "next-intl";
+import SaveSubmitButton from "@/components/form/SaveSubmitButton";
+import {CirclePlusIcon} from "lucide-react";
 
 const comparatorOptions = [
     {value: "gt", label: ">"},
@@ -24,19 +17,20 @@ const comparatorOptions = [
     {value: "lte", label: "<="},
 ]
 
-type ActionState = Awaited<ReturnType<typeof createWebhookAction>>
+type ActionState = Awaited<ReturnType<typeof createWebhookAction>>;
 
-const initialState: ActionState | null = null
+const initialState: ActionState | null = null;
 
 export function NewWebhookForm({terrariumId}: { terrariumId: string }) {
     const action = async (_state: ActionState | null, formData: FormData) => {
         return createWebhookAction(terrariumId, formData)
-    }
+    };
 
+    const {pending} = useFormStatus();
     const [state, formAction] = useActionState<ActionState | null, FormData>(
         action,
         initialState
-    )
+    );
     useEffect(() => {
         if (!state?.message) {
             return
@@ -48,18 +42,27 @@ export function NewWebhookForm({terrariumId}: { terrariumId: string }) {
         }
     }, [state])
 
+    const t = useTranslations('Webhooks.form');
+    const metricsT = useTranslations('Common.metrics');
+    const metricOptions = [
+        {value: "TEMPERATURE", label: metricsT('temperature')},
+        {value: "HUMIDITY", label: metricsT('humidity')},
+        {value: "PRESSURE", label: metricsT('pressure')},
+        {value: "ALTITUDE", label: metricsT('altitude')},
+    ];
+
     return (
         <form action={formAction} className="grid gap-4 md:grid-cols-2">
             <div className="space-y-2">
-                <Label htmlFor="name">Nom</Label>
+                <Label htmlFor="name">{t('fields.name')}</Label>
                 <Input id="name" name="name" required/>
             </div>
             <div className="space-y-2">
-                <Label htmlFor="url">URL</Label>
+                <Label htmlFor="url">{t('fields.url')}</Label>
                 <Input id="url" name="url" type="url" required/>
             </div>
             <div className="space-y-2">
-                <Label>Metric</Label>
+                <Label>{t('fields.metric')}</Label>
                 <select
                     name="metric"
                     className="w-full rounded-md border border-input bg-transparent px-3 py-2"
@@ -73,7 +76,7 @@ export function NewWebhookForm({terrariumId}: { terrariumId: string }) {
                 </select>
             </div>
             <div className="space-y-2">
-                <Label>Comparateur</Label>
+                <Label>{t('fields.comparator')}</Label>
                 <select
                     name="comparator"
                     className="w-full rounded-md border border-input bg-transparent px-3 py-2"
@@ -87,25 +90,21 @@ export function NewWebhookForm({terrariumId}: { terrariumId: string }) {
                 </select>
             </div>
             <div className="space-y-2">
-                <Label htmlFor="threshold">Seuil</Label>
+                <Label htmlFor="threshold">{t('fields.threshold')}</Label>
                 <Input id="threshold" name="threshold" type="number" step="0.1" required/>
             </div>
             <div className="space-y-2">
-                <Label htmlFor="cooldownSec">Cooldown (sec)</Label>
+                <Label htmlFor="cooldownSec">{t('fields.cooldown')}</Label>
                 <Input id="cooldownSec" name="cooldownSec" type="number" defaultValue={900}/>
             </div>
             <div className="md:col-span-2">
-                <SubmitButton/>
+                <SaveSubmitButton
+                    pending={pending}
+                    label={t('submit.label')}
+                    pendingLabel={t('submit.label')}
+                    icon={<CirclePlusIcon className="size-4"/>}
+                />
             </div>
         </form>
-    )
-}
-
-function SubmitButton() {
-    const {pending} = useFormStatus()
-    return (
-        <Button type="submit" disabled={pending}>
-            {pending ? "Création..." : "Créer"}
-        </Button>
     )
 }

@@ -1,5 +1,6 @@
 "use client"
 
+import {useMemo} from "react"
 import {Bar, BarChart, CartesianGrid, XAxis, YAxis} from "recharts"
 import {
     ChartContainer,
@@ -7,6 +8,7 @@ import {
     ChartTooltipContent,
     type ChartConfig,
 } from "@/components/ui/chart"
+import {useTranslations, useLocale} from "next-intl";
 
 type Props = {
     data: Array<{
@@ -16,17 +18,27 @@ type Props = {
     color?: string;
     label?: string;
     unitLabel?: string;
+    locale?: string;
 }
 
 export function CompareHoursChart({
                                       data,
                                       color = "#22c55e",
-                                      label = "Moyenne",
+                                      label,
                                       unitLabel = "",
+                                      locale,
                                   }: Props) {
+    const t = useTranslations('Terrariums.hourOfDay');
+    const resolvedLabel = label ?? t('averageLabel');
+    const resolvedLocale = locale ?? useLocale();
+    const numberFormatter = useMemo(
+        () => new Intl.NumberFormat(resolvedLocale, {maximumFractionDigits: 2}),
+        [resolvedLocale]
+    );
+
     const config: ChartConfig = {
         value: {
-            label,
+            label: resolvedLabel,
             color,
         },
     }
@@ -37,14 +49,14 @@ export function CompareHoursChart({
                 <CartesianGrid strokeDasharray="3 3" vertical={false}/>
                 <XAxis
                     dataKey="hourOfDay"
-                    tickFormatter={(value) => `${value}h`}
+                    tickFormatter={(value) => t('hourLabel', {value})}
                     interval={1}
                 />
                 <YAxis/>
                 <ChartTooltip
                     content={<ChartTooltipContent/>}
                     labelFormatter={(value) => `${value}`}
-                    formatter={(value) => [`${value as number}`, unitLabel]}
+                    formatter={(value) => [numberFormatter.format(value as number), unitLabel]}
                 />
                 <Bar
                     dataKey="value"

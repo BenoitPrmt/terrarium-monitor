@@ -6,12 +6,15 @@ import {User} from "next-auth";
 import Link from "next/link";
 import {ThemeToggle} from "@/components/theme/ThemeToggle";
 import {WEBSITE_NAME} from "@/constants/website";
+import {useTranslations} from "next-intl";
+import LanguageSelector from "@/components/locale/LanguageSelector";
 
 type HeaderProps = {
     session: User | null;
 };
 
 const Header = ({session}: HeaderProps) => {
+    const t = useTranslations('Navigation.Header');
     const isAuthenticated = !!session;
 
     return (
@@ -21,19 +24,18 @@ const Header = ({session}: HeaderProps) => {
                 <Link href="/">{WEBSITE_NAME}</Link>
             </div>
             <div className="space-x-4 flex flex-row items-center">
-                <Button variant="ghost">Fonctionnalités</Button>
-                <Button variant="ghost" onClick={() => window.location.href = '/pricing'}>Tarifs</Button>
 
+                <LanguageSelector />
                 <ThemeToggle/>
 
                 {isAuthenticated && (
                     <Button onClick={() => window.location.href = '/dashboard'}>
-                        <Grid2X2/> Tableau de bord
+                        <Grid2X2/> {t('links.dashboard')}
                     </Button>
                 )}
 
                 {!isAuthenticated &&
-                    <ShinyButton onClick={() => window.location.href = '/login'}>Connexion</ShinyButton>
+                    <ShinyButton onClick={() => window.location.href = '/login'}>{t('links.login')}</ShinyButton>
                 }
 
             </div>

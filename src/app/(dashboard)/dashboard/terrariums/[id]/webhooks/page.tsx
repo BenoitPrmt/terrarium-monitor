@@ -8,9 +8,17 @@ import {
     serializeTerrarium,
 } from "@/lib/services/terrariums"
 import {WebhookModel} from "@/models/Webhook"
-import {Card, CardContent, CardHeader, CardTitle} from "@/components/ui/card"
+import {
+    Card,
+    CardContent,
+    CardDescription,
+    CardHeader,
+    CardTitle,
+} from "@/components/ui/card"
 import {NewWebhookForm} from "@/components/webhooks/NewWebhookForm"
 import {WebhookCard} from "@/components/webhooks/WebhookCard"
+import {HealthCheckWebhookCard} from "@/components/webhooks/HealthCheckWebhookCard"
+import {getTranslations} from "next-intl/server";
 
 type PageProps = {
     params: Promise<{ id: string }>
@@ -18,6 +26,7 @@ type PageProps = {
 
 export default async function WebhooksPage({params}: PageProps) {
     const user = await currentUser()
+    const t = await getTranslations('Webhooks.page');
     if (!user) {
         redirect("/login")
     }
@@ -35,23 +44,56 @@ export default async function WebhooksPage({params}: PageProps) {
         .sort({createdAt: -1})
         .lean()
 
+    const healthCheckConfig = terrariumDoc.healthCheck
+        ? {
+              url: terrariumDoc.healthCheck.url ?? "",
+              delayMinutes: terrariumDoc.healthCheck.delayMinutes ?? 60,
+              isEnabled: Boolean(terrariumDoc.healthCheck.isEnabled),
+              lastTriggeredAt:
+                  terrariumDoc.healthCheck.lastTriggeredAt?.toISOString(),
+              secretId: terrariumDoc.healthCheck.secretId ?? undefined,
+          }
+        : {
+              url: "",
+              delayMinutes: 60,
+              isEnabled: false,
+              lastTriggeredAt: undefined,
+              secretId: undefined,
+          }
+
     return (
         <div className="space-y-6">
             <div>
-                <h1 className="text-2xl font-semibold">Webhooks</h1>
+                <h1 className="text-2xl font-semibold">{t('title')}</h1>
                 <p className="text-muted-foreground">
-                    Automatisez des alertes pour {terrarium.name}.
+                    {t('description', {name: terrarium.name})}
                 </p>
             </div>
 
-            <Card>
-                <CardHeader>
-                    <CardTitle>Nouveau webhook</CardTitle>
-                </CardHeader>
-                <CardContent>
-                    <NewWebhookForm terrariumId={terrarium.id}/>
-                </CardContent>
-            </Card>
+            <div className="grid gap-6 lg:grid-cols-2">
+                <Card>
+                    <CardHeader>
+                        <CardTitle>{t('newWebhook')}</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                        <NewWebhookForm terrariumId={terrarium.id}/>
+                    </CardContent>
+                </Card>
+                <Card>
+                    <CardHeader>
+                        <CardTitle>{t('healthCheck.title')}</CardTitle>
+                        <CardDescription>
+                            {t('healthCheck.description')}
+                        </CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                        <HealthCheckWebhookCard
+                            terrariumId={terrarium.id}
+                            config={healthCheckConfig}
+                        />
+                    </CardContent>
+                </Card>
+            </div>
 
             <div className="space-y-4">
                 {webhooks.map((webhook) => (
@@ -74,7 +116,7 @@ export default async function WebhooksPage({params}: PageProps) {
                 ))}
                 {webhooks.length === 0 && (
                     <p className="text-sm text-muted-foreground">
-                        Aucun webhook pour le moment.
+                        {t('empty')}
                     </p>
                 )}
             </div>

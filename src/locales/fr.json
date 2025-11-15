@@ -1,0 +1,366 @@
+{
+  "Navigation": {
+    "Header": {
+      "links": {
+        "features": "Fonctionnalités",
+        "pricing": "Tarifs",
+        "dashboard": "Tableau de bord",
+        "login": "Connexion"
+      }
+    },
+    "Footer": {
+      "tagline": "Supervisez chaque terrarium en toute simplicité.",
+      "sections": {
+        "quickLinks": "Liens rapides",
+        "legal": "Informations légales"
+      },
+      "links": {
+        "home": "Accueil",
+        "pricing": "Tarifs",
+        "login": "Connexion",
+        "terms": "Conditions d’utilisation",
+        "privacy": "Politique de confidentialité",
+        "legal": "Mentions légales"
+      },
+      "copyright": "© {year} {brand}. Tous droits réservés."
+    },
+    "Sidebar": {
+      "links": {
+        "dashboard": "Tableau de bord",
+        "terrariums": "Terrariums"
+      },
+      "logoAlt": "Logo Terra",
+      "sections": {
+        "terrariums": "Terrariums",
+        "management": "Gestion"
+      }
+    },
+    "User": {
+      "anonymous": "Utilisateur",
+      "languageSelector": "Sélectionner la langue",
+      "account": "Mon compte",
+      "logout": "Déconnexion"
+    },
+    "Breadcrumbs": {
+      "segments": {
+        "dashboard": "Dashboard",
+        "terrariums": "Terrariums",
+        "new": "Nouveau",
+        "settings": "Paramètres",
+        "webhooks": "Webhooks"
+      },
+      "ariaLabel": "Fil d’Ariane"
+    }
+  },
+  "Common": {
+    "fields": {
+      "name": "Nom",
+      "location": "Lieu",
+      "createdAt": "Créé le",
+      "actions": "Actions",
+      "description": "Description"
+    },
+    "actions": {
+      "newTerrarium": "Nouveau terrarium",
+      "back": "Retour",
+      "copy": "Copier",
+      "copied": "Copié",
+      "cancel": "Annuler",
+      "confirm": "Confirmer",
+      "delete": "Supprimer"
+    },
+    "placeholders": {
+      "location": "Choisir un emplacement"
+    },
+    "status": {
+      "notAvailable": "—"
+    },
+    "metrics": {
+      "temperature": "Température",
+      "humidity": "Humidité",
+      "pressure": "Pression",
+      "altitude": "Altitude"
+    },
+    "locations": {
+      "living_room": "Salon",
+      "bedroom": "Chambre",
+      "kitchen": "Cuisine",
+      "bathroom": "Salle de bain",
+      "dining_room": "Salle à manger",
+      "garden": "Jardin",
+      "balcony": "Balcon",
+      "office": "Bureau",
+      "toilet": "Toilettes",
+      "other": "Autre"
+    }
+  },
+  "ThemeToggle": {
+    "label": "Changer de thème",
+    "options": {
+      "light": "Clair",
+      "dark": "Sombre",
+      "system": "Système"
+    }
+  },
+  "NotFound": {
+    "title": "Page introuvable",
+    "description": "Oups ! Cette page n’existe pas ou a été déplacée.",
+    "cta": "Retour à l’accueil"
+  },
+  "Landing": {
+    "title": "Page d’accueil"
+  },
+  "Dashboard": {
+    "Home": {
+      "title": "Tableau de bord",
+      "subtitle": "Suivez tous vos terrariums et leurs dernières mesures.",
+      "stats": {
+        "terrariums": "Terrariums",
+        "lastIngestion": "Dernière ingestion",
+        "activeWebhooks": "Webhooks actifs"
+      },
+      "table": {
+        "title": "Terrariums",
+        "description": "Gérez vos appareils connectés.",
+        "actions": {
+          "new": "Nouveau",
+          "view": "Voir le terrarium",
+          "settings": "Paramètres du terrarium",
+          "webhooks": "Gérer les webhooks"
+        },
+        "empty": "Aucun terrarium pour le moment."
+      }
+    },
+    "metrics": {
+      "granularity": {
+        "raw": "Points bruts",
+        "hourly": "Agrégation horaire",
+        "daily": "Agrégation journalière"
+      },
+      "range": {
+        "24h": "Dernières 24h",
+        "7d": "7 jours",
+        "30d": "30 jours"
+      }
+    }
+  },
+  "Forms": {
+    "saveButton": {
+      "label": "Enregistrer",
+      "pending": "Enregistrement..."
+    }
+  },
+  "Terrariums": {
+    "list": {
+      "title": "Vos terrariums",
+      "description": "Sélectionnez un terrarium pour consulter les mesures ou gérer les paramètres.",
+      "emptyDescription": "Aucune description fournie.",
+      "createdOn": "Créé le",
+      "emptyState": "Aucun terrarium pour le moment. Créez-en un pour commencer !"
+    },
+    "new": {
+      "title": "Nouveau terrarium",
+      "description": "Configurez un appareil et récupérez son token d’accès.",
+      "formTitle": "Informations"
+    },
+    "settings": {
+      "title": "Paramètres",
+      "description": "Gérez les informations publiques et les accès de votre terrarium.",
+      "sections": {
+        "details": "Informations",
+        "token": "Token d’accès appareil",
+        "deletion": "Suppression"
+      },
+      "tokenDescription": "Le token n’est pas stocké en clair. Régénérez-en un pour connecter un nouvel appareil ou remplacer un capteur.",
+      "deletionDescription": "Cette action est irréversible et supprimera toutes les données associées."
+    },
+    "form": {
+      "placeholders": {
+        "name": "Terrarium tropical",
+        "description": "Notes sur le dispositif, capteurs, etc."
+      },
+      "submit": {
+        "label": "Créer le terrarium",
+        "pending": "Création..."
+      }
+    },
+    "token": {
+      "title": "Nouveau token",
+      "pending": "Régénération...",
+      "cta": "Régénérer le token"
+    },
+    "delete": {
+      "trigger": "Supprimer le terrarium",
+      "title": "Supprimer ce terrarium ?",
+      "description": "Toutes les mesures, agrégations et webhooks liés seront supprimés définitivement."
+    },
+    "header": {
+      "label": "Terrarium",
+      "identifier": "Identifiant :",
+      "createdOn": "Créé le {date}",
+      "actions": {
+        "settings": "Paramètres",
+        "webhooks": "Webhooks"
+      }
+    },
+    "metrics": {
+      "ariaLastUpdated": "Dernière mise à jour {date}",
+      "tooltip": "Dernière mise à jour : {date}",
+      "updatedAgo": "Actualisé il y a {value}",
+      "noRecentData": "Aucune donnée récente",
+      "changeWindow": "{value} sur 24h",
+      "noChange": "Pas assez de données sur 24h"
+    },
+    "series": {
+      "title": "Séries temporelles",
+      "description": "Analysez chaque métrique sur l’intervalle sélectionné.",
+      "valueLabel": "Valeur",
+      "currentView": "Vue actuelle",
+      "rangeLabel": "Intervalle : {range}",
+      "placeholders": {
+        "range": "Période",
+        "granularity": "Granularité",
+        "metric": "Métrique"
+      }
+    },
+    "hourOfDay": {
+      "title": "Analyse par heure de la journée",
+      "description": "Identifiez les heures typiques de pics ou de creux pour chaque métrique.",
+      "subtitle": "Métrique analysée",
+      "placeholder": "Choisir une métrique",
+      "averageLabel": "Moyenne",
+      "hourLabel": "{value}h"
+    },
+    "samples": {
+      "title": "Mesures récentes",
+      "description": "20 derniers échantillons ingérés.",
+      "headers": {
+        "type": "Type",
+        "value": "Valeur",
+        "timestamp": "Horodatage"
+      },
+      "empty": "Pas encore de données."
+    }
+  },
+  "Terrarium": {
+    "care": {
+      "title": "Actions récentes",
+      "description": "Gardez un historique des soins apportés à ce terrarium.",
+      "form": {
+        "type": "Type d’action",
+        "notes": "Notes",
+        "placeholder": "Ex : Arrosage léger ce matin.",
+        "submit": "Ajouter"
+      },
+      "logTitle": "Journal des actions",
+      "logEmpty": "Aucune action n’a encore été enregistrée.",
+      "actions": {
+        "showMore": "Voir plus"
+      }
+    },
+    "actions": {
+      "watering": "Arrosage",
+      "feeding": "Nourrissage",
+      "cleaning": "Nettoyage",
+      "maintenance": "Maintenance",
+      "other": "Autre"
+    }
+  },
+  "Webhooks": {
+    "page": {
+      "title": "Webhooks",
+      "description": "Automatisez des alertes pour {name}.",
+      "newWebhook": "Nouveau webhook",
+      "empty": "Aucun webhook pour le moment.",
+      "healthCheck": {
+        "title": "Webhook de surveillance",
+        "description": "Recevez une alerte quand aucun échantillon n’est reçu pendant la durée choisie."
+      }
+    },
+    "form": {
+      "fields": {
+        "name": "Nom",
+        "url": "URL",
+        "metric": "Métrique",
+        "comparator": "Comparateur",
+        "threshold": "Seuil",
+        "cooldown": "Cooldown (sec)"
+      },
+      "submit": {
+        "label": "Créer",
+        "pending": "Création..."
+      }
+    },
+    "healthCheck": {
+      "fields": {
+        "url": "URL du webhook",
+        "delay": "Délai d’inactivité (minutes)",
+        "enabled": "Activer la surveillance"
+      },
+      "helper": "Nous enverrons ce webhook une seule fois lorsque le terrarium arrête d’envoyer des données pendant la durée configurée.",
+      "secretLabel": "Secret : {id}",
+      "lastTriggered": "Dernière alerte : {date}"
+    },
+    "card": {
+      "fields": {
+        "name": "Nom",
+        "url": "URL",
+        "metric": "Métrique",
+        "comparator": "Comparateur",
+        "threshold": "Seuil",
+        "cooldown": "Cooldown (sec)",
+        "active": "Actif"
+      },
+      "secretLabel": "Secret : {id}",
+      "lastTriggered": "Dernier envoi : {date}",
+      "actions": {
+        "testing": "Test...",
+        "test": "Tester",
+        "deleting": "Suppression..."
+      }
+    }
+  },
+  "Actions": {
+    "terrarium": {
+      "create": {
+        "invalidPayload": "Données invalides pour créer le terrarium.",
+        "success": "Terrarium créé avec succès !"
+      },
+      "update": {
+        "invalidPayload": "Données invalides pour modifier le terrarium.",
+        "success": "Terrarium mis à jour !"
+      },
+      "log": {
+        "invalidPayload": "Données invalides pour journaliser l’action.",
+        "success": "Action ajoutée au journal !"
+      },
+      "delete": {
+        "success": "Terrarium supprimé !"
+      }
+    },
+    "webhook": {
+      "common": {
+        "notFound": "Webhook introuvable."
+      },
+      "create": {
+        "invalidPayload": "Données invalides pour créer le webhook.",
+        "success": "Webhook créé avec succès !"
+      },
+      "update": {
+        "invalidPayload": "Données invalides pour modifier le webhook.",
+        "success": "Webhook mis à jour avec succès !"
+      },
+      "delete": {
+        "success": "Webhook supprimé avec succès !"
+      },
+      "test": {
+        "success": "Payload de test envoyé avec succès !"
+      },
+      "healthCheck": {
+        "invalidPayload": "Données invalides pour configurer le webhook de surveillance.",
+        "enabled": "Webhook de surveillance activé !",
+        "disabled": "Webhook de surveillance désactivé."
+      }
+    }
+  }
+}

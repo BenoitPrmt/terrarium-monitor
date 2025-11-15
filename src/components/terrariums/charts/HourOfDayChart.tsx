@@ -12,6 +12,7 @@ import {
 } from "@/components/ui/select"
 import type {MetricType} from "@/models/constants"
 import {CompareHoursChart} from "@/components/charts/CompareHours"
+import {useTranslations, useLocale} from "next-intl";
 
 type Dataset = {
     hourOfDay: number;
@@ -41,6 +42,8 @@ export function HourOfDayChart({
     const router = useRouter()
     const pathname = usePathname()
     const searchParams = useSearchParams()
+    const t = useTranslations('Terrariums.hourOfDay');
+    const locale = useLocale();
 
     const metricMap = useMemo(() => {
         return metricOptions.reduce<Record<MetricType, MetricOption>>(
@@ -82,12 +85,12 @@ export function HourOfDayChart({
         <div className="space-y-4">
             <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
                 <div>
-                    <p className="text-sm text-muted-foreground">Métrique analysée</p>
+                    <p className="text-sm text-muted-foreground">{t('subtitle')}</p>
                     <p className="text-base font-semibold">{selectedOption?.label}</p>
                 </div>
                 <Select value={metric} onValueChange={handleMetricChange}>
                     <SelectTrigger className="w-full sm:w-[220px]">
-                        <SelectValue placeholder="Choisir une métrique"/>
+                        <SelectValue placeholder={t('placeholder')}/>
                     </SelectTrigger>
                     <SelectContent>
                         {metricOptions.map((option) => (
@@ -98,7 +101,13 @@ export function HourOfDayChart({
                     </SelectContent>
                 </Select>
             </div>
-            <CompareHoursChart data={data} color={color} label={selectedOption?.label} unitLabel={selectedOption?.unitLabel} />
+            <CompareHoursChart
+                data={data}
+                color={color}
+                label={selectedOption?.label}
+                unitLabel={selectedOption?.unitLabel}
+                locale={locale}
+            />
         </div>
     )
 }

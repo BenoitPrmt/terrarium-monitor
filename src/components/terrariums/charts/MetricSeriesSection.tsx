@@ -13,6 +13,7 @@ import type {
     MetricDisplayConfig,
     MetricSeriesData,
 } from "@/types/metrics"
+import {getTranslations} from "next-intl/server";
 
 type MetricSeriesSectionProps = {
     metricSeriesData: MetricSeriesData
@@ -22,9 +23,10 @@ type MetricSeriesSectionProps = {
     initialMetric: MetricType
     initialGranularity: AggregateGranularity
     initialRange: string
+    requestedAt: string
 }
 
-export function MetricSeriesSection({
+export async function MetricSeriesSection({
     metricSeriesData,
     configs,
     granularityOptions,
@@ -32,10 +34,13 @@ export function MetricSeriesSection({
     initialMetric,
     initialGranularity,
     initialRange,
+    requestedAt,
 }: MetricSeriesSectionProps) {
+    const metricsT = await getTranslations('Common.metrics');
+    const sectionT = await getTranslations('Terrariums.series');
     const metricOptions = configs.map((config) => ({
         value: config.key,
-        label: `${config.label} (${config.unitLabel})`,
+        label: `${metricsT(config.labelKey)} (${config.unitLabel})`,
         color: config.color,
     }))
 
@@ -43,9 +48,9 @@ export function MetricSeriesSection({
         <Card>
             <CardHeader className="space-y-4">
                 <div>
-                    <CardTitle>Séries temporelles</CardTitle>
+                    <CardTitle>{sectionT('title')}</CardTitle>
                     <CardDescription>
-                        Analysez chaque métrique sur l’intervalle sélectionné.
+                        {sectionT('description')}
                     </CardDescription>
                 </div>
             </CardHeader>
@@ -58,6 +63,7 @@ export function MetricSeriesSection({
                     initialMetric={initialMetric}
                     initialGranularity={initialGranularity}
                     initialRange={initialRange}
+                    requestedAt={requestedAt}
                 />
             </CardContent>
         </Card>

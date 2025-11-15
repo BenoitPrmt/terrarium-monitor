@@ -8,6 +8,7 @@ import {
 } from "@/components/ui/card"
 import type {MetricType} from "@/models/constants"
 import type {HourOfDayPoint, MetricDisplayConfig} from "@/types/metrics"
+import {getTranslations} from "next-intl/server";
 
 type HourOfDaySectionProps = {
     datasets: Record<MetricType, HourOfDayPoint[]>
@@ -15,14 +16,16 @@ type HourOfDaySectionProps = {
     initialMetric: MetricType
 }
 
-export function HourOfDaySection({
+export async function HourOfDaySection({
     datasets,
     configs,
     initialMetric,
 }: HourOfDaySectionProps) {
+    const metricsT = await getTranslations('Common.metrics');
+    const sectionT = await getTranslations('Terrariums.hourOfDay');
     const metricOptions = configs.map((config) => ({
         value: config.key,
-        label: config.label,
+        label: metricsT(config.labelKey),
         color: config.color,
         unitLabel: config.unitLabel,
     }))
@@ -30,9 +33,9 @@ export function HourOfDaySection({
     return (
         <Card>
             <CardHeader className="space-y-2">
-                <CardTitle>Analyse par heure de la journée</CardTitle>
+                <CardTitle>{sectionT('title')}</CardTitle>
                 <CardDescription>
-                    Identifiez les heures typiques de pics ou creux pour chaque métrique.
+                    {sectionT('description')}
                 </CardDescription>
             </CardHeader>
             <CardContent>

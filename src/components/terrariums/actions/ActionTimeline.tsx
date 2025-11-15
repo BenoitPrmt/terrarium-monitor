@@ -1,16 +1,31 @@
-import React from 'react';
+"use client"
+
+import React, {useMemo} from 'react';
 import type {TerrariumActionEntry} from "@/types/terrarium";
 import ActionTimelineItem from "@/components/terrariums/actions/ActionTimelineItem";
+import {useTranslations, useLocale} from "next-intl";
 
 type Props = {
     actions: TerrariumActionEntry[];
-    dateFormatter: Intl.DateTimeFormat;
+    locale?: string;
 }
-const ActionTimeline = ({actions, dateFormatter}: Props) => {
+
+const ActionTimeline = ({actions, locale}: Props) => {
+    const t = useTranslations('Terrarium.care');
+    const resolvedLocale = locale ?? useLocale();
+    const dateFormatter = useMemo(
+        () =>
+            new Intl.DateTimeFormat(resolvedLocale, {
+                dateStyle: "medium",
+                timeStyle: "short",
+            }),
+        [resolvedLocale]
+    );
+
     if (actions.length === 0) {
         return (
             <div className="rounded-lg border border-dashed bg-muted/30 p-6 text-center text-sm text-muted-foreground">
-                Aucune action n&apos;a encore été enregistrée.
+                {t('logEmpty')}
             </div>
         )
     }

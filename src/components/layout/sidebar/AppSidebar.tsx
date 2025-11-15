@@ -9,23 +9,7 @@ import {WEBSITE_NAME} from "@/constants/website";
 import Link from "next/link";
 import {User} from "next-auth";
 import Image from "next/image";
-
-const data = {
-    app: [
-        {
-            title: "Tableau de bord",
-            url: "/dashboard",
-            icon: LayoutPanelLeftIcon,
-        },
-    ],
-    terrariums: [
-        {
-            title: "Terrariums",
-            url: "/dashboard/terrariums",
-            icon: SproutIcon,
-        },
-    ],
-}
+import {useTranslations} from "next-intl";
 
 type Props = {
     user: User;
@@ -33,13 +17,30 @@ type Props = {
 
 export function AppSidebar({user, ...props}: Props) {
     const {open} = useSidebar();
-    
+    const t = useTranslations('Navigation.Sidebar');
+    const navigation = {
+        app: [
+            {
+                title: t('links.dashboard'),
+                url: "/dashboard",
+                icon: LayoutPanelLeftIcon,
+            },
+        ],
+        terrariums: [
+            {
+                title: t('links.terrariums'),
+                url: "/dashboard/terrariums",
+                icon: SproutIcon,
+            },
+        ],
+    };
+
     return (
         <Sidebar variant="floating" collapsible="icon" {...props}>
             <SidebarHeader className="flex items-center mb-2 mt-1">
                 {open && (
                     <div className="flex items-center space-x-2">
-                        <Image src="/assets/logo.png" alt="Terra logo" width={30} height={30} className="rounded-lg" />
+                        <Image src="/assets/logo.png" alt={t('logoAlt')} width={30} height={30} className="rounded-lg" />
                         <div
                             className="text-2xl font-extrabold text-transparent bg-clip-text bg-gradient-to-br from-primary to-secondary-foreground"
                         >
@@ -48,12 +49,12 @@ export function AppSidebar({user, ...props}: Props) {
                     </div>
                 )}
                 {!open && (
-                    <Image src="/assets/logo.png" alt="Terra logo" width={30} height={30} className="rounded-lg" />
+                    <Image src="/assets/logo.png" alt={t('logoAlt')} width={30} height={30} className="rounded-lg" />
                 )}
             </SidebarHeader>
             <SidebarContent>
-                <NavSimple title={WEBSITE_NAME} items={data.app}/>
-                <NavSimple title="Terrariums" items={data.terrariums}/>
+                <NavSimple title={WEBSITE_NAME} items={navigation.app}/>
+                <NavSimple title={t('sections.terrariums')} items={navigation.terrariums}/>
             </SidebarContent>
             <SidebarFooter>
                 <NavUser user={user}/>

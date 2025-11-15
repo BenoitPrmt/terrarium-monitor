@@ -20,6 +20,7 @@ import {
 import {getLocationIcon} from "@/components/terrariums/locationIcons"
 import SaveSubmitButton from "@/components/form/SaveSubmitButton";
 import {toast} from "sonner"
+import {useTranslations} from "next-intl";
 
 type Props = {
     terrariumId: string
@@ -50,6 +51,9 @@ export function TerrariumSettingsForm({
     const [selectedLocation, setSelectedLocation] = useState<TerrariumLocationValue>(
         (location as TerrariumLocationValue) || "other"
     )
+    const t = useTranslations('Terrariums.form');
+    const common = useTranslations('Common');
+    const locationsT = useTranslations('Common.locations');
     useEffect(() => {
         if (!state?.message) {
             return
@@ -64,11 +68,11 @@ export function TerrariumSettingsForm({
     return (
         <form action={formAction} className="space-y-4">
             <div className="space-y-2">
-                <Label htmlFor="name">Nom</Label>
+                <Label htmlFor="name">{common('fields.name')}</Label>
                 <Input id="name" name="name" defaultValue={name} required/>
             </div>
             <div className="space-y-2">
-                <Label>Emplacement</Label>
+                <Label>{common('fields.location')}</Label>
                 <Select
                     value={selectedLocation}
                     onValueChange={(value) =>
@@ -76,7 +80,7 @@ export function TerrariumSettingsForm({
                     }
                 >
                     <SelectTrigger>
-                        <SelectValue placeholder="Choisir un emplacement"/>
+                        <SelectValue placeholder={common('placeholders.location')}/>
                     </SelectTrigger>
                     <SelectContent>
                         {TERRARIUM_LOCATIONS.map((option) => {
@@ -85,7 +89,7 @@ export function TerrariumSettingsForm({
                                 <SelectItem key={option.value} value={option.value}>
                                     <span className="flex items-center gap-2">
                                         <Icon className="size-4"/>
-                                        {option.label}
+                                        {locationsT(option.labelKey)}
                                     </span>
                                 </SelectItem>
                             )
@@ -95,7 +99,7 @@ export function TerrariumSettingsForm({
                 <input type="hidden" name="location" value={selectedLocation}/>
             </div>
             <div className="space-y-2">
-                <Label htmlFor="description">Description</Label>
+                <Label htmlFor="description">{common('fields.description')}</Label>
                 <Textarea
                     id="description"
                     name="description"
@@ -107,4 +111,3 @@ export function TerrariumSettingsForm({
         </form>
     )
 }
-

@@ -16,12 +16,12 @@ export const TERRARIUM_ACTION_TYPES = [
 
 export type TerrariumActionType = (typeof TERRARIUM_ACTION_TYPES)[number]
 
-export const TERRARIUM_ACTION_LABELS: Record<TerrariumActionType, string> = {
-    WATERING: "Arrosage",
-    FEEDING: "Nourrissage",
-    CLEANING: "Nettoyage",
-    MAINTENANCE: "Maintenance",
-    OTHER: "Autre",
+export const TERRARIUM_ACTION_LABEL_KEYS: Record<TerrariumActionType, string> = {
+    WATERING: "watering",
+    FEEDING: "feeding",
+    CLEANING: "cleaning",
+    MAINTENANCE: "maintenance",
+    OTHER: "other",
 }
 
 type ActionVisualConfig = {
@@ -58,6 +58,6 @@ export const TERRARIUM_ACTION_VISUALS: Record<
 export const TERRARIUM_ACTION_OPTIONS = TERRARIUM_ACTION_TYPES.map(
     (type) => ({
         value: type,
-        label: TERRARIUM_ACTION_LABELS[type],
+        labelKey: TERRARIUM_ACTION_LABEL_KEYS[type],
     })
 )

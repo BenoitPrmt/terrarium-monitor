@@ -17,6 +17,7 @@ import {
     SidebarMenuSubButton,
     SidebarMenuSubItem,
 } from "@/components/ui/sidebar"
+import {useTranslations} from "next-intl";
 
 type Props = {
     items: {
@@ -32,9 +33,10 @@ type Props = {
 };
 
 export function NavMain({ items }: Props) {
+    const t = useTranslations('Navigation.Sidebar');
     return (
         <SidebarGroup>
-            <SidebarGroupLabel>Gestion</SidebarGroupLabel>
+            <SidebarGroupLabel>{t('sections.management')}</SidebarGroupLabel>
             <SidebarMenu>
                 {items.map((item) => (
                     <Collapsible

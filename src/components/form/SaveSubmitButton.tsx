@@ -1,6 +1,9 @@
+"use client"
+
 import React from 'react';
 import {Button} from "@/components/ui/button";
 import {Loader2Icon, SaveIcon} from "lucide-react";
+import {useTranslations} from "next-intl";
 
 type Props = {
     pending: boolean;
@@ -12,22 +15,26 @@ type Props = {
 
 const SaveSubmitButton = ({
                               pending,
-                              label = "Enregistrer",
+                              label,
                               icon = <SaveIcon className="size-4"/>,
-                              pendingLabel = "Enregistrement...",
+                              pendingLabel,
                               pendingIcon = <Loader2Icon className="size-4 animate-spin"/>
                           }: Props) => {
+    const t = useTranslations('Forms.saveButton');
+    const resolvedLabel = label ?? t('label');
+    const resolvedPendingLabel = pendingLabel ?? t('pending');
+
     return (
         <Button type="submit" disabled={pending}>
             {pending ? (
                 <>
                     {pendingIcon}
-                    {pendingLabel}
+                    {resolvedPendingLabel}
                 </>
             ) : (
                 <>
                     {icon}
-                    {label}
+                    {resolvedLabel}
                 </>
             )}
         </Button>

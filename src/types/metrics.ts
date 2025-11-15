@@ -6,7 +6,7 @@ import type {SampleDocument} from "@/models/Sample"
 
 export type MetricDisplayConfig = {
     key: MetricType
-    label: string
+    labelKey: string
     unitLabel: string
     color: string
     icon: LucideIcon
@@ -35,12 +35,12 @@ export type MetricSeriesData = Record<
 
 export type ChartGranularityOption = {
     value: AggregateGranularity
-    label: string
+    labelKey: string
 }
 
 export type ChartRangeOption = {
     value: string
-    label: string
+    labelKey: string
 }
 
 export type RecentSample = SampleDocument & {
