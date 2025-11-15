@@ -23,6 +23,7 @@ type MetricSeriesSectionProps = {
     initialMetric: MetricType
     initialGranularity: AggregateGranularity
     initialRange: string
+    requestedAt: string
 }
 
 export async function MetricSeriesSection({
@@ -33,6 +34,7 @@ export async function MetricSeriesSection({
     initialMetric,
     initialGranularity,
     initialRange,
+    requestedAt,
 }: MetricSeriesSectionProps) {
     const metricsT = await getTranslations('Common.metrics');
     const sectionT = await getTranslations('Terrariums.series');
@@ -61,6 +63,7 @@ export async function MetricSeriesSection({
                     initialMetric={initialMetric}
                     initialGranularity={initialGranularity}
                     initialRange={initialRange}
+                    requestedAt={requestedAt}
                 />
             </CardContent>
         </Card>
