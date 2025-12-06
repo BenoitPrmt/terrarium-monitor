@@ -1,4 +1,5 @@
-import React from 'react';
+import React, {useTransition} from 'react';
+import {useRouter} from "next/navigation";
 import {setUserLocale} from "@/services/locale";
 import {getLocaleFlag, Locale, locales} from "@/i18n/config";
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select";
@@ -7,13 +8,19 @@ import {useLocale, useTranslations} from "next-intl";
 const LanguageSelector = () => {
     const locale = useLocale();
     const t = useTranslations('Navigation.User');
+    const router = useRouter();
+    const [isPending, startTransition] = useTransition();
 
     return (
         <Select
             defaultValue={locale}
             aria-label={t('languageSelector')}
-            onValueChange={async (value) => {
-                await setUserLocale(value as Locale)
+            disabled={isPending}
+            onValueChange={(value) => {
+                startTransition(async () => {
+                    await setUserLocale(value as Locale)
+                    router.refresh();
+                });
             }}
         >
             <SelectTrigger
