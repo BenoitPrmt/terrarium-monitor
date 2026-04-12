@@ -199,6 +199,7 @@
       "identifier": "Identifiant :",
       "createdOn": "Créé le {date}",
       "actions": {
+        "refresh": "Rafraîchir",
         "settings": "Paramètres",
         "webhooks": "Webhooks"
       }

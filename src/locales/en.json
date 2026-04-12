@@ -199,6 +199,7 @@
       "identifier": "Identifier:",
       "createdOn": "Created on {date}",
       "actions": {
+        "refresh": "Refresh",
         "settings": "Settings",
         "webhooks": "Webhooks"
       }
