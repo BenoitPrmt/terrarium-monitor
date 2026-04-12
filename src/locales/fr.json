@@ -22,7 +22,7 @@
         "privacy": "Politique de confidentialité",
         "legal": "Mentions légales"
       },
-      "copyright": "© {year} {brand}. Tous droits réservés."
+      "copyright": "{year} - {brand}"
     },
     "Sidebar": {
       "links": {
@@ -108,7 +108,60 @@
     "cta": "Retour à l’accueil"
   },
   "Landing": {
-    "title": "Page d’accueil"
+    "title": "Page d’accueil",
+    "badge": "À propos",
+    "hero": {
+      "title": {
+        "before": "Découvrez"
+      },
+      "description": "Terra est un dashboard open source pour suivre simplement les mesures d’un terrarium, visualiser les tendances et garder un historique lisible.",
+      "primaryCta": "Voir le dépôt GitHub",
+      "secondaryCta": "Nous contacter"
+    },
+    "project": {
+      "title": "Le projet",
+      "subtitle": "Un petit outil simple pour surveiller un terrarium connecté sans surcouche inutile.",
+      "cards": {
+        "need": {
+          "title": "Un besoin réel",
+          "description": "Quand les mesures s’accumulent, il devient vite difficile de voir ce qui change vraiment. L’idée est de rendre l’état du terrarium plus lisible."
+        },
+        "why": {
+          "title": "Le pourquoi",
+          "description": "Moins de temps à lire des données brutes, c’est plus de temps pour observer, ajuster l’environnement et faire le bon entretien."
+        },
+        "today": {
+          "title": "Aujourd’hui",
+          "description": "Le projet gère déjà l’ingestion des données, les graphiques, l’historique récent et quelques outils utiles autour du suivi."
+        }
+      }
+    },
+    "technical": {
+      "title": "La partie technique, en simple",
+      "description": "Une architecture web moderne qui privilégie la fiabilité, la rapidité et la clarté.",
+      "paragraphs": [
+        "L’application centralise les mesures envoyées par les capteurs pour les rendre consultables rapidement dans une interface claire.",
+        "Les données sont agrégées automatiquement pour mettre en avant les tendances utiles, tout en gardant un affichage lisible sur mobile comme sur ordinateur.",
+        "En coulisses, le projet repose sur des technologies web actuelles, choisies pour livrer une expérience robuste et facile à faire évoluer."
+      ]
+    },
+    "team": {
+      "title": "Qui construit le projet",
+      "paragraphs": [
+        "J’ai lancé Terra pour répondre à un besoin très concret : avoir un suivi fiable et compréhensible pour un terrarium connecté. Je construis le projet de bout en bout, de l’ingestion des données jusqu’à l’interface.",
+        "L’objectif reste simple : un outil utile, lisible et assez ouvert pour être amélioré au fil du temps."
+      ],
+      "actions": {
+        "website": "Site personnel",
+        "email": "Email",
+        "github": "GitHub"
+      }
+    },
+    "follow": {
+      "title": "Où retrouver le projet",
+      "description": "Le dépôt GitHub est le meilleur endroit pour voir le code, suivre l’évolution du projet ou proposer des améliorations.",
+      "primaryCta": "Ouvrir le dépôt"
+    }
   },
   "Dashboard": {
     "Home": {
@@ -199,6 +252,7 @@
       "identifier": "Identifiant :",
       "createdOn": "Créé le {date}",
       "actions": {
+        "refresh": "Rafraîchir",
         "settings": "Paramètres",
         "webhooks": "Webhooks"
       }
@@ -233,7 +287,9 @@
     },
     "samples": {
       "title": "Mesures récentes",
-      "description": "20 derniers échantillons ingérés.",
+      "description": "5 derniers échantillons ingérés.",
+      "sentAtLabel": "Envoyé {value}",
+      "groupCount": "{count} mesures",
       "headers": {
         "type": "Type",
         "value": "Valeur",

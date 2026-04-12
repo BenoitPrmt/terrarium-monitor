@@ -1,7 +1,6 @@
 "use client";
-import {Grid2X2} from "lucide-react";
+import {Grid2X2, Leaf} from "lucide-react";
 import {Button} from "@/components/ui/button";
-import {ShinyButton} from "@/components/ui/shiny-button";
 import {User} from "next-auth";
 import Link from "next/link";
 import {ThemeToggle} from "@/components/theme/ThemeToggle";
@@ -18,28 +17,42 @@ const Header = ({session}: HeaderProps) => {
     const isAuthenticated = !!session;
 
     return (
-        <nav className="container mx-auto py-6 px-4 flex justify-between items-center border-b">
-            <div
-                className="text-2xl font-bold bg-linear-to-r from-yellow-400 to-orange-500 text-transparent bg-clip-text">
-                <Link href="/">{WEBSITE_NAME}</Link>
-            </div>
-            <div className="space-x-4 flex flex-row items-center">
+        <header className="border-b border-border/60 bg-background/70 backdrop-blur supports-[backdrop-filter]:bg-background/55">
+            <nav className="mx-auto flex w-full max-w-5xl items-center justify-between gap-4 px-4 py-4">
+                <Link href="/" className="flex items-center gap-3">
+                    <div className="flex size-10 items-center justify-center rounded-2xl bg-emerald-100 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-300">
+                        <Leaf className="size-5"/>
+                    </div>
+                    <div className="flex flex-col">
+                        <span className="text-base font-semibold tracking-tight text-foreground">
+                            {WEBSITE_NAME}
+                        </span>
+                        <span className="text-xs text-muted-foreground">
+                            terrarium monitor
+                        </span>
+                    </div>
+                </Link>
 
-                <LanguageSelector />
+                <div className="flex items-center gap-2 sm:gap-3">
+                    <LanguageSelector />
                 <ThemeToggle/>
 
                 {isAuthenticated && (
-                    <Button onClick={() => window.location.href = '/dashboard'}>
-                        <Grid2X2/> {t('links.dashboard')}
+                    <Button asChild>
+                        <Link href="/dashboard">
+                            <Grid2X2 className="size-4"/> {t('links.dashboard')}
+                        </Link>
                     </Button>
                 )}
 
-                {!isAuthenticated &&
-                    <ShinyButton onClick={() => window.location.href = '/login'}>{t('links.login')}</ShinyButton>
-                }
-
-            </div>
-        </nav>
+                    {!isAuthenticated && (
+                        <Button asChild className="bg-emerald-600 hover:bg-emerald-700">
+                            <Link href="/login">{t('links.login')}</Link>
+                        </Button>
+                    )}
+                </div>
+            </nav>
+        </header>
     );
 };
 

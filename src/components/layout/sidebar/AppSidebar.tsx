@@ -1,7 +1,7 @@
 "use client"
 
 import * as React from "react"
-import {LayoutPanelLeftIcon, SproutIcon} from "lucide-react"
+import {LayoutPanelLeftIcon, Leaf, SproutIcon} from "lucide-react"
 import {NavUser} from "@/components/layout/sidebar/nav/NavUser"
 import {NavSimple} from "@/components/layout/sidebar/nav/NavSimple";
 import {Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarRail, useSidebar,} from "@/components/ui/sidebar"
@@ -10,6 +10,7 @@ import Link from "next/link";
 import {User} from "next-auth";
 import Image from "next/image";
 import {useTranslations} from "next-intl";
+import {cn} from "@/lib/utils";
 
 type Props = {
     user: User;
@@ -37,19 +38,26 @@ export function AppSidebar({user, ...props}: Props) {
 
     return (
         <Sidebar variant="floating" collapsible="icon" {...props}>
-            <SidebarHeader className="flex items-center mb-2 mt-1">
+            <SidebarHeader className={cn("flex mb-2 mt-1", open && 'ml-2')}>
                 {open && (
-                    <div className="flex items-center space-x-2">
-                        <Image src="/assets/logo.png" alt={t('logoAlt')} width={30} height={30} className="rounded-lg" />
-                        <div
-                            className="text-2xl font-extrabold text-transparent bg-clip-text bg-gradient-to-br from-primary to-secondary-foreground"
-                        >
-                            <Link href="/">{WEBSITE_NAME}</Link>
+                    <Link href="/dashboard" className="flex items-center gap-3">
+                        <div className="flex size-10 items-center justify-center rounded-2xl bg-emerald-100 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-300">
+                            <Leaf className="size-5"/>
                         </div>
-                    </div>
+                        <div className="flex flex-col">
+                        <span className="text-base font-semibold tracking-tight text-foreground">
+                            {WEBSITE_NAME}
+                        </span>
+                            <span className="text-xs text-muted-foreground">
+                            terrarium monitor
+                        </span>
+                        </div>
+                    </Link>
                 )}
                 {!open && (
-                    <Image src="/assets/logo.png" alt={t('logoAlt')} width={30} height={30} className="rounded-lg" />
+                    <div className="flex size-8 items-center justify-center rounded-2xl bg-emerald-100 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-300">
+                        <Leaf className="size-5"/>
+                    </div>
                 )}
             </SidebarHeader>
             <SidebarContent>

@@ -10,7 +10,6 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select";
-import {ButtonGroup} from "@/components/ui/button-group";
 import {
     ChartConfig,
     ChartContainer,
@@ -208,44 +207,46 @@ export function MetricSeriesChart({
                         {t('rangeLabel', {range: selectedRangeLabel})}
                     </p>
                 </div>
-                <ButtonGroup className="flex flex-wrap justify-end">
-                    <Select value={range} onValueChange={handleRangeChange}>
-                        <SelectTrigger className="w-[130px]">
-                            <SelectValue placeholder={t('placeholders.range')}/>
-                        </SelectTrigger>
-                        <SelectContent>
-                            {rangeOptions.map((option) => (
-                                <SelectItem key={option.value} value={option.value}>
-                                    {rangeT(option.labelKey)}
-                                </SelectItem>
-                            ))}
-                        </SelectContent>
-                    </Select>
-                    <Select value={granularity} onValueChange={handleGranularityChange}>
-                        <SelectTrigger className="w-[150px]">
-                            <SelectValue placeholder={t('placeholders.granularity')}/>
-                        </SelectTrigger>
-                        <SelectContent>
-                            {availableGranularityOptions.map((option) => (
-                                <SelectItem key={option.value} value={option.value}>
-                                    {granularityT(option.labelKey)}
-                                </SelectItem>
-                            ))}
-                        </SelectContent>
-                    </Select>
-                    <Select value={metric} onValueChange={handleMetricChange}>
-                        <SelectTrigger className="w-[170px]">
-                            <SelectValue placeholder={t('placeholders.metric')}/>
-                        </SelectTrigger>
-                        <SelectContent>
-                            {metricOptions.map((option) => (
-                                <SelectItem key={option.value} value={option.value}>
-                                    {option.label}
-                                </SelectItem>
-                            ))}
-                        </SelectContent>
-                    </Select>
-                </ButtonGroup>
+                <div className="w-full space-y-2 sm:w-auto sm:space-y-0">
+                    <div className="grid grid-cols-1 gap-2 sm:flex sm:flex-wrap sm:justify-end">
+                        <Select value={range} onValueChange={handleRangeChange}>
+                            <SelectTrigger className="w-full sm:w-[150px]">
+                                <SelectValue placeholder={t('placeholders.range')}/>
+                            </SelectTrigger>
+                            <SelectContent>
+                                {rangeOptions.map((option) => (
+                                    <SelectItem key={option.value} value={option.value}>
+                                        {rangeT(option.labelKey)}
+                                    </SelectItem>
+                                ))}
+                            </SelectContent>
+                        </Select>
+                        <Select value={granularity} onValueChange={handleGranularityChange}>
+                            <SelectTrigger className="w-full sm:w-[150px]">
+                                <SelectValue placeholder={t('placeholders.granularity')}/>
+                            </SelectTrigger>
+                            <SelectContent>
+                                {availableGranularityOptions.map((option) => (
+                                    <SelectItem key={option.value} value={option.value}>
+                                        {granularityT(option.labelKey)}
+                                    </SelectItem>
+                                ))}
+                            </SelectContent>
+                        </Select>
+                        <Select value={metric} onValueChange={handleMetricChange}>
+                            <SelectTrigger className="w-full sm:w-[170px]">
+                                <SelectValue placeholder={t('placeholders.metric')}/>
+                            </SelectTrigger>
+                            <SelectContent>
+                                {metricOptions.map((option) => (
+                                    <SelectItem key={option.value} value={option.value}>
+                                        {option.label}
+                                    </SelectItem>
+                                ))}
+                            </SelectContent>
+                        </Select>
+                    </div>
+                </div>
             </div>
             <ChartContainer config={chartConfig} className="h-[320px] w-full">
                 <AreaChart data={chartData}>

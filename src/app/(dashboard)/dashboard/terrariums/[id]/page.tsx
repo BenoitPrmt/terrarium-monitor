@@ -26,6 +26,7 @@ import {HourOfDaySection} from "@/components/terrariums/charts/HourOfDaySection"
 import {MetricSeriesSection} from "@/components/terrariums/charts/MetricSeriesSection";
 import {MetricSnapshotGrid} from "@/components/terrariums/MetricSnapshotGrid";
 import {RecentSamplesSection} from "@/components/terrariums/RecentSamplesSection";
+import RefreshTerrariumButton from "@/components/terrariums/RefreshTerrariumButton";
 import {TerrariumHeader} from "@/components/terrariums/TerrariumHeader";
 import {TerrariumActionsSection} from "@/components/terrariums/TerrariumActionsSection";
 
@@ -154,7 +155,7 @@ export default async function TerrariumDetailPage({params, searchParams}: PagePr
     const recentSamples = await SampleModel.find({
         terrariumId: terrariumDoc._id,
     })
-        .sort({ts: -1})
+        .sort({sentAt: -1, ts: -1})
         .limit(20)
         .lean<RecentSample[]>()
 
@@ -162,7 +163,7 @@ export default async function TerrariumDetailPage({params, searchParams}: PagePr
 
     return (
         <div className="space-y-6">
-            <TerrariumHeader terrarium={terrarium}/>
+            <TerrariumHeader terrarium={terrarium} />
             <MetricSnapshotGrid configs={METRIC_DISPLAY_CONFIGS} snapshots={metricSnapshots}/>
 
             <MetricSeriesSection

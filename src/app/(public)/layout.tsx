@@ -17,12 +17,14 @@ export default async function MarketingLayout({children}: Props) {
     const session: User | null = await currentUser();
 
     return (
-        <div className="flex flex-col min-h-screen">
+        <div className="min-h-screen bg-gradient-to-br from-emerald-50 via-background to-lime-50 dark:from-zinc-950 dark:via-zinc-950 dark:to-emerald-950/30">
+            <div className="flex min-h-screen flex-col">
             <Header session={session}/>
-            <main className="container mx-auto py-4 px-4 flex-grow">
+            <main className="flex-1 px-4 py-6 sm:py-8">
                 {children}
             </main>
             <Footer />
+            </div>
         </div>
     )
 }

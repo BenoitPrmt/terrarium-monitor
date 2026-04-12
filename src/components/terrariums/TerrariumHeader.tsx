@@ -1,4 +1,5 @@
 import Link from "next/link"
+import {ReactNode} from "react"
 import {SettingsIcon, WebhookIcon} from "lucide-react"
 
 import CopyCode from "@/components/CopyCode"
@@ -8,6 +9,7 @@ import {Button} from "@/components/ui/button"
 import {ButtonGroup} from "@/components/ui/button-group"
 import type {TerrariumSummary} from "@/types/terrarium"
 import {getTranslations, getLocale} from "next-intl/server";
+import RefreshTerrariumButton from "@/components/terrariums/RefreshTerrariumButton";
 
 type TerrariumHeaderProps = {
     terrarium: TerrariumSummary
@@ -39,6 +41,8 @@ export async function TerrariumHeader({terrarium}: TerrariumHeaderProps) {
                 </div>
             </div>
             <div className="flex gap-2">
+                <RefreshTerrariumButton/>
+
                 <ButtonGroup>
                     <Button variant="outline" asChild>
                         <Link href={`/dashboard/terrariums/${terrarium.id}/settings`}>

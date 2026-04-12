@@ -5,12 +5,19 @@ import {useSelectedLayoutSegments} from "next/navigation"
 
 import {
     Breadcrumb,
+    BreadcrumbEllipsis,
     BreadcrumbItem,
     BreadcrumbLink,
     BreadcrumbList,
     BreadcrumbPage,
     BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb"
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
 import {useTranslations} from "next-intl";
 
 export function DashboardBreadcrumbs() {
@@ -52,18 +59,69 @@ export function DashboardBreadcrumbs() {
         return list
     }, [formatLabel, segments])
 
+    const firstItem = items[0]
+    const lastItem = items[items.length - 1]
+    const middleItems = items.slice(1, -1)
+
     return (
         <Breadcrumb aria-label={t('ariaLabel')}>
-            <BreadcrumbList>
-                <BreadcrumbSeparator/>
+            <BreadcrumbList className="min-w-0 flex-nowrap overflow-hidden sm:hidden">
+                <BreadcrumbItem className="min-w-0 shrink">
+                    {items.length === 1 ? (
+                        <BreadcrumbPage className="block truncate">
+                            {firstItem.label}
+                        </BreadcrumbPage>
+                    ) : (
+                        <BreadcrumbLink href={firstItem.href} className="block max-w-[7rem] truncate">
+                            {firstItem.label}
+                        </BreadcrumbLink>
+                    )}
+                </BreadcrumbItem>
 
+                {middleItems.length > 0 && (
+                    <>
+                        <BreadcrumbSeparator />
+                        <BreadcrumbItem>
+                            <DropdownMenu>
+                                <DropdownMenuTrigger className="flex size-9 items-center justify-center rounded-md outline-none transition-colors hover:bg-accent hover:text-foreground focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px]">
+                                    <BreadcrumbEllipsis className="size-9" />
+                                </DropdownMenuTrigger>
+                                <DropdownMenuContent align="start">
+                                    {middleItems.map((item) => (
+                                        <DropdownMenuItem key={item.href} asChild>
+                                            <BreadcrumbLink href={item.href}>
+                                                {item.label}
+                                            </BreadcrumbLink>
+                                        </DropdownMenuItem>
+                                    ))}
+                                </DropdownMenuContent>
+                            </DropdownMenu>
+                        </BreadcrumbItem>
+                    </>
+                )}
+
+                {items.length > 1 && (
+                    <>
+                        <BreadcrumbSeparator />
+                        <BreadcrumbItem className="min-w-0 shrink">
+                            <BreadcrumbPage className="block max-w-[10rem] truncate">
+                                {lastItem.label}
+                            </BreadcrumbPage>
+                        </BreadcrumbItem>
+                    </>
+                )}
+            </BreadcrumbList>
+
+            <BreadcrumbList className="hidden min-w-0 flex-nowrap overflow-hidden sm:flex">
                 {items.map((item, index) => (
                     <React.Fragment key={item.href}>
-                        <BreadcrumbItem>
+                        <BreadcrumbItem className="min-w-0 shrink-0">
                             {index === items.length - 1 ? (
-                                <BreadcrumbPage>{item.label}</BreadcrumbPage>
+                                <BreadcrumbPage className="block max-w-[16rem] truncate">
+                                    {item.label}
+                                </BreadcrumbPage>
                             ) : (
-                                <BreadcrumbLink href={item.href}>
+                                <BreadcrumbLink href={item.href} className="block max-w-[12rem] truncate">
                                     {item.label}
                                 </BreadcrumbLink>
                             )}
