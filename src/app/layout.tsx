@@ -1,5 +1,5 @@
 import type {Metadata} from "next";
-import {Outfit} from "next/font/google";
+import {DM_Sans} from "next/font/google";
 import "./globals.css";
 import {Toaster} from "@/components/ui/sonner";
 import {
@@ -19,8 +19,8 @@ import {NextIntlClientProvider} from "next-intl";
 import {ReactNode} from "react";
 import {getLocale, getMessages} from "next-intl/server";
 
-const outfitSans = Outfit({
-    variable: "--font-geist-sans",
+const dmSans = DM_Sans({
+    variable: "--font-dm-sans",
     subsets: ["latin"],
     weight: ["400", "500", "600", "700", "800"],
 });
@@ -70,7 +70,7 @@ export default async function RootLayout({
     return (
         <html lang={locale} suppressHydrationWarning>
         <body
-            className={`${outfitSans.variable} antialiased`}
+            className={`${dmSans.variable} font-sans antialiased`}
         >
         <NextIntlClientProvider locale={locale} messages={messages}>
             <ThemeProvider

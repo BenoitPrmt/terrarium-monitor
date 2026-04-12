@@ -108,7 +108,60 @@
     "cta": "Back to home"
   },
   "Landing": {
-    "title": "Landing page"
+    "title": "Landing page",
+    "badge": "About",
+    "hero": {
+      "title": {
+        "before": "Discover"
+      },
+      "description": "Terra is a simple open source dashboard for monitoring terrarium measurements, visualizing trends, and keeping a readable history.",
+      "primaryCta": "View the GitHub repository",
+      "secondaryCta": "Contact us"
+    },
+    "project": {
+      "title": "The project",
+      "subtitle": "A small tool for monitoring a connected terrarium without unnecessary layers.",
+      "cards": {
+        "need": {
+          "title": "A real need",
+          "description": "When measurements pile up, it quickly becomes hard to see what is actually changing. The goal is to make the terrarium state easier to read."
+        },
+        "why": {
+          "title": "Why it exists",
+          "description": "Less time reading raw data means more time observing, adjusting the environment, and doing the right maintenance."
+        },
+        "today": {
+          "title": "Today",
+          "description": "The project already handles data ingestion, charts, recent history, and a few useful tools around monitoring."
+        }
+      }
+    },
+    "technical": {
+      "title": "The technical side, kept simple",
+      "description": "A modern web architecture focused on reliability, speed, and clarity.",
+      "paragraphs": [
+        "The application centralizes measurements sent by sensors so they can be reviewed quickly in a clear interface.",
+        "Data is automatically aggregated to surface useful trends while keeping the UI readable on both mobile and desktop.",
+        "Behind the scenes, the project relies on modern web technologies chosen to deliver a robust experience that stays easy to evolve."
+      ]
+    },
+    "team": {
+      "title": "Who is building it",
+      "paragraphs": [
+        "I launched Terra to solve a very concrete need: having reliable and understandable monitoring for a connected terrarium. I build the project end to end, from data ingestion to the interface.",
+        "The goal stays simple: a useful, readable tool that remains open enough to improve over time."
+      ],
+      "actions": {
+        "website": "Personal website",
+        "email": "Email",
+        "github": "GitHub"
+      }
+    },
+    "follow": {
+      "title": "Where to find the project",
+      "description": "The GitHub repository is the best place to inspect the code, follow the project, or suggest improvements.",
+      "primaryCta": "Open repository"
+    }
   },
   "Dashboard": {
     "Home": {

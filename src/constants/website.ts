@@ -9,7 +9,7 @@ export const WEBSITE_CONTACT_EMAIL = "contact@benoitparmentier.fr"
 
 export const AUTHOR_NAME = "Benoît"
 export const AUTHOR_EMAIL = "hello@benoit.fun"
-export const AUTHOR_URL = "https://benoit.fun"
+export const AUTHOR_URL = "https://benoitparmentier.fr"
 export const AUTHOR_GITHUB = "BenoitPrmt"
 export const AUTHOR_LINKEDIN = "benoit-parmentier"
 export const AUTHOR_TWITTER = "BenoitDotDev"
