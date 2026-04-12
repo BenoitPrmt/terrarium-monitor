@@ -22,7 +22,7 @@
         "privacy": "Privacy Policy",
         "legal": "Imprint"
       },
-      "copyright": "© {year} {brand}. All rights reserved."
+      "copyright": "{year} - {brand}"
     },
     "Sidebar": {
       "links": {

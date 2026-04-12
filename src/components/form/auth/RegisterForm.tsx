@@ -159,16 +159,11 @@ export function RegisterForm({className, ...props}: React.ComponentProps<"div">)
                         <img
                             src="/assets/auth/terrarium.jpeg"
                             alt="Image"
-                            className="absolute inset-0 h-full w-full object-cover dark:brightness-[0.2] dark:grayscale"
+                            className="absolute inset-0 h-full w-full object-cover"
                         />
                     </div>
                 </CardContent>
             </Card>
-            <div
-                className="text-balance text-center text-xs text-muted-foreground [&_a]:underline [&_a]:underline-offset-4 hover:[&_a]:text-primary">
-                En continuant, vous acceptez nos <a href="/terms">Conditions d'utilisation</a>{" "}
-                et notre <a href="/privacy">Politique de confidentialité</a>.
-            </div>
         </div>
     );
 }

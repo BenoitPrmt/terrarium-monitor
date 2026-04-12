@@ -29,8 +29,8 @@ export default async function HomePage() {
     const t = await getTranslations("Landing")
 
     return (
-        <div className="relative left-1/2 right-1/2 -mx-[50vw] min-h-screen w-screen bg-gradient-to-br from-emerald-50 via-background to-lime-50 dark:from-zinc-950 dark:via-zinc-950 dark:to-emerald-950/30">
-            <section className="relative px-4 py-20">
+        <div className="mx-auto w-full max-w-5xl">
+            <section className="relative py-16 sm:py-20">
                 <div className="mx-auto max-w-4xl text-center">
                     <Badge
                         variant="outline"
@@ -65,7 +65,7 @@ export default async function HomePage() {
 
             <Separator className="mx-auto max-w-4xl" />
 
-            <section className="px-4 py-16">
+            <section className="py-16">
                 <div className="mx-auto max-w-4xl">
                     <div className="mb-12 text-center">
                         <h2 className="mb-4 text-3xl font-bold text-foreground">
@@ -134,7 +134,7 @@ export default async function HomePage() {
 
             <Separator className="mx-auto max-w-4xl" />
 
-            <section className="px-4 py-16">
+            <section className="py-16">
                 <div className="mx-auto max-w-4xl">
                     <div className="mb-12 text-center">
                         <h2 className="mb-4 text-3xl font-bold text-foreground">{t("team.title")}</h2>
@@ -182,7 +182,7 @@ export default async function HomePage() {
 
             <Separator className="mx-auto max-w-4xl" />
 
-            <section className="px-4 py-16">
+            <section className="py-16">
                 <div className="mx-auto max-w-4xl text-center">
                     <h2 className="mb-4 text-3xl font-bold text-foreground">{t("follow.title")}</h2>
                     <p className="mx-auto mb-8 max-w-2xl text-lg text-muted-foreground">
