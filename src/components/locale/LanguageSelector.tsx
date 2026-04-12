@@ -1,4 +1,6 @@
-import React, {useTransition} from 'react';
+"use client";
+
+import React, {useEffect, useState, useTransition} from 'react';
 import {useRouter} from "next/navigation";
 import {setUserLocale} from "@/services/locale";
 import {getLocaleFlag, Locale, locales} from "@/i18n/config";
@@ -10,16 +12,26 @@ const LanguageSelector = () => {
     const t = useTranslations('Navigation.User');
     const router = useRouter();
     const [isPending, startTransition] = useTransition();
+    const [selectedLocale, setSelectedLocale] = useState(locale as Locale);
+
+    useEffect(() => {
+        setSelectedLocale(locale as Locale);
+    }, [locale]);
 
     return (
         <Select
-            defaultValue={locale}
+            value={selectedLocale}
             aria-label={t('languageSelector')}
             disabled={isPending}
             onValueChange={(value) => {
-                startTransition(async () => {
-                    await setUserLocale(value as Locale)
-                    router.refresh();
+                const nextLocale = value as Locale;
+                setSelectedLocale(nextLocale);
+
+                startTransition(() => {
+                    void (async () => {
+                        await setUserLocale(nextLocale);
+                        router.refresh();
+                    })();
                 });
             }}
         >
