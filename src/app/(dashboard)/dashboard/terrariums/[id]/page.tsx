@@ -155,7 +155,7 @@ export default async function TerrariumDetailPage({params, searchParams}: PagePr
     const recentSamples = await SampleModel.find({
         terrariumId: terrariumDoc._id,
     })
-        .sort({ts: -1})
+        .sort({sentAt: -1, ts: -1})
         .limit(20)
         .lean<RecentSample[]>()
 

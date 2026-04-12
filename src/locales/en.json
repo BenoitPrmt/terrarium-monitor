@@ -234,7 +234,9 @@
     },
     "samples": {
       "title": "Recent measurements",
-      "description": "Last 20 ingested samples.",
+      "description": "Last 5 ingested samples.",
+      "sentAtLabel": "Sent {value}",
+      "groupCount": "{count} measurements",
       "headers": {
         "type": "Type",
         "value": "Value",

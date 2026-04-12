@@ -234,7 +234,9 @@
     },
     "samples": {
       "title": "Mesures récentes",
-      "description": "20 derniers échantillons ingérés.",
+      "description": "5 derniers échantillons ingérés.",
+      "sentAtLabel": "Envoyé {value}",
+      "groupCount": "{count} mesures",
       "headers": {
         "type": "Type",
         "value": "Valeur",
