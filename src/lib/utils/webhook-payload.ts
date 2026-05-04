@@ -54,25 +54,25 @@ export type DiscordBodyConfigInput =
 
 export const DEFAULT_DISCORD_BODY_CONFIG: DiscordBodyConfig = {
     content:
-        "Alert on {{terrarium.name}}: {{metric}} is {{current}} ({{comparator}} {{threshold}})",
-    embedTitle: "Terrarium alert",
-    embedDescription: "{{metric}} crossed the configured threshold.",
+        "Alerte sur {{terrarium.name}}: {{metric}} a atteint {{current}} ({{comparator}} {{threshold}})",
+    embedTitle: "Alerte Terrarium",
+    embedDescription: "{{metric}} a atteint le seuil défini pour {{terrarium.name}}.",
     embedColor: "#22c55e",
     fields: [
         {
             name: "Terrarium",
             value: "{{terrarium.name}}",
-            inline: true,
+            inline: false,
         },
         {
-            name: "Value",
+            name: "Valeur",
             value: "{{current}}",
-            inline: true,
+            inline: false,
         },
         {
-            name: "Rule",
+            name: "Règle",
             value: "{{comparator}} {{threshold}}",
-            inline: true,
+            inline: false,
         },
     ],
 }

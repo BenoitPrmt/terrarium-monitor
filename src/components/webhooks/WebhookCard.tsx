@@ -82,7 +82,7 @@ export function WebhookCard({terrariumId, webhook}: Props) {
                         customBodyTemplate: webhook.customBodyTemplate,
                     }}
                     trigger={
-                        <Button variant="ghost" size="icon" aria-label={t("actions.test")}>
+                        <Button variant="outline" size="icon" aria-label={t("actions.test")}>
                             <SendIcon className="size-4" />
                         </Button>
                     }
@@ -92,7 +92,7 @@ export function WebhookCard({terrariumId, webhook}: Props) {
                     mode="edit"
                     webhook={webhook}
                     trigger={
-                        <Button variant="ghost" size="icon" aria-label={t("actions.edit")}>
+                        <Button variant="outline" size="icon" aria-label={t("actions.edit")}>
                             <PencilIcon className="size-4" />
                         </Button>
                     }
@@ -104,7 +104,7 @@ export function WebhookCard({terrariumId, webhook}: Props) {
                     isActive={webhook.isActive}
                     trigger={
                         <Button
-                            variant="ghost"
+                            variant="destructive"
                             size="icon"
                             aria-label={t("actions.delete")}
                         >
