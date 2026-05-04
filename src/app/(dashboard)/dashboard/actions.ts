@@ -260,7 +260,9 @@ export async function updateWebhookAction(
         cooldownSec: formData.get("cooldownSec")
             ? Number(formData.get("cooldownSec"))
             : undefined,
-        isActive: formData.get("isActive") === "true" ? true : undefined,
+        isActive: formData.has("isActive")
+            ? formData.get("isActive") === "true"
+            : undefined,
     }
 
     const parsed = webhookUpdateSchema.safeParse(payload)
@@ -303,7 +305,8 @@ export async function deleteWebhookAction(
 
 export async function testWebhookAction(
     terrariumId: string,
-    webhookId: string
+    webhookId: string,
+    formData?: FormData
 ): Promise<ActionResult> {
     const ownerId = await requireAuth()
     await connectMongoose()
@@ -320,29 +323,50 @@ export async function testWebhookAction(
         return {success: false, message: t('webhook.common.notFound')}
     }
 
+    const requestedCurrent = Number(formData?.get("current"))
+    const current = Number.isFinite(requestedCurrent)
+        ? requestedCurrent
+        : webhook.threshold
+
     const payload = {
         terrariumId: terrarium._id.toString(),
         metric: webhook.metric,
         comparator: webhook.comparator,
         threshold: webhook.threshold,
-        current: webhook.threshold,
+        current,
         at: new Date().toISOString(),
-        samplesCountInBatch: 0,
+        samplesCountInBatch: 1,
     }
 
-    await sendWebhookWithRetry(
-        webhook.url,
-        payload,
-        {
-            terrariumId: terrarium._id.toString(),
-            metric: webhook.metric,
-            signatureSecret: process.env.WEBHOOK_SIGNATURE_SECRET || "test",
-            secretId: webhook.secretId ?? undefined,
-        },
-        1
-    )
+    try {
+        const delivered = await sendWebhookWithRetry(
+            webhook.url,
+            payload,
+            {
+                terrariumId: terrarium._id.toString(),
+                metric: webhook.metric,
+                signatureSecret: process.env.WEBHOOK_SIGNATURE_SECRET || "test",
+                secretId: webhook.secretId ?? undefined,
+            },
+            1
+        )
 
-    return {success: true, message: t('webhook.test.success')}
+        if (!delivered) {
+            return {
+                success: false,
+                message: t('webhook.test.failed'),
+                data: {payload},
+            }
+        }
+    } catch {
+        return {
+            success: false,
+            message: t('webhook.test.failed'),
+            data: {payload},
+        }
+    }
+
+    return {success: true, message: t('webhook.test.success'), data: {payload}}
 }
 
 export async function updateHealthCheckWebhookAction(

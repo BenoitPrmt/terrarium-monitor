@@ -203,6 +203,80 @@
       "pending": "Saving..."
     }
   },
+  "Auth": {
+    "common": {
+      "fields": {
+        "name": "Name",
+        "email": "Email",
+        "password": "Password"
+      },
+      "imageAlt": "Terrarium illustration"
+    },
+    "validation": {
+      "name": {
+        "minLength": "Name must be at least 2 characters long"
+      },
+      "email": {
+        "invalid": "Please enter a valid email address"
+      },
+      "password": {
+        "minLength": "Password must be at least 8 characters long",
+        "uppercaseOrNumber": "Password must contain at least one uppercase letter or one number",
+        "confirmMismatch": "Passwords do not match"
+      }
+    },
+    "passwordInput": {
+      "label": "Password",
+      "placeholder": "Password",
+      "confirmLabel": "Confirm password",
+      "confirmPlaceholder": "Confirm password",
+      "minLength": "{current}/{length} characters minimum",
+      "strength": "Strength",
+      "levels": {
+        "weak": "Weak",
+        "medium": "Medium",
+        "good": "Good",
+        "excellent": "Excellent"
+      }
+    },
+    "login": {
+      "title": "Welcome back!",
+      "description": "Sign in to your account to continue",
+      "placeholders": {
+        "email": "m@example.com",
+        "password": "Your password"
+      },
+      "forgotPassword": "Forgot password?",
+      "submit": "Sign in",
+      "noAccount": "Don’t have an account?",
+      "createAccount": "Create my account",
+      "errors": {
+        "invalidCredentials": "Incorrect email or password"
+      },
+      "toast": {
+        "success": "You are now signed in!",
+        "error": "Error while signing in"
+      }
+    },
+    "register": {
+      "title": "Create your account",
+      "description": "Create an account to configure your sensors and dashboards.",
+      "placeholders": {
+        "name": "John Doe",
+        "email": "first.last@example.com"
+      },
+      "submit": "Create my account",
+      "alreadyHaveAccount": "Already have an account?",
+      "signIn": "Sign in",
+      "errors": {
+        "emailExists": "This email address is already in use"
+      },
+      "toast": {
+        "success": "Account created successfully!",
+        "error": "Error while creating the account"
+      }
+    }
+  },
   "Terrariums": {
     "list": {
       "title": "Your terrariums",
@@ -328,6 +402,24 @@
       "description": "Automate alerts for {name}.",
       "newWebhook": "New webhook",
       "empty": "No webhooks yet.",
+      "howItWorks": {
+        "title": "How webhooks work",
+        "description": "A webhook is an HTTP POST sent by Terrarium Monitor as soon as an incoming measurement matches the configured rule.",
+        "steps": {
+          "condition": {
+            "title": "1. Define the condition",
+            "description": "Choose the metric, comparator and threshold to monitor."
+          },
+          "delivery": {
+            "title": "2. Receive the POST",
+            "description": "The JSON body shown below is sent to the configured URL with signature headers."
+          },
+          "test": {
+            "title": "3. Simulate before enabling",
+            "description": "Enter a test value to send an event without waiting for a real measurement."
+          }
+        }
+      },
       "healthCheck": {
         "title": "Healthcheck webhook",
         "description": "Trigger an alert when no samples are received for the configured delay."
@@ -340,11 +432,20 @@
         "metric": "Metric",
         "comparator": "Comparator",
         "threshold": "Threshold",
-        "cooldown": "Cooldown (sec)"
+        "cooldown": "Cooldown (sec)",
+        "active": "Active"
+      },
+      "dialog": {
+        "createTrigger": "Create webhook",
+        "createTitle": "Create webhook",
+        "createDescription": "Configure the URL to call and the condition that triggers delivery.",
+        "editTitle": "Edit webhook",
+        "editDescription": "Update the URL, threshold or state of this webhook."
       },
       "submit": {
         "label": "Create",
-        "pending": "Creating..."
+        "pending": "Creating...",
+        "editLabel": "Save"
       }
     },
     "healthCheck": {
@@ -355,7 +456,23 @@
       },
       "helper": "We will trigger this webhook once when the terrarium stops sending data for the specified delay.",
       "secretLabel": "Secret: {id}",
-      "lastTriggered": "Last downtime alert: {date}"
+      "lastTriggered": "Last downtime alert: {date}",
+      "summary": {
+        "name": "Monitoring",
+        "delay": "Alert after {minutes} min without samples",
+        "noUrl": "No URL configured"
+      },
+      "status": {
+        "active": "Active",
+        "inactive": "Inactive"
+      },
+      "actions": {
+        "edit": "Edit healthcheck webhook"
+      },
+      "dialog": {
+        "title": "Healthcheck webhook",
+        "description": "Trigger an alert when no samples are received for the configured delay."
+      }
     },
     "card": {
       "fields": {
@@ -369,10 +486,59 @@
       },
       "secretLabel": "Secret: {id}",
       "lastTriggered": "Last delivery: {date}",
+      "status": {
+        "active": "Active",
+        "inactive": "Inactive"
+      },
+      "test": {
+        "title": "Simulate an event",
+        "dialogTitle": "Test webhook",
+        "description": "The simulated value becomes the current field in the body. Use it to verify your endpoint and receiving rules.",
+        "fields": {
+          "current": "Simulated value"
+        }
+      },
+      "body": {
+        "title": "JSON body sent",
+        "description": "Preview of the next test payload or the latest test sent."
+      },
       "actions": {
         "testing": "Testing...",
         "test": "Test",
+        "edit": "Edit",
+        "delete": "Delete",
         "deleting": "Deleting..."
+      }
+    },
+    "deleteDialog": {
+      "title": "Delete {name}?",
+      "description": "Deletion is permanent. You can also disable the webhook to keep it without triggering it.",
+      "cancel": "Cancel",
+      "disable": "Disable",
+      "delete": "Delete"
+    },
+    "infoDialog": {
+      "trigger": "See how webhooks work",
+      "title": "How webhooks work",
+      "description": "Terrarium Monitor sends an HTTP POST request when an active webhook condition is met.",
+      "request": {
+        "title": "Request sent",
+        "description": "POST method to the configured URL, with a JSON body and signature headers."
+      },
+      "status": {
+        "title": "Expected status",
+        "description": "Return an HTTP 2xx status. 5xx errors are retried automatically."
+      },
+      "headers": {
+        "title": "Included headers",
+        "terrariumId": "Terrarium identifier",
+        "metric": "Metric that triggered the delivery",
+        "signature": "HMAC signature of the JSON body",
+        "secretId": "Identifier of the secret used to sign"
+      },
+      "body": {
+        "title": "Example body",
+        "description": "The same format is used for tests and real deliveries."
       }
     }
   },
@@ -410,7 +576,8 @@
         "success": "Webhook deleted successfully!"
       },
       "test": {
-        "success": "Test payload sent successfully!"
+        "success": "Test payload sent successfully!",
+        "failed": "The test webhook did not return a valid HTTP status."
       },
       "healthCheck": {
         "invalidPayload": "Invalid data to update the healthcheck webhook.",

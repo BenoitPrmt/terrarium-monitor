@@ -1,37 +1,14 @@
 "use client"
 
-import {useEffect, useState, useTransition, useActionState} from "react"
-import {useFormStatus} from "react-dom"
+import {PencilIcon, SendIcon, Trash2Icon} from "lucide-react"
+import {useLocale, useTranslations} from "next-intl"
 
-import {
-    deleteWebhookAction,
-    testWebhookAction,
-    updateWebhookAction,
-} from "@/app/(dashboard)/dashboard/actions"
-import {Button} from "@/components/ui/button"
-import {Input} from "@/components/ui/input"
-import {Label} from "@/components/ui/label"
-import {Switch} from "@/components/ui/switch"
+import {WebhookDeleteDialog} from "@/components/webhooks/WebhookDeleteDialog"
+import {WebhookFormDialog} from "@/components/webhooks/WebhookFormDialog"
+import {WebhookTestDialog} from "@/components/webhooks/WebhookTestDialog"
 import {Badge} from "@/components/ui/badge"
+import {Button} from "@/components/ui/button"
 import type {MetricType} from "@/models/constants"
-import {Loader2Icon, SendIcon, Trash2Icon} from "lucide-react";
-import SaveSubmitButton from "@/components/form/SaveSubmitButton";
-import {toast} from "sonner"
-import {useLocale, useTranslations} from "next-intl";
-
-const metricOptionsBase = [
-    {value: "TEMPERATURE", key: "temperature"},
-    {value: "HUMIDITY", key: "humidity"},
-    {value: "PRESSURE", key: "pressure"},
-    {value: "ALTITUDE", key: "altitude"},
-]
-
-const comparatorOptions = [
-    {value: "gt", label: ">"},
-    {value: "gte", label: ">="},
-    {value: "lt", label: "<"},
-    {value: "lte", label: "<="},
-]
 
 type Props = {
     terrariumId: string
@@ -49,215 +26,82 @@ type Props = {
     }
 }
 
-type ActionState = Awaited<ReturnType<typeof updateWebhookAction>>
-
-const initialState: ActionState | null = null
-
 export function WebhookCard({terrariumId, webhook}: Props) {
-    const {pending} = useFormStatus();
-    const t = useTranslations('Webhooks.card');
-    const common = useTranslations('Common');
-    const metricsT = useTranslations('Common.metrics');
-    const locale = useLocale();
-    const metricOptions = metricOptionsBase.map((option) => ({
-        value: option.value,
-        label: metricsT(option.key as keyof Record<string, string>),
-    }));
-    const action = async (_state: ActionState | null, formData: FormData) => {
-        return updateWebhookAction(terrariumId, webhook.id, formData)
-    }
-
-    const [state, formAction] = useActionState<ActionState | null, FormData>(
-        action,
-        initialState
-    )
-    const [metric, setMetric] = useState(webhook.metric)
-    const [comparator, setComparator] = useState(webhook.comparator)
-    const [isActive, setIsActive] = useState(webhook.isActive)
-    const [testPending, startTest] = useTransition()
-    const [deletePending, startDelete] = useTransition()
-
-    useEffect(() => {
-        if (!state?.message) {
-            return
-        }
-        if (state.success) {
-            const data = state.data as {
-                metric?: MetricType
-                comparator?: string
-                isActive?: boolean
-            } | undefined
-            if (data?.metric) setMetric(data.metric)
-            if (data?.comparator) setComparator(data.comparator)
-            if (typeof data?.isActive === "boolean") setIsActive(data.isActive)
-            toast.success(state.message)
-        } else {
-            toast.error(state.message)
-        }
-    }, [state])
+    const t = useTranslations("Webhooks.card")
+    const metricsT = useTranslations("Common.metrics")
+    const locale = useLocale()
+    const metricLabel = metricsT(webhook.metric.toLowerCase() as never)
+    const formatter = new Intl.DateTimeFormat(locale, {
+        dateStyle: "medium",
+        timeStyle: "short",
+    })
 
     return (
-        <div className="space-y-4 rounded-lg border p-4">
-            <form action={formAction} className="space-y-4">
-                <div className="grid gap-4 md:grid-cols-2">
-                    <div className="space-y-2">
-                        <Label htmlFor={`name-${webhook.id}`}>{t('fields.name')}</Label>
-                        <Input
-                            id={`name-${webhook.id}`}
-                            name="name"
-                            defaultValue={webhook.name}
-                            required
-                        />
-                    </div>
-                    <div className="space-y-2">
-                        <Label htmlFor={`url-${webhook.id}`}>{t('fields.url')}</Label>
-                        <Input
-                            id={`url-${webhook.id}`}
-                            name="url"
-                            defaultValue={webhook.url}
-                            type="url"
-                            required
-                        />
-                    </div>
-                </div>
-                <div className="grid gap-4 md:grid-cols-4">
-                    <div className="space-y-2">
-                        <Label>{t('fields.metric')}</Label>
-                        <select
-                            className="w-full rounded-md border border-input bg-transparent px-3 py-2"
-                            value={metric}
-                            onChange={(event) => setMetric(event.target.value as MetricType)}
-                        >
-                            {metricOptions.map((option) => (
-                                <option key={option.value} value={option.value}>
-                                    {option.label}
-                                </option>
-                            ))}
-                        </select>
-                        <input type="hidden" name="metric" value={metric}/>
-                    </div>
-                    <div className="space-y-2">
-                        <Label>{t('fields.comparator')}</Label>
-                        <select
-                            className="w-full rounded-md border border-input bg-transparent px-3 py-2"
-                            value={comparator}
-                            onChange={(event) => setComparator(event.target.value)}
-                        >
-                            {comparatorOptions.map((option) => (
-                                <option key={option.value} value={option.value}>
-                                    {option.label}
-                                </option>
-                            ))}
-                        </select>
-                        <input type="hidden" name="comparator" value={comparator}/>
-                    </div>
-                    <div className="space-y-2">
-                        <Label htmlFor={`threshold-${webhook.id}`}>{t('fields.threshold')}</Label>
-                        <Input
-                            id={`threshold-${webhook.id}`}
-                            name="threshold"
-                            type="number"
-                            step="0.1"
-                            defaultValue={webhook.threshold}
-                        />
-                    </div>
-                    <div className="space-y-2">
-                        <Label htmlFor={`cooldown-${webhook.id}`}>{t('fields.cooldown')}</Label>
-                        <Input
-                            id={`cooldown-${webhook.id}`}
-                            name="cooldownSec"
-                            type="number"
-                            defaultValue={webhook.cooldownSec}
-                        />
-                    </div>
-                </div>
-                <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                        <Switch
-                            id={`active-${webhook.id}`}
-                            checked={isActive}
-                            onCheckedChange={(checked) => setIsActive(checked)}
-                        />
-                        <Label htmlFor={`active-${webhook.id}`}>{t('fields.active')}</Label>
-                        <input
-                            type="hidden"
-                            name="isActive"
-                            value={isActive ? "true" : "false"}
-                        />
-                    </div>
-                    <SaveSubmitButton pending={pending}/>
-                </div>
-            </form>
-            <div className="flex flex-wrap items-center gap-3 text-sm text-muted-foreground">
-                {webhook.secretId && (
-                    <Badge variant="default">{t('secretLabel', {id: webhook.secretId})}</Badge>
-                )}
+        <div className="grid gap-3 border-b px-4 py-4 last:border-b-0 md:grid-cols-[minmax(180px,1fr)_minmax(220px,1.4fr)_auto_auto] md:items-center">
+            <div className="min-w-0">
+                <p className="truncate text-base font-semibold">{webhook.name}</p>
+                <p className="text-xs text-muted-foreground">
+                    {metricLabel} {webhook.comparator} {webhook.threshold}
+                </p>
+            </div>
+            <div className="min-w-0">
+                <p className="truncate font-mono text-sm text-muted-foreground">
+                    {webhook.url}
+                </p>
                 {webhook.lastTriggeredAt && (
-                    <span>
-                        {t('lastTriggered', {
-                            date: new Intl.DateTimeFormat(locale, {
-                                dateStyle: "medium",
-                                timeStyle: "short",
-                            }).format(new Date(webhook.lastTriggeredAt)),
+                    <p className="text-xs text-muted-foreground">
+                        {t("lastTriggered", {
+                            date: formatter.format(new Date(webhook.lastTriggeredAt)),
                         })}
-                    </span>
+                    </p>
                 )}
             </div>
-            <div className="flex gap-2">
-                <Button
-                    type="button"
-                    variant="outline"
-                    disabled={testPending}
-                    onClick={() =>
-                        startTest(async () => {
-                            const result = await testWebhookAction(terrariumId, webhook.id)
-                            if (result.success) {
-                                toast.success(result.message)
-                            } else {
-                                toast.error(result.message)
-                            }
-                        })
-                    }
-                >
-                    {testPending ? (
-                        <>
-                            <Loader2Icon className="size-4 animate-spin" />
-                            {t('actions.testing')}
-                        </>
-                    ) : (
-                        <>
+            <Badge
+                variant={webhook.isActive ? "default" : "destructive"}
+                className="w-fit"
+            >
+                {webhook.isActive ? t("status.active") : t("status.inactive")}
+            </Badge>
+            <div className="flex items-center gap-1 md:justify-end">
+                <WebhookTestDialog
+                    terrariumId={terrariumId}
+                    webhook={{
+                        id: webhook.id,
+                        metric: webhook.metric,
+                        comparator: webhook.comparator,
+                        threshold: webhook.threshold,
+                    }}
+                    trigger={
+                        <Button variant="ghost" size="icon" aria-label={t("actions.test")}>
                             <SendIcon className="size-4" />
-                            {t('actions.test')}
-                        </>
-                    )}
-                </Button>
-                <Button
-                    type="button"
-                    variant="destructive"
-                    disabled={deletePending}
-                    onClick={() =>
-                        startDelete(async () => {
-                            const result = await deleteWebhookAction(terrariumId, webhook.id)
-                            if (result.success) {
-                                toast.success(result.message)
-                            } else {
-                                toast.error(result.message)
-                            }
-                        })
+                        </Button>
                     }
-                >
-                    {deletePending ? (
-                        <>
-                            <Loader2Icon className="size-4 animate-spin" />
-                            {t('actions.deleting')}
-                        </>
-                    ) : (
-                        <>
+                />
+                <WebhookFormDialog
+                    terrariumId={terrariumId}
+                    mode="edit"
+                    webhook={webhook}
+                    trigger={
+                        <Button variant="ghost" size="icon" aria-label={t("actions.edit")}>
+                            <PencilIcon className="size-4" />
+                        </Button>
+                    }
+                />
+                <WebhookDeleteDialog
+                    terrariumId={terrariumId}
+                    webhookId={webhook.id}
+                    webhookName={webhook.name}
+                    isActive={webhook.isActive}
+                    trigger={
+                        <Button
+                            variant="ghost"
+                            size="icon"
+                            aria-label={t("actions.delete")}
+                        >
                             <Trash2Icon className="size-4" />
-                            {common('actions.delete')}
-                        </>
-                    )}
-                </Button>
+                        </Button>
+                    }
+                />
             </div>
         </div>
     )

@@ -5,15 +5,15 @@ import {Input} from "@/components/ui/input"
 import {Label} from "@/components/ui/label"
 import {signIn} from "next-auth/react";
 import {FormEvent, useState} from "react";
+import Link from "next/link";
 import {toast} from "sonner";
 import {z} from "zod";
-
-const loginFormSchema = z.object({
-    email: z.string().email("Veuillez entrer une adresse email valide"),
-    password: z.string().min(8, "Le mot de passe doit contenir au moins 8 caractères"),
-});
+import {useTranslations} from "next-intl";
 
 export function LoginForm({className, ...props}: React.ComponentProps<"div">) {
+    const t = useTranslations("Auth.login");
+    const validationT = useTranslations("Auth.validation");
+    const commonT = useTranslations("Auth.common");
     const [email, setEmail] = useState<string>("");
     const [password, setPassword] = useState<string>("");
     const [errors, setErrors] = useState<{
@@ -27,6 +27,10 @@ export function LoginForm({className, ...props}: React.ComponentProps<"div">) {
         setErrors({});
 
         try {
+            const loginFormSchema = z.object({
+                email: z.email(validationT("email.invalid")),
+                password: z.string().min(8, validationT("password.minLength")),
+            });
             loginFormSchema.parse({email, password});
         } catch (error) {
             if (error instanceof z.ZodError) {
@@ -47,15 +51,15 @@ export function LoginForm({className, ...props}: React.ComponentProps<"div">) {
         })
             .then((result) => {
                 if (result?.error) {
-                    setErrors({password: "Email ou mot de passe incorrect"});
+                    setErrors({password: t("errors.invalidCredentials")});
                     return;
                 }
-                toast.success("Vous êtes connecté !");
+                toast.success(t("toast.success"));
                 window.location.href = "/dashboard";
             })
             .catch((error) => {
                 console.error("Sign in error", error);
-                toast.error("Erreur lors de la connexion");
+                toast.error(t("toast.error"));
             });
     };
 
@@ -67,18 +71,18 @@ export function LoginForm({className, ...props}: React.ComponentProps<"div">) {
                         <div className="flex flex-col gap-6">
                             <div className="flex flex-col items-center text-center">
                                 <h1 className="text-2xl font-bold">
-                                    Bon retour parmi nous !
+                                    {t("title")}
                                 </h1>
                                 <p className="text-balance text-muted-foreground">
-                                    Connectez-vous à votre compte pour continuer
+                                    {t("description")}
                                 </p>
                             </div>
                             <div className="grid gap-2">
-                                <Label htmlFor="email">Email</Label>
+                                <Label htmlFor="email">{commonT("fields.email")}</Label>
                                 <Input
                                     id="email"
                                     type="email"
-                                    placeholder="m@example.com"
+                                    placeholder={t("placeholders.email")}
                                     required
                                     value={email}
                                     onChange={(e) => setEmail(e.target.value)}
@@ -90,17 +94,18 @@ export function LoginForm({className, ...props}: React.ComponentProps<"div">) {
                             </div>
                             <div className="grid gap-2">
                                 <div className="flex items-center">
-                                    <Label htmlFor="password">Mot de passe</Label>
-                                    <a
+                                    <Label htmlFor="password">{commonT("fields.password")}</Label>
+                                    <Link
                                         href="#"
                                         className="ml-auto text-sm underline-offset-2 hover:underline"
                                     >
-                                        Mot de passe oublié ?
-                                    </a>
+                                        {t("forgotPassword")}
+                                    </Link>
                                 </div>
                                 <Input
                                     id="password"
                                     type="password"
+                                    placeholder={t("placeholders.password")}
                                     required
                                     value={password}
                                     onChange={(e) => setPassword(e.target.value)}
@@ -111,20 +116,20 @@ export function LoginForm({className, ...props}: React.ComponentProps<"div">) {
                                 )}
                             </div>
                             <Button type="submit" className="w-full">
-                                Me connecter
+                                {t("submit")}
                             </Button>
                             <div className="text-center text-sm">
-                                Vous n&#39;avez pas de compte ?{" "}
-                                <a href="/register" className="underline underline-offset-4">
-                                    Créer mon compte
-                                </a>
+                                {t("noAccount")}{" "}
+                                <Link href="/register" className="underline underline-offset-4">
+                                    {t("createAccount")}
+                                </Link>
                             </div>
                         </div>
                     </form>
                     <div className="relative hidden bg-muted md:block">
                         <img
                             src="/assets/auth/terrarium.jpeg"
-                            alt="Image"
+                            alt={commonT("imageAlt")}
                             className="absolute inset-0 h-full w-full object-cover"
                         />
                     </div>

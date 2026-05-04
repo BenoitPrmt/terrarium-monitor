@@ -8,21 +8,14 @@ import {toast} from "sonner"
 import {z} from "zod"
 import {Separator} from "@/components/ui/separator";
 import {PasswordInput} from "@/components/form/PasswordInput";
-
-const registerFormSchema = z.object({
-    name: z.string().min(2, "Le nom doit contenir au moins 2 caractères"),
-    email: z.string().email("Veuillez entrer une adresse email valide"),
-    password: z.string()
-        .min(8, "Le mot de passe doit contenir au moins 8 caractères")
-        .regex(/[A-Z]?|[0-9]?/, "Le mot de passe doit contenir au moins une majuscule ou un chiffre"),
-    confirmPassword: z.string()
-}).refine((data) => data.password === data.confirmPassword, {
-    message: "Les mots de passe ne correspondent pas",
-    path: ["confirmPassword"],
-});
+import Link from "next/link";
+import {useTranslations} from "next-intl";
 
 
 export function RegisterForm({className, ...props}: React.ComponentProps<"div">) {
+    const t = useTranslations("Auth.register");
+    const validationT = useTranslations("Auth.validation");
+    const commonT = useTranslations("Auth.common");
     const [name, setName] = useState("");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
@@ -39,6 +32,17 @@ export function RegisterForm({className, ...props}: React.ComponentProps<"div">)
         setErrors({});
 
         try {
+            const registerFormSchema = z.object({
+                name: z.string().min(2, validationT("name.minLength")),
+                email: z.string().email(validationT("email.invalid")),
+                password: z.string()
+                    .min(8, validationT("password.minLength"))
+                    .regex(/[A-Z]|[0-9]/, validationT("password.uppercaseOrNumber")),
+                confirmPassword: z.string()
+            }).refine((data) => data.password === data.confirmPassword, {
+                message: validationT("password.confirmMismatch"),
+                path: ["confirmPassword"],
+            });
             registerFormSchema.parse({
                 name,
                 email,
@@ -61,13 +65,13 @@ export function RegisterForm({className, ...props}: React.ComponentProps<"div">)
             if (!response.ok) {
                 const data = await response.json();
                 if (data.error === 'email_exists') {
-                    setErrors({email: "Cette adresse email est déjà utilisée"});
+                    setErrors({email: t("errors.emailExists")});
                     return;
                 }
                 throw new Error();
             }
 
-            toast.success("Compte créé avec succès !");
+            toast.success(t("toast.success"));
             window.location.href = "/login";
         } catch (error) {
             if (error instanceof z.ZodError) {
@@ -78,8 +82,9 @@ export function RegisterForm({className, ...props}: React.ComponentProps<"div">)
                     }
                 });
                 setErrors(formattedErrors);
+                return;
             }
-            toast.error("Erreur lors de la création du compte");
+            toast.error(t("toast.error"));
         }
     };
 
@@ -90,10 +95,10 @@ export function RegisterForm({className, ...props}: React.ComponentProps<"div">)
                     <div className="p-6 md:p-8">
                         <div className="flex flex-col items-center text-center">
                             <h1 className="text-2xl font-bold">
-                                Créer votre compte
+                                {t("title")}
                             </h1>
                             <p className="text-balance text-muted-foreground">
-                                Créez un compte pour configurer vos capteurs et dashboards.
+                                {t("description")}
                             </p>
                         </div>
 
@@ -102,11 +107,11 @@ export function RegisterForm({className, ...props}: React.ComponentProps<"div">)
                         <form onSubmit={handleRegister}>
                             <div className="flex flex-col gap-6">
                                 <div className="grid gap-2">
-                                    <Label htmlFor="name">Nom</Label>
+                                    <Label htmlFor="name">{commonT("fields.name")}</Label>
                                     <Input
                                         id="name"
                                         type="text"
-                                        placeholder="John Doe"
+                                        placeholder={t("placeholders.name")}
                                         required
                                         value={name}
                                         onChange={(e) => setName(e.target.value)}
@@ -117,11 +122,11 @@ export function RegisterForm({className, ...props}: React.ComponentProps<"div">)
                                     )}
                                 </div>
                                 <div className="grid gap-2">
-                                    <Label htmlFor="email">Email</Label>
+                                    <Label htmlFor="email">{commonT("fields.email")}</Label>
                                     <Input
                                         id="email"
                                         type="email"
-                                        placeholder="prenom.nom@ecole.com"
+                                        placeholder={t("placeholders.email")}
                                         required
                                         value={email}
                                         onChange={(e) => setEmail(e.target.value)}
@@ -136,6 +141,7 @@ export function RegisterForm({className, ...props}: React.ComponentProps<"div">)
                                     length={8}
                                     strength
                                     confirm
+                                    label={commonT("fields.password")}
                                     error={errors.password}
                                     confirmError={errors.confirmPassword}
                                     onValueChange={setPassword}
@@ -144,13 +150,13 @@ export function RegisterForm({className, ...props}: React.ComponentProps<"div">)
                                 />
 
                                 <Button type="submit" className="w-full">
-                                    Créer mon compte
+                                    {t("submit")}
                                 </Button>
                                 <div className="text-center text-sm">
-                                    Vous avez déjà un compte ?{" "}
-                                    <a href="/login" className="underline underline-offset-4">
-                                        Me connecter
-                                    </a>
+                                    {t("alreadyHaveAccount")}{" "}
+                                    <Link href="/login" className="underline underline-offset-4">
+                                        {t("signIn")}
+                                    </Link>
                                 </div>
                             </div>
                         </form>
@@ -158,7 +164,7 @@ export function RegisterForm({className, ...props}: React.ComponentProps<"div">)
                     <div className="relative hidden bg-muted md:block">
                         <img
                             src="/assets/auth/terrarium.jpeg"
-                            alt="Image"
+                            alt={commonT("imageAlt")}
                             className="absolute inset-0 h-full w-full object-cover"
                         />
                     </div>

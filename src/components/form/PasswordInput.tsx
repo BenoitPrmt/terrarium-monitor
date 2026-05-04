@@ -5,6 +5,7 @@ import {Check, Eye, EyeOff, X} from "lucide-react";
 import {Input} from "@/components/ui/input";
 import {Label} from "@/components/ui/label";
 import {cn} from "@/lib/utils";
+import {useTranslations} from "next-intl";
 
 interface PasswordInputProps extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 'onChange'> {
     label?: string;
@@ -37,10 +38,10 @@ const getStrengthColor = (strength: number): string => {
 };
 
 const getStrengthLabel = (strength: number): string => {
-    if (strength <= 25) return "Faible";
-    if (strength <= 50) return "Moyen";
-    if (strength <= 75) return "Bon";
-    return "Excellent";
+    if (strength <= 25) return "weak";
+    if (strength <= 50) return "medium";
+    if (strength <= 75) return "good";
+    return "excellent";
 };
 
 export const PasswordInput = ({
@@ -55,6 +56,7 @@ export const PasswordInput = ({
                                   className,
                                   ...props
                               }: PasswordInputProps) => {
+    const t = useTranslations("Auth.passwordInput");
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
     const [password, setPassword] = useState("");
@@ -92,7 +94,7 @@ export const PasswordInput = ({
     return (
         <div className={cn("space-y-4", className)}>
             <div className="space-y-2">
-                <Label>{label}</Label>
+                <Label>{label ?? t("label")}</Label>
                 <div className="relative">
                     <Input
                         type={showPassword ? "text" : "password"}
@@ -102,7 +104,7 @@ export const PasswordInput = ({
                             "pr-10",
                             error && "border-red-500"
                         )}
-                        placeholder="Mot de passe"
+                        placeholder={t("placeholder")}
                         {...props}
                     />
                     <button
@@ -131,11 +133,11 @@ export const PasswordInput = ({
                         </div>
                         <div className="flex items-center justify-between text-xs text-muted-foreground">
                             {length && (
-                                <span>{password.length}/{length} caractères minimum</span>
+                                <span>{t("minLength", {current: password.length, length})}</span>
                             )}
                             {strength && (
                                 <span className="flex items-center gap-1">
-                                    Force: {getStrengthLabel(passwordStrength)}
+                                    {t("strength")}: {t(`levels.${getStrengthLabel(passwordStrength)}`)}
                                     {passwordStrength >= 50 ? (
                                         <Check
                                             className={`h-3 w-3 ${passwordStrength > 75 ? "text-green-500" : "text-yellow-500"}`}/>
@@ -153,7 +155,7 @@ export const PasswordInput = ({
 
             {confirm && (
                 <div className="space-y-2">
-                    <Label>Confirmer le mot de passe</Label>
+                    <Label>{t("confirmLabel")}</Label>
                     <div className="relative">
                         <Input
                             type={showConfirmPassword ? "text" : "password"}
@@ -163,7 +165,7 @@ export const PasswordInput = ({
                                 "pr-10",
                                 confirmError && "border-red-500"
                             )}
-                            placeholder="Confirmer le mot de passe"
+                            placeholder={t("confirmPlaceholder")}
                         />
                         <button
                             type="button"
