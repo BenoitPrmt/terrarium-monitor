@@ -23,6 +23,9 @@ function serializeWebhook(webhook: WebhookDocument) {
         threshold: webhook.threshold,
         cooldownSec: webhook.cooldownSec,
         isActive: webhook.isActive,
+        bodyPreset: webhook.bodyPreset ?? "default",
+        discordBodyConfig: webhook.discordBodyConfig,
+        customBodyTemplate: webhook.customBodyTemplate,
         secretId: webhook.secretId,
         lastTriggeredAt: webhook.lastTriggeredAt?.toISOString(),
         createdAt: webhook.createdAt?.toISOString(),
@@ -97,6 +100,9 @@ export async function POST(
         threshold: payload.threshold,
         cooldownSec: payload.cooldownSec ?? 900,
         isActive: payload.isActive ?? true,
+        bodyPreset: payload.bodyPreset ?? "default",
+        discordBodyConfig: payload.discordBodyConfig,
+        customBodyTemplate: payload.customBodyTemplate,
         secretId: payload.secretId ?? generateUuid(),
     })
 

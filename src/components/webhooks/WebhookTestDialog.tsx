@@ -19,17 +19,14 @@ import {
 import {Input} from "@/components/ui/input"
 import {Label} from "@/components/ui/label"
 import {WebhookBodyPreview} from "@/components/webhooks/WebhookBodyPreview"
+import {
+    buildWebhookPayload,
+    type DiscordBodyConfigInput,
+    type WebhookBodyPreset,
+} from "@/lib/utils/webhook-payload"
 import type {MetricType} from "@/models/constants"
 
-type WebhookTestPayload = {
-    terrariumId: string
-    metric: MetricType
-    comparator: string
-    threshold: number
-    current: number
-    at: string
-    samplesCountInBatch: number
-}
+type WebhookTestPayload = Record<string, unknown>
 
 type Props = {
     terrariumId: string
@@ -38,6 +35,9 @@ type Props = {
         metric: MetricType
         comparator: string
         threshold: number
+        bodyPreset?: WebhookBodyPreset
+        discordBodyConfig?: DiscordBodyConfigInput
+        customBodyTemplate?: string
     }
     trigger: ReactNode
 }
@@ -57,21 +57,37 @@ export function WebhookTestDialog({terrariumId, webhook, trigger}: Props) {
     const [lastPayload, setLastPayload] = useState<WebhookTestPayload | null>(null)
     const [pending, startTransition] = useTransition()
 
-    const previewPayload = useMemo<WebhookTestPayload>(
-        () =>
-            lastPayload ?? {
-                terrariumId,
-                metric: webhook.metric,
-                comparator: webhook.comparator,
-                threshold: webhook.threshold,
-                current: Number.isFinite(Number(testValue))
-                    ? Number(testValue)
-                    : webhook.threshold,
-                at: new Date().toISOString(),
-                samplesCountInBatch: 1,
-            },
-        [lastPayload, terrariumId, testValue, webhook]
-    )
+    const previewPayload = useMemo<WebhookTestPayload>(() => {
+        if (lastPayload) {
+            return lastPayload
+        }
+
+        try {
+            return buildWebhookPayload(
+                {
+                    bodyPreset: webhook.bodyPreset,
+                    discordBodyConfig: webhook.discordBodyConfig,
+                    customBodyTemplate: webhook.customBodyTemplate,
+                },
+                {
+                    terrarium: {
+                        id: terrariumId,
+                        name: "Terrarium",
+                    },
+                    metric: webhook.metric,
+                    comparator: webhook.comparator,
+                    threshold: webhook.threshold,
+                    current: Number.isFinite(Number(testValue))
+                        ? Number(testValue)
+                        : webhook.threshold,
+                    at: new Date().toISOString(),
+                    samplesCountInBatch: 1,
+                }
+            )
+        } catch {
+            return {error: t("body.invalidJson")}
+        }
+    }, [lastPayload, terrariumId, testValue, webhook, t])
 
     return (
         <Dialog open={open} onOpenChange={setOpen}>

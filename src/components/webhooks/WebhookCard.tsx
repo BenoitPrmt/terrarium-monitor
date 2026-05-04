@@ -8,6 +8,10 @@ import {WebhookFormDialog} from "@/components/webhooks/WebhookFormDialog"
 import {WebhookTestDialog} from "@/components/webhooks/WebhookTestDialog"
 import {Badge} from "@/components/ui/badge"
 import {Button} from "@/components/ui/button"
+import type {
+    DiscordBodyConfigInput,
+    WebhookBodyPreset,
+} from "@/lib/utils/webhook-payload"
 import type {MetricType} from "@/models/constants"
 
 type Props = {
@@ -21,6 +25,9 @@ type Props = {
         threshold: number
         cooldownSec: number
         isActive: boolean
+        bodyPreset?: WebhookBodyPreset
+        discordBodyConfig?: DiscordBodyConfigInput
+        customBodyTemplate?: string
         secretId?: string
         lastTriggeredAt?: string
     }
@@ -70,6 +77,9 @@ export function WebhookCard({terrariumId, webhook}: Props) {
                         metric: webhook.metric,
                         comparator: webhook.comparator,
                         threshold: webhook.threshold,
+                        bodyPreset: webhook.bodyPreset,
+                        discordBodyConfig: webhook.discordBodyConfig,
+                        customBodyTemplate: webhook.customBodyTemplate,
                     }}
                     trigger={
                         <Button variant="ghost" size="icon" aria-label={t("actions.test")}>

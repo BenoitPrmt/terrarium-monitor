@@ -28,7 +28,12 @@ import {AggregateHourlyModel} from "@/models/AggregateHourly"
 import {AggregateDailyModel} from "@/models/AggregateDaily"
 import {AggregateByHourOfDayModel} from "@/models/AggregateByHourOfDay"
 import {TerrariumActionModel} from "@/models/TerrariumAction"
-import {generateUuid, hashDeviceToken, sendWebhookWithRetry} from "@/lib/utils"
+import {
+    buildWebhookPayload,
+    generateUuid,
+    hashDeviceToken,
+    sendWebhookWithRetry,
+} from "@/lib/utils"
 import {createTranslator} from "next-intl";
 import {getUserLocale} from "@/services/locale";
 
@@ -219,6 +224,9 @@ export async function createWebhookAction(
         threshold: Number(formData.get("threshold")),
         cooldownSec: Number(formData.get("cooldownSec")) || undefined,
         isActive: formData.get("isActive") === "true",
+        bodyPreset: formData.get("bodyPreset") || "default",
+        discordBodyConfig: parseJsonFormValue(formData.get("discordBodyConfig")),
+        customBodyTemplate: formData.get("customBodyTemplate") || undefined,
     }
 
     const parsed = webhookCreateSchema.safeParse(payload)
@@ -263,6 +271,9 @@ export async function updateWebhookAction(
         isActive: formData.has("isActive")
             ? formData.get("isActive") === "true"
             : undefined,
+        bodyPreset: formData.get("bodyPreset") || undefined,
+        discordBodyConfig: parseJsonFormValue(formData.get("discordBodyConfig")),
+        customBodyTemplate: formData.get("customBodyTemplate") || undefined,
     }
 
     const parsed = webhookUpdateSchema.safeParse(payload)
@@ -328,17 +339,27 @@ export async function testWebhookAction(
         ? requestedCurrent
         : webhook.threshold
 
-    const payload = {
-        terrariumId: terrarium._id.toString(),
-        metric: webhook.metric,
-        comparator: webhook.comparator,
-        threshold: webhook.threshold,
-        current,
-        at: new Date().toISOString(),
-        samplesCountInBatch: 1,
-    }
-
     try {
+        const payload = buildWebhookPayload(
+            {
+                bodyPreset: webhook.bodyPreset,
+                discordBodyConfig: webhook.discordBodyConfig,
+                customBodyTemplate: webhook.customBodyTemplate,
+            },
+            {
+                terrarium: {
+                    id: terrarium._id.toString(),
+                    name: terrarium.name,
+                },
+                metric: webhook.metric,
+                comparator: webhook.comparator,
+                threshold: webhook.threshold,
+                current,
+                at: new Date().toISOString(),
+                samplesCountInBatch: 1,
+            }
+        )
+
         const delivered = await sendWebhookWithRetry(
             webhook.url,
             payload,
@@ -358,15 +379,26 @@ export async function testWebhookAction(
                 data: {payload},
             }
         }
+
+        return {success: true, message: t('webhook.test.success'), data: {payload}}
     } catch {
         return {
             success: false,
             message: t('webhook.test.failed'),
-            data: {payload},
         }
     }
+}
 
-    return {success: true, message: t('webhook.test.success'), data: {payload}}
+function parseJsonFormValue(value: FormDataEntryValue | null) {
+    if (!value || typeof value !== "string") {
+        return undefined
+    }
+
+    try {
+        return JSON.parse(value)
+    } catch {
+        return undefined
+    }
 }
 
 export async function updateHealthCheckWebhookAction(
@@ -398,10 +430,9 @@ export async function updateHealthCheckWebhookAction(
     const terrarium = await requireTerrariumForOwner(terrariumId, ownerId)
 
     const nextConfig = {
-        url:
-            parsed.data.url ??
-            terrarium.healthCheck?.url ??
-            "",
+        url: parsed.data.isEnabled
+            ? parsed.data.url ?? terrarium.healthCheck?.url ?? ""
+            : parsed.data.url ?? "",
         delayMinutes:
             parsed.data.delayMinutes ??
             terrarium.healthCheck?.delayMinutes ??

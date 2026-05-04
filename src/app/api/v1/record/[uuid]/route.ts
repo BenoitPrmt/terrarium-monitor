@@ -10,7 +10,7 @@ import type {MetricType, WebhookComparator} from "@/models/constants"
 import {rateLimit, verifyDeviceToken} from "@/lib/utils"
 import {clampToIngestionWindow, toUtcDate} from "@/lib/utils/time"
 import {updateAggregatesFromSamples} from "@/lib/services/aggregations"
-import {sendWebhookWithRetry} from "@/lib/utils/webhook"
+import {buildWebhookPayload, sendWebhookWithRetry} from "@/lib/utils"
 
 export const runtime = "nodejs"
 export const dynamic = "force-dynamic"
@@ -138,7 +138,10 @@ export async function POST(
         }
     )
 
-    const webhookPromise = triggerWebhooks(terrarium._id, inserted).catch(
+    const webhookPromise = triggerWebhooks(
+        {id: terrarium._id, name: terrarium.name},
+        inserted
+    ).catch(
         (error) => {
             console.error("Failed to trigger webhooks", error)
         }
@@ -165,7 +168,7 @@ export async function POST(
 }
 
 async function triggerWebhooks(
-    terrariumId: Types.ObjectId,
+    terrarium: {id: Types.ObjectId; name: string},
     samples: Awaited<ReturnType<typeof SampleModel.insertMany>>
 ) {
     if (!samples.length) {
@@ -175,7 +178,7 @@ async function triggerWebhooks(
     const metrics = Array.from(new Set(samples.map((s) => s.type)))
 
     const webhooks = await WebhookModel.find({
-        terrariumId,
+        terrariumId: terrarium.id,
         metric: {$in: metrics},
         isActive: true,
     })
@@ -216,21 +219,40 @@ async function triggerWebhooks(
             }
         }
 
-        const payload = {
-            terrariumId: terrariumId.toString(),
-            metric: webhook.metric,
-            comparator: webhook.comparator,
-            threshold: webhook.threshold,
-            current: matchedSample.value,
-            at: matchedSample.ts.toISOString(),
-            samplesCountInBatch: metricSamples.length,
+        let payload
+        try {
+            payload = buildWebhookPayload(
+                {
+                    bodyPreset: webhook.bodyPreset,
+                    discordBodyConfig: webhook.discordBodyConfig,
+                    customBodyTemplate: webhook.customBodyTemplate,
+                },
+                {
+                    terrarium: {
+                        id: terrarium.id.toString(),
+                        name: terrarium.name,
+                    },
+                    metric: webhook.metric,
+                    comparator: webhook.comparator,
+                    threshold: webhook.threshold,
+                    current: matchedSample.value,
+                    at: matchedSample.ts.toISOString(),
+                    samplesCountInBatch: metricSamples.length,
+                }
+            )
+        } catch (error) {
+            console.error("Failed to build webhook payload", {
+                webhookId: webhook._id.toString(),
+                error,
+            })
+            continue
         }
 
         const delivered = await sendWebhookWithRetry(
             webhook.url,
             payload,
             {
-                terrariumId: terrariumId.toString(),
+                terrariumId: terrarium.id.toString(),
                 metric: webhook.metric,
                 signatureSecret: WEBHOOK_SECRET_VALUE,
                 secretId: webhook.secretId ?? undefined,

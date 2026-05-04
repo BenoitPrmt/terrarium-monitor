@@ -442,6 +442,35 @@
         "editTitle": "Edit webhook",
         "editDescription": "Update the URL, threshold or state of this webhook."
       },
+      "body": {
+        "title": "Body sent",
+        "description": "Choose a ready-made format or create your own JSON body with variables.",
+        "presets": {
+          "default": "Standard",
+          "discord": "Discord",
+          "custom": "Custom"
+        },
+        "defaultHelp": "Generic format recommended for your own APIs and internal tools.",
+        "discordHelp": "Discord webhook compatible format: a content message and an embed with alert details.",
+        "discord": {
+          "content": "Message",
+          "title": "Embed title",
+          "description": "Embed description",
+          "color": "Color",
+          "fields": "Embed fields",
+          "fieldName": "Field name",
+          "fieldValue": "Field value",
+          "inline": "Inline",
+          "addField": "Add field",
+          "removeField": "Remove field",
+          "newFieldName": "New field"
+        },
+        "customTemplate": "JSON template",
+        "variables": "Available variables: {{terrarium.id}}, {{terrarium.name}}, {{metric}}, {{comparator}}, {{threshold}}, {{current}}, {{at}}, {{samplesCountInBatch}}.",
+        "previewTitle": "Body preview",
+        "previewDescription": "Preview generated with example values.",
+        "invalidJson": "The custom template must be a valid JSON object."
+      },
       "submit": {
         "label": "Create",
         "pending": "Creating...",
@@ -500,7 +529,8 @@
       },
       "body": {
         "title": "JSON body sent",
-        "description": "Preview of the next test payload or the latest test sent."
+        "description": "Preview of the next test payload or the latest test sent.",
+        "invalidJson": "The custom template must be a valid JSON object."
       },
       "actions": {
         "testing": "Testing...",

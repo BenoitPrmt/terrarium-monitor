@@ -442,6 +442,35 @@
         "editTitle": "Modifier le webhook",
         "editDescription": "Mettez à jour l’URL, le seuil ou l’état de ce webhook."
       },
+      "body": {
+        "title": "Body envoyé",
+        "description": "Choisissez un format prêt à l’emploi ou créez votre propre body JSON avec variables.",
+        "presets": {
+          "default": "Standard",
+          "discord": "Discord",
+          "custom": "Custom"
+        },
+        "defaultHelp": "Format générique recommandé pour vos propres APIs et outils internes.",
+        "discordHelp": "Format compatible avec les webhooks Discord : un message content et un embed avec les détails de l’alerte.",
+        "discord": {
+          "content": "Message",
+          "title": "Titre de l’embed",
+          "description": "Description de l’embed",
+          "color": "Couleur",
+          "fields": "Champs de l’embed",
+          "fieldName": "Nom du champ",
+          "fieldValue": "Valeur du champ",
+          "inline": "Inline",
+          "addField": "Ajouter un champ",
+          "removeField": "Supprimer le champ",
+          "newFieldName": "Nouveau champ"
+        },
+        "customTemplate": "Template JSON",
+        "variables": "Variables disponibles : {{terrarium.id}}, {{terrarium.name}}, {{metric}}, {{comparator}}, {{threshold}}, {{current}}, {{at}}, {{samplesCountInBatch}}.",
+        "previewTitle": "Aperçu du body",
+        "previewDescription": "Aperçu généré avec des valeurs d’exemple.",
+        "invalidJson": "Le template custom doit être un objet JSON valide."
+      },
       "submit": {
         "label": "Créer",
         "pending": "Création...",
@@ -500,7 +529,8 @@
       },
       "body": {
         "title": "Body JSON envoyé",
-        "description": "Aperçu du payload du prochain test ou du dernier test envoyé."
+        "description": "Aperçu du payload du prochain test ou du dernier test envoyé.",
+        "invalidJson": "Le template custom doit être un objet JSON valide."
       },
       "actions": {
         "testing": "Test...",

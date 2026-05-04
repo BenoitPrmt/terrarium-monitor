@@ -97,6 +97,11 @@ export default async function WebhooksPage({params}: PageProps) {
                             threshold: webhook.threshold,
                             cooldownSec: webhook.cooldownSec,
                             isActive: webhook.isActive,
+                            bodyPreset: webhook.bodyPreset ?? "default",
+                            discordBodyConfig:
+                                webhook.discordBodyConfig ?? undefined,
+                            customBodyTemplate:
+                                webhook.customBodyTemplate ?? undefined,
                             secretId: webhook.secretId ?? undefined,
                             lastTriggeredAt: webhook.lastTriggeredAt?.toISOString(),
                         }}

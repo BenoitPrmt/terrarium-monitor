@@ -7,6 +7,7 @@ import {
     type HydratedDocument,
 } from "mongoose"
 
+import {WEBHOOK_BODY_PRESETS} from "@/lib/utils/webhook-payload"
 import {METRIC_TYPES, WEBHOOK_COMPARATORS} from "./constants"
 
 const WebhookSchema = new Schema(
@@ -19,6 +20,26 @@ const WebhookSchema = new Schema(
         comparator: {type: String, enum: WEBHOOK_COMPARATORS, required: true},
         threshold: {type: Number, required: true},
         cooldownSec: {type: Number, default: 900},
+        bodyPreset: {
+            type: String,
+            enum: WEBHOOK_BODY_PRESETS,
+            default: "default",
+        },
+        discordBodyConfig: {
+            content: {type: String, maxlength: 1000},
+            embedTitle: {type: String, maxlength: 256},
+            embedDescription: {type: String, maxlength: 2000},
+            embedColor: {type: String, maxlength: 7},
+            fields: [
+                {
+                    name: {type: String, maxlength: 256},
+                    value: {type: String, maxlength: 1024},
+                    inline: {type: Boolean, default: true},
+                    _id: false,
+                },
+            ],
+        },
+        customBodyTemplate: {type: String, maxlength: 5000},
         lastTriggeredAt: {type: Date},
         secretId: {type: String},
     },
