@@ -195,6 +195,7 @@ export function WebhookFormDialog({terrariumId, mode, webhook, trigger}: Props) 
                         <Input
                             id={`${mode}-webhook-name`}
                             name="name"
+                            placeholder={t("fields.name")}
                             defaultValue={initialValue.name}
                             required
                         />
@@ -206,6 +207,7 @@ export function WebhookFormDialog({terrariumId, mode, webhook, trigger}: Props) 
                         <Input
                             id={`${mode}-webhook-url`}
                             name="url"
+                            placeholder={t("fields.url")}
                             type="url"
                             defaultValue={initialValue.url}
                             required
