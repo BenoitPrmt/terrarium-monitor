@@ -401,7 +401,10 @@
       "title": "Webhooks",
       "description": "Automate alerts for {name}.",
       "newWebhook": "New webhook",
-      "empty": "No webhooks yet.",
+      "empty": {
+        "title": "No webhooks yet",
+        "description": "Create a webhook to receive custom notifications when a measurement matches a condition you define."
+      },
       "howItWorks": {
         "title": "How webhooks work",
         "description": "A webhook is an HTTP POST sent by Terrarium Monitor as soon as an incoming measurement matches the configured rule.",

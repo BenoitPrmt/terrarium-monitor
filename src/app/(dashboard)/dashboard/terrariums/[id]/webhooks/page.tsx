@@ -12,8 +12,16 @@ import {WebhookCard} from "@/components/webhooks/WebhookCard"
 import {HealthCheckWebhookRow} from "@/components/webhooks/HealthCheckWebhookRow"
 import {WebhookFormDialog} from "@/components/webhooks/WebhookFormDialog"
 import {WebhookInfoDialog} from "@/components/webhooks/WebhookInfoDialog"
-import {Button} from "@/components/ui/button"
-import {CirclePlusIcon} from "lucide-react"
+import {Button} from "@/components/ui/button";
+import {
+    Empty,
+    EmptyContent,
+    EmptyDescription,
+    EmptyHeader,
+    EmptyMedia,
+    EmptyTitle,
+} from "@/components/ui/empty"
+import {ArrowUpRightIcon, CirclePlusIcon, WebhookIcon} from "lucide-react";
 import {getTranslations} from "next-intl/server";
 
 type PageProps = {
@@ -68,7 +76,7 @@ export default async function WebhooksPage({params}: PageProps) {
                     terrariumId={terrarium.id}
                     mode="create"
                     trigger={
-                        <Button size="lg" className="w-full lg:w-auto">
+                        <Button className="w-full lg:w-auto">
                             <CirclePlusIcon className="size-4" />
                             {t("newWebhook")}
                         </Button>
@@ -108,9 +116,29 @@ export default async function WebhooksPage({params}: PageProps) {
                     />
                 ))}
                 {webhooks.length === 0 && (
-                    <p className="px-4 py-10 text-center text-sm text-muted-foreground">
-                        {t('empty')}
-                    </p>
+                    <Empty>
+                        <EmptyHeader>
+                            <EmptyMedia variant="icon">
+                                <WebhookIcon />
+                            </EmptyMedia>
+                            <EmptyTitle>{t("empty.title")}</EmptyTitle>
+                            <EmptyDescription>
+                                {t("empty.description")}
+                            </EmptyDescription>
+                        </EmptyHeader>
+                        <EmptyContent className="flex-row justify-center gap-2">
+                            <WebhookFormDialog
+                                terrariumId={terrarium.id}
+                                mode="create"
+                                trigger={
+                                    <Button className="w-full lg:w-auto">
+                                        <CirclePlusIcon className="size-4" />
+                                        {t("newWebhook")}
+                                    </Button>
+                                }
+                            />
+                        </EmptyContent>
+                    </Empty>
                 )}
             </div>
         </div>
