@@ -28,7 +28,12 @@ import {AggregateHourlyModel} from "@/models/AggregateHourly"
 import {AggregateDailyModel} from "@/models/AggregateDaily"
 import {AggregateByHourOfDayModel} from "@/models/AggregateByHourOfDay"
 import {TerrariumActionModel} from "@/models/TerrariumAction"
-import {generateUuid, hashDeviceToken, sendWebhookWithRetry} from "@/lib/utils"
+import {
+    buildWebhookPayload,
+    generateUuid,
+    hashDeviceToken,
+    sendWebhookWithRetry,
+} from "@/lib/utils"
 import {createTranslator} from "next-intl";
 import {getUserLocale} from "@/services/locale";
 
@@ -219,6 +224,9 @@ export async function createWebhookAction(
         threshold: Number(formData.get("threshold")),
         cooldownSec: Number(formData.get("cooldownSec")) || undefined,
         isActive: formData.get("isActive") === "true",
+        bodyPreset: formData.get("bodyPreset") || "default",
+        discordBodyConfig: parseJsonFormValue(formData.get("discordBodyConfig")),
+        customBodyTemplate: formData.get("customBodyTemplate") || undefined,
     }
 
     const parsed = webhookCreateSchema.safeParse(payload)
@@ -260,7 +268,12 @@ export async function updateWebhookAction(
         cooldownSec: formData.get("cooldownSec")
             ? Number(formData.get("cooldownSec"))
             : undefined,
-        isActive: formData.get("isActive") === "true" ? true : undefined,
+        isActive: formData.has("isActive")
+            ? formData.get("isActive") === "true"
+            : undefined,
+        bodyPreset: formData.get("bodyPreset") || undefined,
+        discordBodyConfig: parseJsonFormValue(formData.get("discordBodyConfig")),
+        customBodyTemplate: formData.get("customBodyTemplate") || undefined,
     }
 
     const parsed = webhookUpdateSchema.safeParse(payload)
@@ -303,7 +316,8 @@ export async function deleteWebhookAction(
 
 export async function testWebhookAction(
     terrariumId: string,
-    webhookId: string
+    webhookId: string,
+    formData?: FormData
 ): Promise<ActionResult> {
     const ownerId = await requireAuth()
     await connectMongoose()
@@ -320,29 +334,71 @@ export async function testWebhookAction(
         return {success: false, message: t('webhook.common.notFound')}
     }
 
-    const payload = {
-        terrariumId: terrarium._id.toString(),
-        metric: webhook.metric,
-        comparator: webhook.comparator,
-        threshold: webhook.threshold,
-        current: webhook.threshold,
-        at: new Date().toISOString(),
-        samplesCountInBatch: 0,
+    const requestedCurrent = Number(formData?.get("current"))
+    const current = Number.isFinite(requestedCurrent)
+        ? requestedCurrent
+        : webhook.threshold
+
+    try {
+        const payload = buildWebhookPayload(
+            {
+                bodyPreset: webhook.bodyPreset,
+                discordBodyConfig: webhook.discordBodyConfig,
+                customBodyTemplate: webhook.customBodyTemplate,
+            },
+            {
+                terrarium: {
+                    id: terrarium._id.toString(),
+                    name: terrarium.name,
+                },
+                metric: webhook.metric,
+                comparator: webhook.comparator,
+                threshold: webhook.threshold,
+                current,
+                at: new Date().toISOString(),
+                samplesCountInBatch: 1,
+            }
+        )
+
+        const delivered = await sendWebhookWithRetry(
+            webhook.url,
+            payload,
+            {
+                terrariumId: terrarium._id.toString(),
+                metric: webhook.metric,
+                signatureSecret: process.env.WEBHOOK_SIGNATURE_SECRET || "test",
+                secretId: webhook.secretId ?? undefined,
+            },
+            1
+        )
+
+        if (!delivered) {
+            return {
+                success: false,
+                message: t('webhook.test.failed'),
+                data: {payload},
+            }
+        }
+
+        return {success: true, message: t('webhook.test.success'), data: {payload}}
+    } catch {
+        return {
+            success: false,
+            message: t('webhook.test.failed'),
+        }
+    }
+}
+
+function parseJsonFormValue(value: FormDataEntryValue | null) {
+    if (!value || typeof value !== "string") {
+        return undefined
     }
 
-    await sendWebhookWithRetry(
-        webhook.url,
-        payload,
-        {
-            terrariumId: terrarium._id.toString(),
-            metric: webhook.metric,
-            signatureSecret: process.env.WEBHOOK_SIGNATURE_SECRET || "test",
-            secretId: webhook.secretId ?? undefined,
-        },
-        1
-    )
-
-    return {success: true, message: t('webhook.test.success')}
+    try {
+        return JSON.parse(value)
+    } catch {
+        return undefined
+    }
 }
 
 export async function updateHealthCheckWebhookAction(
@@ -374,10 +430,9 @@ export async function updateHealthCheckWebhookAction(
     const terrarium = await requireTerrariumForOwner(terrariumId, ownerId)
 
     const nextConfig = {
-        url:
-            parsed.data.url ??
-            terrarium.healthCheck?.url ??
-            "",
+        url: parsed.data.isEnabled
+            ? parsed.data.url ?? terrarium.healthCheck?.url ?? ""
+            : parsed.data.url ?? "",
         delayMinutes:
             parsed.data.delayMinutes ??
             terrarium.healthCheck?.delayMinutes ??
